@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ProyectoASEE</string>
+    <string name="api_base_url">https://gateway.marvel.com:443/v1/public/</string>
+    <string name="api_key">8930b8251773dc6334474b306aaaa6b6</string>
 </resources>
