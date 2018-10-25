@@ -1,6 +1,6 @@
 package es.unex.asee.proyectoasee.adapters;
 
-import android.support.annotation.NonNull;
+import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.proyectoasee.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -18,10 +19,14 @@ import es.unex.asee.proyectoasee.pojo.marvel.characters.Result;
 
 public class CharactersAdapter extends RecyclerView.Adapter<CharactersAdapter.CharactersViewHolder> {
 
-    List<Result> charactersList;
+    private List<Result> charactersList;
+    private Context context;
 
-    public CharactersAdapter(List<Result> charactersList) {
+    private static final String imageSize = "/standard_fantastic";
+
+    public CharactersAdapter(List<Result> charactersList, Context context) {
         this.charactersList = charactersList;
+        this.context = context;
     }
 
     @Override
@@ -36,7 +41,13 @@ public class CharactersAdapter extends RecyclerView.Adapter<CharactersAdapter.Ch
     @Override
     public void onBindViewHolder(CharactersViewHolder charactersViewHolder, int i) {
 
-        charactersViewHolder.mTextViewCharacter.setText(charactersList.get(i).getName());
+        Result character = charactersList.get(i);
+        String imagePath = character.getThumbnail().getPath();
+        String imageExtension = character.getThumbnail().getExtension();
+        String finalImagePath = imagePath + imageSize + "." + imageExtension;
+
+        charactersViewHolder.mTextViewCharacter.setText(character.getName());
+        Picasso.with(context).load(finalImagePath).into(charactersViewHolder.mImageViewCharacter);
 
     }
 
