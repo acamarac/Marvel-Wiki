@@ -1,64 +1,63 @@
-package es.unex.asee.proyectoasee;
+package es.unex.asee.proyectoasee.fragments;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.example.android.proyectoasee.R;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
+import es.unex.asee.proyectoasee.CharactersActivity;
+import es.unex.asee.proyectoasee.MainActivity;
 import es.unex.asee.proyectoasee.adapters.CharactersAdapter;
 import es.unex.asee.proyectoasee.client.APIClient;
 import es.unex.asee.proyectoasee.interfaces.ApiInterface;
 import es.unex.asee.proyectoasee.pojo.marvel.characters.Characters;
-import es.unex.asee.proyectoasee.pojo.marvel.characters.Data;
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
-public class CharactersActivity extends AppCompatActivity {
+public class CharactersListFragment extends Fragment {
 
+    private View view;
     private static final String TAG = "CharactersActivity";
 
     private RecyclerView mRecyclerView;
     private ApiInterface apiInterface;
 
-    public static String MD5_Hash(String s) {
-        MessageDigest m = null;
-
-        try {
-            m = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-
-        m.update(s.getBytes(),0,s.length());
-        String hash = new BigInteger(1, m.digest()).toString(16);
-        return hash;
-    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_characters);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        mRecyclerView = (RecyclerView)findViewById(R.id.rViewCharactersList);
+        // Inflate the layout for this fragment
+        view = inflater.inflate(R.layout.layout_characters, container, false);
+
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle("Characters");
+
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.rViewCharactersList);
 
         //Create GridView
-        GridLayoutManager mGridLayoutManager = new GridLayoutManager(CharactersActivity.this, 3);
+        GridLayoutManager mGridLayoutManager = new GridLayoutManager(getActivity(), 3);
         mRecyclerView.setLayoutManager(mGridLayoutManager);
+
+
+        requestCharacters();
+
+
+        return view;
+    }
+
+
+    public void requestCharacters() {
 
         apiInterface = APIClient.getClient().create(ApiInterface.class);
 
@@ -82,9 +81,12 @@ public class CharactersActivity extends AppCompatActivity {
 
                 Characters characters = response.body();
 
+                //If characters is null, then the hash failed and we have to request again
+                if (characters.getData() == null) requestCharacters();
+
                 Log.d(TAG, "onResponse: " + response.code());
 
-                CharactersAdapter adapter = new CharactersAdapter(characters.getData().getResults(), getApplicationContext());
+                CharactersAdapter adapter = new CharactersAdapter(characters.getData().getResults(), view.getContext());
                 mRecyclerView.setAdapter(adapter);
 
             }
@@ -97,5 +99,24 @@ public class CharactersActivity extends AppCompatActivity {
 
     }
 
-}
+    /**
+     * Método que permite calcular el md5 de un string.
+     * Será utilizado para calcular el hash que debe pasarse por parámetro en la url
+     * @param s String del que calcular el hash
+     * @return String obtenido tras la realización del algoritmo md5
+     */
+    public static String MD5_Hash(String s) {
+        MessageDigest m = null;
 
+        try {
+            m = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        m.update(s.getBytes(),0,s.length());
+        String hash = new BigInteger(1, m.digest()).toString(16);
+        return hash;
+    }
+
+}

@@ -22,7 +22,7 @@ public class CharactersAdapter extends RecyclerView.Adapter<CharactersAdapter.Ch
     private List<Result> charactersList;
     private Context context;
 
-    private static final String imageSize = "/standard_fantastic";
+    private static final String imageSize = "/standard_large";
 
     public CharactersAdapter(List<Result> charactersList, Context context) {
         this.charactersList = charactersList;
@@ -58,14 +58,14 @@ public class CharactersAdapter extends RecyclerView.Adapter<CharactersAdapter.Ch
 
     public static class CharactersViewHolder extends RecyclerView.ViewHolder {
 
-        private CardView mCardViewCharacter;
+        //private CardView mCardViewCharacter;
         private TextView mTextViewCharacter;
         private ImageView mImageViewCharacter;
 
         CharactersViewHolder (View v) {
             super(v);
 
-            mCardViewCharacter = (CardView)v.findViewById(R.id.cvCharacter);
+            //mCardViewCharacter = (CardView)v.findViewById(R.id.cvCharacter);
             mTextViewCharacter =  (TextView)v.findViewById(R.id.tvCharacter);
             mImageViewCharacter = (ImageView)v.findViewById(R.id.ivCharacter);
         }

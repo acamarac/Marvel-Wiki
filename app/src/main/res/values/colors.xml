@@ -3,4 +3,8 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="redToolBar">#DA1F28</color>
+    <color name="white">#fdfdff</color>
+    <color name="yellowHighlight">#FEF3BB</color>
+    <color name="grey">#F5F5F5</color>
 </resources>
