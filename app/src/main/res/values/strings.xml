@@ -6,4 +6,8 @@
     <string name="characters">Characters</string>
     <string name="comics">Comics</string>
     <string name="series">Series</string>
+    <string name="characterImageDescription">Characters image</string>
+    <string name="openWeb">Show in web</string>
+    <string name="descriptionString">Description</string>
+    <string name="comicsString">Comics</string>
 </resources>

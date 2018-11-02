@@ -73,7 +73,7 @@ public class CharactersActivity extends AppCompatActivity {
         String hash = ts + privateKey + apiKey;
         String hashResult = MD5_Hash(hash);
 
-        Call<Characters> charactersCall = apiInterface.getCharactersData(ts, apiKey, hashResult);
+        Call<Characters> charactersCall = apiInterface.getCharactersData(ts, apiKey, hashResult,0);
 
 
         charactersCall.enqueue(new Callback<Characters>() {

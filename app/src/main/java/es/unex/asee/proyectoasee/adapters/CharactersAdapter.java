@@ -1,6 +1,11 @@
 package es.unex.asee.proyectoasee.adapters;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,6 +19,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import es.unex.asee.proyectoasee.MainActivity;
+import es.unex.asee.proyectoasee.fragments.CharacterDetailsFragment;
 import es.unex.asee.proyectoasee.pojo.marvel.characters.Result;
 
 
@@ -41,13 +48,32 @@ public class CharactersAdapter extends RecyclerView.Adapter<CharactersAdapter.Ch
     @Override
     public void onBindViewHolder(CharactersViewHolder charactersViewHolder, int i) {
 
-        Result character = charactersList.get(i);
+        final Result character = charactersList.get(i);
         String imagePath = character.getThumbnail().getPath();
         String imageExtension = character.getThumbnail().getExtension();
         String finalImagePath = imagePath + imageSize + "." + imageExtension;
 
         charactersViewHolder.mTextViewCharacter.setText(character.getName());
         Picasso.with(context).load(finalImagePath).into(charactersViewHolder.mImageViewCharacter);
+
+        charactersViewHolder.mCardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                AppCompatActivity mainActivity = (AppCompatActivity) v.getContext();
+
+                CharacterDetailsFragment characterFragment= new CharacterDetailsFragment();
+                Bundle bundle = new Bundle();
+                bundle.putInt("id", character.getId());
+                characterFragment.setArguments(bundle);
+
+                mainActivity.getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment, characterFragment)
+                        .addToBackStack(null)
+                        .commit();
+
+            }
+        });
 
     }
 
@@ -61,6 +87,7 @@ public class CharactersAdapter extends RecyclerView.Adapter<CharactersAdapter.Ch
         //private CardView mCardViewCharacter;
         private TextView mTextViewCharacter;
         private ImageView mImageViewCharacter;
+        private CardView mCardView;
 
         CharactersViewHolder (View v) {
             super(v);
@@ -68,7 +95,15 @@ public class CharactersAdapter extends RecyclerView.Adapter<CharactersAdapter.Ch
             //mCardViewCharacter = (CardView)v.findViewById(R.id.cvCharacter);
             mTextViewCharacter =  (TextView)v.findViewById(R.id.tvCharacter);
             mImageViewCharacter = (ImageView)v.findViewById(R.id.ivCharacter);
+            mCardView = (CardView) v.findViewById(R.id.rvCardView);
         }
+
+    }
+
+    public void addCharactersPagination(List<Result> characters) {
+
+        charactersList.addAll(characters);
+        notifyDataSetChanged();
 
     }
 

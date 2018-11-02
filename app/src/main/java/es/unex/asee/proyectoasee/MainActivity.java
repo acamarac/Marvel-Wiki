@@ -98,8 +98,9 @@ public class MainActivity extends AppCompatActivity {
                 break;*/
             case 1:
                 CharactersListFragment charactersFragment = new CharactersListFragment();
-                fragmentTransaction.replace(R.id.fragment, charactersFragment);
-                fragmentTransaction.commit();
+                fragmentTransaction.replace(R.id.fragment, charactersFragment)
+                        .addToBackStack(null)
+                        .commit();
                 break;
             /*case 2:
                 ComicsListFragment comicsFragment = new ComicsListFragment();
