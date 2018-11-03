@@ -18,4 +18,8 @@ public interface ApiInterface {
     Call<CharacterDetails> getCharacterDetails(@Path("id") Integer id, @Query("ts") String ts, @Query("apikey") String apiKey,
                                                @Query("hash") String hash);
 
+    @GET("characters")
+    Call<Characters> getCharacterByName(@Query("ts") String ts, @Query("apikey") String apiKey, @Query("hash") String hash,
+                                       @Query("nameStartsWith") String name);
+
 }

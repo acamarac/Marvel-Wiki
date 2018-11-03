@@ -129,4 +129,57 @@ public class Result {
         this.urls = urls;
     }
 
+
+
+
+    /*@Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(name);
+        dest.writeString(description);
+        dest.writeString(modified);
+        dest.writeValue(thumbnail);
+        dest.writeString(resourceURI);
+        dest.writeValue(comics);
+        dest.writeValue(series);
+        dest.writeValue(stories);
+        dest.writeValue(events);
+
+        dest.writeTypedList(urls);
+        //añadir lista
+    }
+
+    private void readFromParcel(Parcel in) {
+        id = in.readInt();
+        name = in.readString();
+        description = in.readString();
+        modified = in.readString();
+        in.readValue(thumbnail);
+        resourceURI = in.readString();
+        in.readValue(comics);
+        in.readValue(series);
+        in.readValue(stories);
+        in.readValue(events);
+
+
+        in.readTypedList(urls, CREATOR);
+
+    }
+
+    public static final Parcelable.Creator<Url> CREATOR
+            = new Creator<Url>() {
+        public Url createFromParcel(Parcel in) {
+            return new Url(in);
+        }
+
+        public Url[] newArray(int size) {
+            return new Url[size];
+        }
+    };*/
+
 }

@@ -1,15 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/main_layout_character"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/character_information_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:layout_marginTop="10dp">
+    android:layout_marginTop="56dp"
+    android:orientation="vertical">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/relative_layout_character"
         android:layout_width="fill_parent"
-        android:layout_height="240dp">
+        android:layout_height="261dp">
 
         <ImageView
             android:id="@+id/ivCharacterImage"
@@ -40,12 +40,12 @@
             android:id="@+id/characterRatingBar"
             android:layout_width="wrap_content"
             android:layout_height="47dp"
+            android:layout_centerHorizontal="true"
             android:layout_marginLeft="20dp"
-            android:progressTint="@color/redToolBar"
             android:layout_marginTop="50dp"
             android:numStars="5"
-            android:stepSize="0.5"
-            android:layout_centerHorizontal="true"/>
+            android:progressTint="@color/redToolBar"
+            android:stepSize="0.5" />
 
         <Button
             android:id="@+id/bShowWeb"
@@ -53,59 +53,34 @@
             android:layout_height="50dp"
             android:layout_alignParentRight="true"
             android:layout_marginRight="30dp"
-            android:text="@string/openWeb"
             android:backgroundTint="@color/redToolBar"
-            android:textColor="@color/white"/>
+            android:text="@string/openWeb"
+            android:textColor="@color/white" />
 
     </RelativeLayout>
 
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_marginTop="20dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp">
-
-
-            <TextView
-                android:id="@+id/tvChIntroduction"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/descriptionString"
-                android:textSize="20dp"
-                android:textStyle="bold"/>
-
-            <TextView
-                android:id="@+id/tvCharacterDescription"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
+        android:layout_marginRight="20dp"
         android:layout_marginTop="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp">
+        android:orientation="vertical">
 
 
         <TextView
-            android:id="@+id/tvComicsIntroduction"
+            android:id="@+id/tvChIntroduction"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/comicsString"
+            android:text="@string/descriptionString"
             android:textSize="20dp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/tvCharacterComics"
+            android:id="@+id/tvCharacterDescription"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 

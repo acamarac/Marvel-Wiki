@@ -2,8 +2,11 @@ package es.unex.asee.proyectoasee.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +20,8 @@ import com.squareup.picasso.Picasso;
 import java.util.Date;
 import java.util.List;
 
+import es.unex.asee.proyectoasee.adapters.ComicsInDetailsAdapter;
+import es.unex.asee.proyectoasee.adapters.ViewPagerAdapter;
 import es.unex.asee.proyectoasee.client.APIClient;
 import es.unex.asee.proyectoasee.interfaces.ApiInterface;
 import es.unex.asee.proyectoasee.pojo.marvel.characterDetails.CharacterDetails;
@@ -26,7 +31,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class CharacterDetailsFragment extends Fragment {
+
+//Fragment which supports tabs
+public class CharacterDetailMainFragment extends Fragment {
 
     private View view;
     private Integer id;
@@ -34,15 +41,19 @@ public class CharacterDetailsFragment extends Fragment {
     private static final String TAG = "CharacterDFragment";
     private static final String apiKey = "8930b8251773dc6334474b306aaaa6b6";
     private static final String privateKey = "a6fd8f30a718e8f8f2e8f462ef36a46ee94f9309";
-    private static final String imageSize = "/landscape_incredible";
 
     private ApiInterface apiInterface;
 
     private CharacterDetails character;
 
-    private TextView tvCharacterName;
-    private TextView tvCharacterDescription;
-    private ImageView ivCharacterImage;
+    private RecyclerView rvComics;
+
+    private ComicsInDetailsAdapter adapter;
+    private LinearLayoutManager mLinearLayoutManager;
+
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
+    private ViewPagerAdapter viewPagerAdapter;
 
 
     @Override
@@ -61,7 +72,12 @@ public class CharacterDetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.layout_character_detail, container, false);
+        view = inflater.inflate(R.layout.character_detail_main_fragment, container, false);
+
+        tabLayout = (TabLayout) view.findViewById(R.id.tabLayout);
+        viewPager = (ViewPager) view.findViewById(R.id.viewPager);
+
+        setHasOptionsMenu(false);
 
         requestCharacterDetails();
 
@@ -87,9 +103,21 @@ public class CharacterDetailsFragment extends Fragment {
             @Override
             public void onResponse(Call<CharacterDetails> call, Response<CharacterDetails> response) {
 
-                character = response.body();
+                if (response.code() == 401) {
+                    requestCharacterDetails();
+                } else {
 
-                loadCharacterData();
+                    character = response.body();
+
+                    viewPagerAdapter = new ViewPagerAdapter(getActivity().getSupportFragmentManager());
+                    viewPagerAdapter.addFragment(new CharacterInformationFragment(), "Information", character);
+                    viewPagerAdapter.addFragment(new ComicsInDetailsFragment(), "Comics", character);
+                    viewPagerAdapter.addFragment(new SeriesInDetailsFragment(), "Series", character);
+
+                    viewPager.setAdapter(viewPagerAdapter);
+                    tabLayout.setupWithViewPager(viewPager);
+
+                }
 
             }
 
@@ -99,41 +127,6 @@ public class CharacterDetailsFragment extends Fragment {
             }
         });
 
-    }
-
-    private void loadCharacterData() {
-
-        if (character.getCode().equals("InvalidCredentials")) requestCharacterDetails();
-
-        if (character.getStatus().equals("Ok")) {
-
-            List<Result> characterData = character.getData().getResults();
-
-            Result characterDetail = characterData.get(0);
-
-            String imagePath = characterDetail.getThumbnail().getPath();
-            String imageExtension = characterDetail.getThumbnail().getExtension();
-            String finalImagePath = imagePath + imageSize + "." + imageExtension;
-
-            tvCharacterName = (TextView) view.findViewById(R.id.tvCharacterName);
-            tvCharacterDescription = (TextView) view.findViewById(R.id.tvCharacterDescription);
-            ivCharacterImage = (ImageView) view.findViewById(R.id.ivCharacterImage);
-
-            tvCharacterName.setText(characterDetail.getName());
-
-            TextView chDesc = (TextView) view.findViewById(R.id.tvChIntroduction);
-            if (characterDetail.getDescription().equals(""))
-                chDesc.setVisibility(View.INVISIBLE);
-            else
-                tvCharacterDescription.setText(characterDetail.getDescription());
-
-
-            Picasso.with(this.getContext())
-                    .load(finalImagePath)
-                    .fit()
-                    .into(ivCharacterImage);
-
-        }
     }
 
 }

@@ -4,7 +4,7 @@ package es.unex.asee.proyectoasee.pojo.marvel.characters;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Thumbnail {
+public class Thumbnail extends ClassLoader {
 
     @SerializedName("path")
     @Expose

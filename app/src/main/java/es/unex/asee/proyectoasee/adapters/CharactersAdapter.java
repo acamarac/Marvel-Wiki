@@ -2,9 +2,6 @@ package es.unex.asee.proyectoasee.adapters;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -19,8 +16,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import es.unex.asee.proyectoasee.MainActivity;
-import es.unex.asee.proyectoasee.fragments.CharacterDetailsFragment;
+import es.unex.asee.proyectoasee.fragments.CharacterDetailMainFragment;
+import es.unex.asee.proyectoasee.fragments.CharacterInformationFragment;
 import es.unex.asee.proyectoasee.pojo.marvel.characters.Result;
 
 
@@ -62,13 +59,13 @@ public class CharactersAdapter extends RecyclerView.Adapter<CharactersAdapter.Ch
 
                 AppCompatActivity mainActivity = (AppCompatActivity) v.getContext();
 
-                CharacterDetailsFragment characterFragment= new CharacterDetailsFragment();
+                CharacterDetailMainFragment characterFragment= new CharacterDetailMainFragment();
                 Bundle bundle = new Bundle();
                 bundle.putInt("id", character.getId());
                 characterFragment.setArguments(bundle);
 
                 mainActivity.getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment, characterFragment)
+                        .add(R.id.fragment, characterFragment)
                         .addToBackStack(null)
                         .commit();
 
