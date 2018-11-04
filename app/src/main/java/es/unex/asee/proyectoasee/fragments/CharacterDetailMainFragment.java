@@ -109,7 +109,8 @@ public class CharacterDetailMainFragment extends Fragment {
 
                     character = response.body();
 
-                    viewPagerAdapter = new ViewPagerAdapter(getActivity().getSupportFragmentManager());
+                    //viewPagerAdapter = new ViewPagerAdapter(getActivity().getSupportFragmentManager());
+                    viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager());
                     viewPagerAdapter.addFragment(new CharacterInformationFragment(), "Information", character);
                     viewPagerAdapter.addFragment(new ComicsInDetailsFragment(), "Comics", character);
                     viewPagerAdapter.addFragment(new SeriesInDetailsFragment(), "Series", character);
@@ -129,4 +130,9 @@ public class CharacterDetailMainFragment extends Fragment {
 
     }
 
+    @Override
+    public void onStop() {
+        Log.d(TAG, "Estoy en onStop");
+        super.onStop();
+    }
 }

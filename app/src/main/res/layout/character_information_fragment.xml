@@ -11,6 +11,24 @@
         android:layout_width="fill_parent"
         android:layout_height="261dp">
 
+        <com.github.ivbaranov.mfb.MaterialFavoriteButton
+            android:id="@+id/characterFavButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:elevation="10dp"
+            app:mfb_animate_favorite="true"
+            app:mfb_animate_unfavorite="false"
+            app:mfb_bounce_duration="300"
+            app:mfb_color="black"
+            app:mfb_favorite_image="@drawable/ic_fav"
+            app:mfb_not_favorite_image="@drawable/ic_no_fav"
+            app:mfb_padding="12"
+            app:mfb_rotation_angle="360"
+            app:mfb_rotation_duration="400"
+            app:mfb_size="60"
+            app:mfb_type="heart" />
+
         <ImageView
             android:id="@+id/ivCharacterImage"
             android:layout_width="match_parent"

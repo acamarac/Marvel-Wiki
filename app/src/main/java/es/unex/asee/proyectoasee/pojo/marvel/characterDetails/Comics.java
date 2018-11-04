@@ -1,11 +1,12 @@
 
 package es.unex.asee.proyectoasee.pojo.marvel.characterDetails;
 
+import java.io.Serializable;
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Comics {
+public class Comics implements Serializable{
 
     @SerializedName("available")
     @Expose

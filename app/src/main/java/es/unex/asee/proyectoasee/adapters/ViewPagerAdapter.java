@@ -1,5 +1,6 @@
 package es.unex.asee.proyectoasee.adapters;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,6 +19,8 @@ public class ViewPagerAdapter extends FragmentPagerAdapter{
 
     private final List<Fragment> fragments = new ArrayList<Fragment>();
     private final List<String> fragmentsNames = new ArrayList<String>();
+
+    private Context context;
 
     public ViewPagerAdapter(FragmentManager fm) {
         super(fm);
@@ -48,5 +51,6 @@ public class ViewPagerAdapter extends FragmentPagerAdapter{
         fragments.add(fragment);
         fragmentsNames.add(fragmentName);
     }
+
 
 }
