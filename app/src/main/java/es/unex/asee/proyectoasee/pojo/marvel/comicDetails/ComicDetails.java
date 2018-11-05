@@ -1,5 +1,5 @@
 
-package es.unex.asee.proyectoasee.pojo.marvel.characterDetails;
+package es.unex.asee.proyectoasee.pojo.marvel.comicDetails;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -7,15 +7,15 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
+import es.unex.asee.proyectoasee.pojo.marvel.characterDetails.CharacterDetails;
 
-public class CharacterDetails implements Parcelable, Serializable {
+public class ComicDetails implements Parcelable {
 
-    public CharacterDetails() {
+    public ComicDetails() {
 
     }
 
-    public CharacterDetails(Parcel in) {
+    public ComicDetails(Parcel in) {
         readFromParcel(in);
     }
 
@@ -97,7 +97,6 @@ public class CharacterDetails implements Parcelable, Serializable {
         this.data = data;
     }
 
-
     @Override
     public int describeContents() {
         return 0;
@@ -136,5 +135,4 @@ public class CharacterDetails implements Parcelable, Serializable {
             return new CharacterDetails[size];
         }
     };
-
 }

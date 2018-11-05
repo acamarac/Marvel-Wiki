@@ -1,4 +1,4 @@
-package es.unex.asee.proyectoasee.fragments;
+package es.unex.asee.proyectoasee.fragments.comics;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,29 +13,29 @@ import android.view.ViewGroup;
 
 import com.example.android.proyectoasee.R;
 
-import es.unex.asee.proyectoasee.adapters.ComicsInDetailsAdapter;
-import es.unex.asee.proyectoasee.pojo.marvel.characterDetails.CharacterDetails;
+import es.unex.asee.proyectoasee.adapters.Comic_CharactersInDetailsAdapter;
+import es.unex.asee.proyectoasee.pojo.marvel.comicDetails.ComicDetails;
 
-public class ComicsInDetailsFragment extends Fragment {
+public class Comic_CharactersInDetailsFragment extends Fragment{
 
     View view;
 
 
-    private static final String TAG = "CharacterComicsFragment";
+    private static final String TAG = "ComicChFragment";
 
-    RecyclerView rvComics;
+    RecyclerView rvCharacters;
     LinearLayoutManager mLinearLayoutManager;
-    ComicsInDetailsAdapter adapter;
-    CharacterDetails character;
+    Comic_CharactersInDetailsAdapter adapter;
+    ComicDetails comic;
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments().containsKey("Character")) {
-            character = getArguments().getParcelable("Character");
+        if (getArguments().containsKey("Comic")) {
+            comic = getArguments().getParcelable("Comic");
 
-            Log.d(TAG, "onCreate: id " + character.getData().getResults().get(0).getName());
+            Log.d(TAG, "onCreate: id " + comic.getData().getResults().get(0).getTitle());
 
         }
 
@@ -47,17 +47,17 @@ public class ComicsInDetailsFragment extends Fragment {
 
         view = inflater.inflate(R.layout.comics_in_details_fragment, container, false);
 
-        rvComics = (RecyclerView) view.findViewById(R.id.rViewComics);
+
+        rvCharacters = (RecyclerView) view.findViewById(R.id.rViewComics);
 
         mLinearLayoutManager = new LinearLayoutManager(getContext());
-        rvComics.setLayoutManager(mLinearLayoutManager);
+        rvCharacters.setLayoutManager(mLinearLayoutManager);
 
-        adapter = new ComicsInDetailsAdapter(character.getData().getResults().get(0).getComics().getItems(), view.getContext());
-        rvComics.setAdapter(adapter);
+        adapter = new Comic_CharactersInDetailsAdapter(comic.getData().getResults().get(0).getCharacters().getItems(), view.getContext());
+        rvCharacters.setAdapter(adapter);
 
         return view;
 
     }
-
 
 }

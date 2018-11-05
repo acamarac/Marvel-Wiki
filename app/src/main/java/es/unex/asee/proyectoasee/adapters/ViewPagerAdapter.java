@@ -2,18 +2,16 @@ package es.unex.asee.proyectoasee.adapters;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
-import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import es.unex.asee.proyectoasee.pojo.marvel.characterDetails.CharacterDetails;
+import es.unex.asee.proyectoasee.pojo.marvel.comicDetails.ComicDetails;
 
 public class ViewPagerAdapter extends FragmentPagerAdapter{
 
@@ -45,7 +43,18 @@ public class ViewPagerAdapter extends FragmentPagerAdapter{
     public void addFragment(Fragment fragment, String fragmentName, CharacterDetails character) {
 
         Bundle bundle = new Bundle();
-        bundle.putParcelable("Character", character);
+        bundle.putSerializable("Character", character);
+        fragment.setArguments(bundle);
+
+        fragments.add(fragment);
+        fragmentsNames.add(fragmentName);
+    }
+
+
+    public void addFragmentComics(Fragment fragment, String fragmentName, ComicDetails comic) {
+
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("Comic", comic);
         fragment.setArguments(bundle);
 
         fragments.add(fragment);

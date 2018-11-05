@@ -13,7 +13,8 @@ import android.view.MenuItem;
 
 import com.example.android.proyectoasee.R;
 
-import es.unex.asee.proyectoasee.fragments.CharactersListFragment;
+import es.unex.asee.proyectoasee.fragments.characters.CharactersListFragment;
+import es.unex.asee.proyectoasee.fragments.comics.ComicsListFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -102,12 +103,12 @@ public class MainActivity extends AppCompatActivity {
                         .addToBackStack(null)
                         .commit();
                 break;
-            /*case 2:
+            case 2:
                 ComicsListFragment comicsFragment = new ComicsListFragment();
                 fragmentTransaction.replace(R.id.fragment, comicsFragment);
                 fragmentTransaction.commit();
                 break;
-            case 3:
+            /*case 3:
                 SeriesListFragment seriesFragment = new SeriesListFragment();
                 fragmentTransaction.replace(R.id.fragment, seriesFragment);
                 fragmentTransaction.commit();

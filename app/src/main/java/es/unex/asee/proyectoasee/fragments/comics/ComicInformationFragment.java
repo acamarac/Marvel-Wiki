@@ -1,4 +1,4 @@
-package es.unex.asee.proyectoasee.fragments;
+package es.unex.asee.proyectoasee.fragments.comics;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -21,40 +21,39 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 import es.unex.asee.proyectoasee.database.DatabaseManager;
-import es.unex.asee.proyectoasee.databasePOJO.CharacterDb;
-import es.unex.asee.proyectoasee.pojo.marvel.characterDetails.CharacterDetails;
-import es.unex.asee.proyectoasee.pojo.marvel.characterDetails.Result;
+import es.unex.asee.proyectoasee.pojo.marvel.comicDetails.ComicDetails;
+import es.unex.asee.proyectoasee.pojo.marvel.comicDetails.Result;
 
-public class CharacterInformationFragment extends Fragment {
+public class ComicInformationFragment extends Fragment{
 
     private View view;
-    private CharacterDetails character;
+    private ComicDetails comic;
 
-    private static final String TAG = "CharacterIFragment";
+    private static final String TAG = "ComicIFragment";
 
-    private TextView tvCharacterName;
-    private TextView tvCharacterDescription;
-    private ImageView ivCharacterImage;
+    private TextView tvComicName;
+    private TextView tvComicDescription;
+    private ImageView ivComicImage;
     private Button webButton;
 
     private static final String imageSize = "/landscape_incredible";
 
     private DatabaseManager dbManager;
-    private CharacterDb characterDb;
+    //private ComicDb comicDb;
 
     private MaterialFavoriteButton favButton;
     private RatingBar ratingBar;
 
-    private boolean favCharacter = false;
-    private float ratingCharacter = 0;
+    private boolean favComic = false;
+    private float ratingComic = 0;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments().containsKey("Character")) {
-            character = getArguments().getParcelable("Character");
+        if (getArguments().containsKey("Comic")) {
+            comic = getArguments().getParcelable("Comic");
 
-            Log.d(TAG, "onCreate: id " + character.getData().getResults().get(0).getName());
+            Log.d(TAG, "onCreate: id " + comic.getData().getResults().get(0).getTitle());
 
         }
 
@@ -67,25 +66,25 @@ public class CharacterInformationFragment extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.character_information_fragment, container, false);
 
-        dbManager = new DatabaseManager(view.getContext());
-        dbManager.open();
+        //dbManager = new DatabaseManager(view.getContext());
+        //dbManager.open();
 
-        tvCharacterName = (TextView) view.findViewById(R.id.tvCharacterName);
-        tvCharacterDescription = (TextView) view.findViewById(R.id.tvCharacterDescription);
-        ivCharacterImage = (ImageView) view.findViewById(R.id.ivCharacterImage);
+        tvComicName = (TextView) view.findViewById(R.id.tvCharacterName);
+        tvComicDescription = (TextView) view.findViewById(R.id.tvCharacterDescription);
+        ivComicImage = (ImageView) view.findViewById(R.id.ivCharacterImage);
         webButton = (Button) view.findViewById(R.id.bShowWeb);
         favButton = (MaterialFavoriteButton) view.findViewById(R.id.characterFavButton);
         ratingBar = (RatingBar) view.findViewById(R.id.characterRatingBar);
 
 
-        characterDb = dbManager.getCharacterInformation(character.getData().getResults().get(0).getId());
+        //comicDb = dbManager.getCharacterInformation(comic.getData().getResults().get(0).getId());
 
-        loadCharacterData();
+        loadComicData();
 
         favButton.setOnFavoriteChangeListener(new MaterialFavoriteButton.OnFavoriteChangeListener() {
             @Override
             public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
-                favCharacter = favorite;
+                favComic = favorite;
                 Log.d(TAG, "Soy el botón de fav");
             }
         });
@@ -94,7 +93,7 @@ public class CharacterInformationFragment extends Fragment {
         ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                ratingCharacter = rating;
+                ratingComic = rating;
                 Log.d(TAG, "Soy el botón de rating");
             }
         });
@@ -103,32 +102,32 @@ public class CharacterInformationFragment extends Fragment {
     }
 
 
-    private void loadCharacterData() {
+    private void loadComicData() {
 
 
-        if (character.getStatus().equals("Ok")) {
+        if (comic.getStatus().equals("Ok")) {
 
-            final List<Result> characterData = character.getData().getResults();
+            final List<Result> comicData = comic.getData().getResults();
 
-            final Result characterDetail = characterData.get(0);
+            final Result comicDetail = comicData.get(0);
 
-            String imagePath = characterDetail.getThumbnail().getPath();
-            String imageExtension = characterDetail.getThumbnail().getExtension();
+            String imagePath = comicDetail.getThumbnail().getPath();
+            String imageExtension = comicDetail.getThumbnail().getExtension();
             String finalImagePath = imagePath + imageSize + "." + imageExtension;
 
-            tvCharacterName.setText(characterDetail.getName());
+            tvComicName.setText(comicDetail.getTitle());
 
             TextView chDesc = (TextView) view.findViewById(R.id.tvChIntroduction);
-            if (characterDetail.getDescription().equals(""))
+            if (comicDetail.getDescription() == null)
                 chDesc.setVisibility(View.INVISIBLE);
             else
-                tvCharacterDescription.setText(characterDetail.getDescription());
+                tvComicDescription.setText(comicDetail.getDescription());
 
 
             Picasso.with(this.getContext())
                     .load(finalImagePath)
                     .fit()
-                    .into(ivCharacterImage);
+                    .into(ivComicImage);
 
 
 
@@ -139,9 +138,9 @@ public class CharacterInformationFragment extends Fragment {
                     boolean encontrado = false;
                     String urlResource = null;
 
-                    for (int i=0; i<characterDetail.getUrls().size() && !encontrado; i++) {
-                        if (characterDetail.getUrls().get(i).getType().equals("detail")) {
-                            urlResource = characterDetail.getUrls().get(i).getUrl();
+                    for (int i=0; i<comicDetail.getUrls().size() && !encontrado; i++) {
+                        if (comicDetail.getUrls().get(i).getType().equals("detail")) {
+                            urlResource = comicDetail.getUrls().get(i).getUrl();
                             encontrado = true;
                         }
                     }
@@ -153,19 +152,19 @@ public class CharacterInformationFragment extends Fragment {
                 }
             });
 
-            if (characterDb != null) {
+            /*if (comicDb != null) {
 
-                favCharacter = (characterDb.getFavorite() == 0)?false:true;
-                ratingCharacter = characterDb.getRating();
+                favComic = (comicDb.getFavorite() == 0)?false:true;
+                ratingComic = comicDb.getRating();
 
-                if (favCharacter == false) favButton.setFavorite(false);
+                if (favComic == false) favButton.setFavorite(false);
                 else favButton.setFavorite(true);
 
-                if (ratingCharacter != 0) {
-                    ratingBar.setRating(ratingCharacter);
+                if (ratingComic != 0) {
+                    ratingBar.setRating(ratingComic);
                 }
 
-            }
+            }*/
 
         }
     }
@@ -175,18 +174,19 @@ public class CharacterInformationFragment extends Fragment {
     public void onStop() {
         Log.d(TAG, "Soy el fragment, en onStop");
 
-        Integer idCharacter = character.getData().getResults().get(0).getId();
-        Integer favInsert = (favCharacter==true)?1:0;
+        /*Integer idCharacter = comic.getData().getResults().get(0).getId();
+        Integer favInsert = (favComic ==true)?1:0;
 
-        CharacterDb characterInsert = new CharacterDb(idCharacter.longValue(), favInsert.longValue(), ratingCharacter);
+        CharacterDb characterInsert = new CharacterDb(idCharacter.longValue(), favInsert.longValue(), ratingComic);
 
-        if (characterDb == null) {
+        if (comicDb == null) {
             dbManager.insertCharacterInformation(characterInsert);
         } else {
             dbManager.updateCharacterInformation(characterInsert);
         }
 
-        dbManager.close();
+        dbManager.close();*/
         super.onStop();
     }
+
 }

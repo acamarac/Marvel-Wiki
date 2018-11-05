@@ -11,4 +11,5 @@
     <string name="descriptionString">Description</string>
     <string name="comicsString">Comics</string>
     <string name="search">Search</string>
+    <string name="fav">Favorite</string>
 </resources>
