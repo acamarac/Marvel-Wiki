@@ -1,5 +1,6 @@
 package es.unex.asee.proyectoasee.fragments.comics;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -39,6 +40,9 @@ public class ComicDetailMainFragment extends Fragment {
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private ViewPagerAdapter viewPagerAdapter;
+
+
+    private ComicDetailListener mCallback;
 
 
     @Override
@@ -94,14 +98,7 @@ public class ComicDetailMainFragment extends Fragment {
 
                     comic = response.body();
 
-                    //viewPagerAdapter = new ViewPagerAdapter(getActivity().getSupportFragmentManager());
-                    viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager());
-                    viewPagerAdapter.addFragmentComics(new ComicInformationFragment(), "Information", comic);
-                    viewPagerAdapter.addFragmentComics(new Comic_CharactersInDetailsFragment(), "Characters", comic);
-                    //viewPagerAdapter.addFragmentComics(new Comic_SeriesInDetailsFragment(), "Series", comic);
-
-                    viewPager.setAdapter(viewPagerAdapter);
-                    tabLayout.setupWithViewPager(viewPager);
+                    generateTabs();
 
                 }
 
@@ -113,6 +110,51 @@ public class ComicDetailMainFragment extends Fragment {
             }
         });
 
+    }
+
+    public void generateTabs() {
+
+        viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager());
+
+        ComicInformationFragment comicInformationFragment = new ComicInformationFragment();
+        Comic_CharactersInDetailsFragment comic_charactersInDetailsFragment = new Comic_CharactersInDetailsFragment();
+
+        viewPagerAdapter.addFragmentComics(comicInformationFragment, "Information", comic);
+        viewPagerAdapter.addFragmentComics(comic_charactersInDetailsFragment, "CharacterEntity", comic);
+        //viewPagerAdapter.addFragmentComics(new Comic_SeriesInDetailsFragment(), "Series", comic);
+
+        mCallback.sendComic(comic, comicInformationFragment);
+        mCallback.sendComic(comic, comic_charactersInDetailsFragment);
+        //mCallback.sendComic(comic, seriesInDetailsFragment);
+
+        viewPager.setAdapter(viewPagerAdapter);
+        tabLayout.setupWithViewPager(viewPager);
+
+    }
+
+    //Method to communicate fragments
+    public interface ComicDetailListener {
+        void sendComic(ComicDetails comic, ComicInformationFragment fragment);
+        void sendComic(ComicDetails comic, Comic_CharactersInDetailsFragment fragment);
+        //void sendComic(ComicDetails comic, Comic_SeriesInDetailsFragment fragment);
+    }
+
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof ComicDetailMainFragment.ComicDetailListener) {
+            mCallback = (ComicDetailMainFragment.ComicDetailListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement ComicDetailListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallback = null;
     }
 
 }

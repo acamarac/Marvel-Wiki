@@ -9,15 +9,7 @@ import com.google.gson.annotations.SerializedName;
 
 import es.unex.asee.proyectoasee.pojo.marvel.characterDetails.CharacterDetails;
 
-public class ComicDetails implements Parcelable {
-
-    public ComicDetails() {
-
-    }
-
-    public ComicDetails(Parcel in) {
-        readFromParcel(in);
-    }
+public class ComicDetails {
 
     @SerializedName("code")
     @Expose
@@ -97,42 +89,4 @@ public class ComicDetails implements Parcelable {
         this.data = data;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(code);
-        dest.writeString(status);
-        dest.writeString(copyright);
-        dest.writeString(attributionText);
-        dest.writeString(attributionHTML);
-        dest.writeString(etag);
-        dest.writeValue(data);
-    }
-
-    private void readFromParcel(Parcel in) {
-        code = in.readInt();
-        status = in.readString();
-        copyright = in.readString();
-        attributionText = in.readString();
-        attributionHTML = in.readString();
-        etag = in.readString();
-
-        in.readValue(data);
-
-    }
-
-    public static final Parcelable.Creator<CharacterDetails> CREATOR
-            = new Creator<CharacterDetails>() {
-        public CharacterDetails createFromParcel(Parcel in) {
-            return new CharacterDetails(in);
-        }
-
-        public CharacterDetails[] newArray(int size) {
-            return new CharacterDetails[size];
-        }
-    };
 }

@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,11 +41,8 @@ public class ViewPagerAdapter extends FragmentPagerAdapter{
         return fragmentsNames.get(position);
     }
 
-    public void addFragment(Fragment fragment, String fragmentName, CharacterDetails character) {
 
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("Character", character);
-        fragment.setArguments(bundle);
+    public void addFragment(Fragment fragment, String fragmentName) {
 
         fragments.add(fragment);
         fragmentsNames.add(fragmentName);
@@ -53,13 +51,12 @@ public class ViewPagerAdapter extends FragmentPagerAdapter{
 
     public void addFragmentComics(Fragment fragment, String fragmentName, ComicDetails comic) {
 
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("Comic", comic);
-        fragment.setArguments(bundle);
-
         fragments.add(fragment);
         fragmentsNames.add(fragmentName);
     }
+
+
+
 
 
 }

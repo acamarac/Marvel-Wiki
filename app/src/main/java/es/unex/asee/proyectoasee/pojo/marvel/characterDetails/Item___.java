@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class Item___ implements Serializable {
+public class Item___  {
 
     @SerializedName("resourceURI")
     @Expose

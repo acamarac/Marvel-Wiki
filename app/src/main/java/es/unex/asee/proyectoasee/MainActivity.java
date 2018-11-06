@@ -2,6 +2,7 @@ package es.unex.asee.proyectoasee;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -13,10 +14,21 @@ import android.view.MenuItem;
 
 import com.example.android.proyectoasee.R;
 
+import es.unex.asee.proyectoasee.fragments.characters.CharacterDetailMainFragment;
+import es.unex.asee.proyectoasee.fragments.characters.CharacterInformationFragment;
+import es.unex.asee.proyectoasee.fragments.characters.Character_ComicsInDetailsFragment;
+import es.unex.asee.proyectoasee.fragments.characters.Character_SeriesInDetailsFragment;
 import es.unex.asee.proyectoasee.fragments.characters.CharactersListFragment;
+import es.unex.asee.proyectoasee.fragments.comics.ComicDetailMainFragment;
+import es.unex.asee.proyectoasee.fragments.comics.ComicInformationFragment;
+import es.unex.asee.proyectoasee.fragments.comics.Comic_CharactersInDetailsFragment;
 import es.unex.asee.proyectoasee.fragments.comics.ComicsListFragment;
+import es.unex.asee.proyectoasee.pojo.marvel.characterDetails.CharacterDetails;
+import es.unex.asee.proyectoasee.pojo.marvel.comicDetails.ComicDetails;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements CharacterDetailMainFragment.CharacterDetailListener,
+        ComicDetailMainFragment.ComicDetailListener {
 
     DrawerLayout drawerLayout;
     Toolbar toolbar;
@@ -116,4 +128,28 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void sendCharacter(CharacterDetails character, CharacterInformationFragment fragment) {
+        fragment.reciveCharacter(character);
+    }
+
+    @Override
+    public void sendCharacter(CharacterDetails character, Character_ComicsInDetailsFragment fragment) {
+        fragment.reciveCharacter(character);
+    }
+
+    @Override
+    public void sendCharacter(CharacterDetails character, Character_SeriesInDetailsFragment fragment) {
+        fragment.reciveCharacter(character);
+    }
+
+    @Override
+    public void sendComic(ComicDetails comic, ComicInformationFragment fragment) {
+        fragment.reciveComic(comic);
+    }
+
+    @Override
+    public void sendComic(ComicDetails comic, Comic_CharactersInDetailsFragment fragment) {
+        fragment.reciveComic(comic);
+    }
 }

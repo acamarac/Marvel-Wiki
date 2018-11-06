@@ -1,4 +1,4 @@
-package es.unex.asee.proyectoasee.databasePOJO;
+package es.unex.asee.proyectoasee.databasePOJOOLD;
 
 public class CharacterDb {
 

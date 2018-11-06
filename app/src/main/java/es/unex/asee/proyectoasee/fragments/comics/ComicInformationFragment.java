@@ -20,7 +20,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import es.unex.asee.proyectoasee.database.DatabaseManager;
+import es.unex.asee.proyectoasee.databaseOLD.DatabaseManager;
 import es.unex.asee.proyectoasee.pojo.marvel.comicDetails.ComicDetails;
 import es.unex.asee.proyectoasee.pojo.marvel.comicDetails.Result;
 
@@ -50,13 +50,12 @@ public class ComicInformationFragment extends Fragment{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments().containsKey("Comic")) {
-            comic = getArguments().getParcelable("Comic");
+    }
 
-            Log.d(TAG, "onCreate: id " + comic.getData().getResults().get(0).getTitle());
-
-        }
-
+    // This is a public method that the Activity can use to communicate
+    // directly with this Fragment
+    public void reciveComic(ComicDetails comic) {
+        this.comic = comic;
     }
 
 

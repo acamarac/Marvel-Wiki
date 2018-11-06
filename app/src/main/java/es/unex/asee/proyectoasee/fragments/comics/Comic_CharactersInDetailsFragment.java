@@ -32,13 +32,12 @@ public class Comic_CharactersInDetailsFragment extends Fragment{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments().containsKey("Comic")) {
-            comic = getArguments().getParcelable("Comic");
+    }
 
-            Log.d(TAG, "onCreate: id " + comic.getData().getResults().get(0).getTitle());
-
-        }
-
+    // This is a public method that the Activity can use to communicate
+    // directly with this Fragment
+    public void reciveComic(ComicDetails comic) {
+        this.comic = comic;
     }
 
     @Nullable
