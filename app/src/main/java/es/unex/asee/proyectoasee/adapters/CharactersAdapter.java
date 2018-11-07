@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.example.android.proyectoasee.R;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import es.unex.asee.proyectoasee.fragments.characters.CharacterDetailMainFragment;
@@ -27,9 +28,19 @@ public class CharactersAdapter extends RecyclerView.Adapter<CharactersAdapter.Ch
 
     private static final String imageSize = "/standard_large";
 
+    public CharactersAdapter(Context context) {
+        charactersList = new ArrayList<>();
+        this.context = context;
+    }
+
     public CharactersAdapter(List<Result> charactersList, Context context) {
         this.charactersList = charactersList;
         this.context = context;
+    }
+
+
+    public void clearList() {
+        charactersList.clear();
     }
 
     @Override
@@ -87,7 +98,6 @@ public class CharactersAdapter extends RecyclerView.Adapter<CharactersAdapter.Ch
 
     public static class CharactersViewHolder extends RecyclerView.ViewHolder {
 
-        //private CardView mCardViewCharacter;
         private TextView mTextViewCharacter;
         private ImageView mImageViewCharacter;
         private CardView mCardView;

@@ -13,7 +13,7 @@
     <item
         android:id="@+id/menuShowFavorite"
         android:title="@string/fav"
-        android:icon="@drawable/app_bar_fav"
+        android:icon="@drawable/app_bar_not_fav"
         app:showAsAction="always"
         ></item>
 

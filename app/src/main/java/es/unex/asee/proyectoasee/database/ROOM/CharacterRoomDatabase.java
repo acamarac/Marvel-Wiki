@@ -8,7 +8,7 @@ import android.content.Context;
 import es.unex.asee.proyectoasee.database.DAO.CharacterDAO;
 import es.unex.asee.proyectoasee.database.Entities.CharacterEntity;
 
-@Database(entities = {CharacterEntity.class}, version = 1)
+@Database(entities = {CharacterEntity.class}, version = 2)
 public abstract class CharacterRoomDatabase extends RoomDatabase {
 
     public abstract CharacterDAO characterDao();
@@ -21,6 +21,7 @@ public abstract class CharacterRoomDatabase extends RoomDatabase {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             CharacterRoomDatabase.class, "CharacterDatabase")
+                            .fallbackToDestructiveMigration()
                             .build();
                 }
             }

@@ -7,6 +7,8 @@ import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
+import java.util.List;
+
 import es.unex.asee.proyectoasee.database.Entities.CharacterEntity;
 
 @Dao
@@ -17,6 +19,9 @@ public interface CharacterDAO {
 
     @Query("SELECT * FROM CharacterEntity WHERE id = :id")
     CharacterEntity getCharacter(Integer id);
+
+    @Query("SELECT * FROM CharacterEntity WHERE favorite = 1")
+    List<CharacterEntity> getAllFavoriteCharacters();
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void updateCharacter(CharacterEntity character);

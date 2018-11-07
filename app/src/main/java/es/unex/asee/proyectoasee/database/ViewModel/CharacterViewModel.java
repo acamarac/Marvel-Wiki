@@ -2,6 +2,7 @@ package es.unex.asee.proyectoasee.database.ViewModel;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
+import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
 import java.util.List;
@@ -23,6 +24,10 @@ public class CharacterViewModel extends AndroidViewModel {
         return mRepository.getCharacter(id);
     }
 
+    public List<Result> getAllFavoriteCharacters() {
+        return mRepository.getAllFavoriteCharacters();
+    }
+
     public void insertCharacter(CharacterEntity character) {
         mRepository.insertCharacter(character);
     }
@@ -31,8 +36,12 @@ public class CharacterViewModel extends AndroidViewModel {
         mRepository.updateCharacter(character);
     }
 
-    public List<Result> getAllCharacters(Integer offset) {
+    public LiveData<List<Result>> getAllCharacters(Integer offset) {
         return mRepository.getAllCharacters(offset);
+    }
+
+    public LiveData<List<Result>> getCharacterByName(String name) {
+        return mRepository.getCharacterByName(name);
     }
 
 }
