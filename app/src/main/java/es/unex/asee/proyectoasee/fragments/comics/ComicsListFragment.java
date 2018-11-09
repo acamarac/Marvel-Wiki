@@ -1,12 +1,14 @@
 package es.unex.asee.proyectoasee.fragments.comics;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,30 +19,18 @@ import android.widget.ProgressBar;
 
 import com.example.android.proyectoasee.R;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import es.unex.asee.proyectoasee.MainActivity;
-import es.unex.asee.proyectoasee.adapters.ComicsAdapter;
-import es.unex.asee.proyectoasee.client.APIClient;
-import es.unex.asee.proyectoasee.interfaces.ApiInterface;
-import es.unex.asee.proyectoasee.pojo.marvel.comics.Comics;
+import es.unex.asee.proyectoasee.adapters.comics.ComicsAdapter;
+import es.unex.asee.proyectoasee.database.ViewModel.ComicViewModel;
 import es.unex.asee.proyectoasee.pojo.marvel.comics.Result;
-import es.unex.asee.proyectoasee.utils.Utils;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
-public class ComicsListFragment extends Fragment {
+public class ComicsListFragment extends Fragment implements ComicsAdapter.ComicsAdapterListener{
 
     private View view;
-    private static final String TAG = "ComicsFragment";
-    private static final String apiKey = "8930b8251773dc6334474b306aaaa6b6";
-    private static final String privateKey = "a6fd8f30a718e8f8f2e8f462ef36a46ee94f9309";
 
     private RecyclerView mRecyclerView;
-    private ApiInterface apiInterface;
     private ProgressBar progressBar;
     private ComicsAdapter adapter;
 
@@ -50,11 +40,11 @@ public class ComicsListFragment extends Fragment {
     private int visibleItemCount, totalItemCount, pastVisibleItems, limit, previousTotal = 0;
     private boolean isLoading = true;
 
-    private List<Result> charactersList = new ArrayList<Result>();
-
     SearchView mSearchView;
 
     boolean onSearch = false;
+
+    private ComicViewModel mComicViewModel;
 
 
     @Override
@@ -74,6 +64,10 @@ public class ComicsListFragment extends Fragment {
 
         setHasOptionsMenu(true);
 
+        adapter = new ComicsAdapter(view.getContext(), ComicsListFragment.this);
+        mRecyclerView.setAdapter(adapter);
+
+        mComicViewModel = ViewModelProviders.of(this).get(ComicViewModel.class);
 
         requestComics();
 
@@ -95,7 +89,7 @@ public class ComicsListFragment extends Fragment {
                         }
                     } else {
                         if ((totalItemCount - visibleItemCount) <= (pastVisibleItems + limit) && !onSearch) {
-                            pagination();
+                            requestComics();
                             isLoading = true;
                         }
                     }
@@ -108,166 +102,57 @@ public class ComicsListFragment extends Fragment {
 
 
     public void requestComics() {
-
-        apiInterface = APIClient.getClient().create(ApiInterface.class);
-
-
-        Long tsLong = new Date().getTime();
-        String ts = tsLong.toString();
-
-        //Tercer parámetro: md5(ts + privatekey + publickey (apikey))
-        String hash = ts + privateKey + apiKey;
-        String hashResult = Utils.MD5_Hash(hash);
-
         progressBar.setVisibility(View.VISIBLE);
-        Call<Comics> charactersCall = apiInterface.getComicsData(ts, apiKey, hashResult, offset);
-
-        charactersCall.enqueue(new Callback<Comics>() {
+        mComicViewModel.getAllComics(offset).observe(getActivity(), new Observer<List<Result>>() {
             @Override
-            public void onResponse(Call<Comics> call, Response<Comics> response) {
-
-                Comics comics = response.body();
-
-                //If characters is null, then the hash failed and we have to request again
-
-                if (response.code() == 401) {
-                    requestComics();
-                } else {
-
-                    offset = offset + comics.getData().getResults().size();
-
-                    Log.d(TAG, "offset: " + offset);
-
-                    charactersList.addAll(comics.getData().getResults());
-
-                    adapter = new ComicsAdapter(comics.getData().getResults(), view.getContext());
-                    mRecyclerView.setAdapter(adapter);
-
-                }
-
-
-
-                progressBar.setVisibility(View.GONE);
-
-            }
-
-            @Override
-            public void onFailure(Call<Comics> call, Throwable t) {
-                Log.d(TAG, "onResponse: " + t.getMessage());
+            public void onChanged(@Nullable List<Result> results) {
+                adapter.addComicsPagination(results);
+                offset = offset + results.size();
             }
         });
-
-    }
-
-
-
-    private void pagination() {
-
-        Long tsLong = new Date().getTime();
-        String ts = tsLong.toString();
-
-        //Tercer parámetro: md5(ts + privatekey + publickey (apikey))
-        String hash = ts + privateKey + apiKey;
-        String hashResult = Utils.MD5_Hash(hash);
-
-        progressBar.setVisibility(View.VISIBLE);
-        Call<Comics> charactersCall = apiInterface.getComicsData(ts, apiKey, hashResult, offset);
-
-        charactersCall.enqueue(new Callback<Comics>() {
-            @Override
-            public void onResponse(Call<Comics> call, Response<Comics> response) {
-
-                if (response.code() == 401) {
-                    pagination();
-                } else {
-
-                    //We check if response still have characters to show
-                    if (response.body().getStatus().equals("Ok")) {
-
-                        List<Result> characters = response.body().getData().getResults();
-
-                        charactersList.addAll(characters);
-
-                        offset = offset + characters.size();
-                        adapter.addComicsPagination(characters);
-
-                        Log.d(TAG, "offset: " + offset);
-
-                    }
-
-                }
-
-
-
-                progressBar.setVisibility(View.GONE);
-
-            }
-
-            @Override
-            public void onFailure(Call<Comics> call, Throwable t) {
-                Log.d(TAG, "onResponse: " + t.getMessage());
-            }
-        });
-
+        progressBar.setVisibility(View.GONE);
     }
 
 
     private void searchComicByName(final String name) {
-
-        apiInterface = APIClient.getClient().create(ApiInterface.class);
-
-
-        Long tsLong = new Date().getTime();
-        String ts = tsLong.toString();
-
-        //Tercer parámetro: md5(ts + privatekey + publickey (apikey))
-        String hash = ts + privateKey + apiKey;
-        String hashResult = Utils.MD5_Hash(hash);
-
+        adapter.clearList();
         progressBar.setVisibility(View.VISIBLE);
-        Call<Comics> comicsCall = apiInterface.getComicByName(ts, apiKey, hashResult, name);
-
-
-        comicsCall.enqueue(new Callback<Comics>() {
+        mComicViewModel.getComicByName(name).observe(getActivity(), new Observer<List<Result>>() {
             @Override
-            public void onResponse(Call<Comics> call, Response<Comics> response) {
-
-                if (response.code() == 401) {
-                    searchComicByName(name);
-                } else {
-
-                    Comics characters = response.body();
-
-                    //If characters is null, then the hash failed and we have to request again
-
-                    offset = offset + characters.getData().getResults().size();
-
-                    Log.d(TAG, "offset: " + offset);
-
-                    charactersList.addAll(characters.getData().getResults());
-
-                    adapter = new ComicsAdapter(characters.getData().getResults(), view.getContext());
-                    mRecyclerView.setAdapter(adapter);
-
-                }
-
-                progressBar.setVisibility(View.GONE);
-
-            }
-
-            @Override
-            public void onFailure(Call<Comics> call, Throwable t) {
-                Log.d(TAG, "onResponse: " + t.getMessage());
+            public void onChanged(@Nullable List<Result> results) {
+                adapter.addComicsPagination(results);
+                offset = offset + results.size();
             }
         });
+        progressBar.setVisibility(View.GONE);
+    }
 
+    private void displayFavComics() {
+        progressBar.setVisibility(View.VISIBLE);
+        adapter.clearList();
+        adapter.addComicsPagination(mComicViewModel.getFavoriteComics());
+        progressBar.setVisibility(View.GONE);
+    }
+
+    private void displayReadComic() {
+        progressBar.setVisibility(View.VISIBLE);
+        adapter.clearList();
+        adapter.addComicsPagination(mComicViewModel.getReadComics());
+        progressBar.setVisibility(View.GONE);
+    }
+
+    private void displayReadingComic() {
+        progressBar.setVisibility(View.VISIBLE);
+        adapter.clearList();
+        adapter.addComicsPagination(mComicViewModel.getReadingComics());
+        progressBar.setVisibility(View.GONE);
     }
 
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
-        inflater.inflate(R.menu.search_menu, menu);
+        inflater.inflate(R.menu.comic_list_menu, menu);
         MenuItem item = menu.findItem(R.id.menuSearch);
         mSearchView = (SearchView) item.getActionView();
 
@@ -285,6 +170,16 @@ public class ComicsListFragment extends Fragment {
             }
         });
 
+        mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                offset = 0;
+                adapter.clearList();
+                requestComics();
+                return false;
+            }
+        });
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -293,11 +188,24 @@ public class ComicsListFragment extends Fragment {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.menuShowFavorite:
-                //displayFavCharacters();
+                ((MainActivity) getActivity()).getSupportActionBar().setTitle("Favorite Comics");
+                displayFavComics();
+                return true;
+            case R.id.menuShowRead:
+                ((MainActivity) getActivity()).getSupportActionBar().setTitle("Read Comics");
+                displayReadComic();
+                return true;
+            case R.id.menuShowReading:
+                ((MainActivity) getActivity()).getSupportActionBar().setTitle("Reading Comics");
+                displayReadingComic();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
+    @Override
+    public void sendComicId(Integer id, ComicDetailMainFragment fragment) {
+        fragment.receiveId(id);
+    }
 }

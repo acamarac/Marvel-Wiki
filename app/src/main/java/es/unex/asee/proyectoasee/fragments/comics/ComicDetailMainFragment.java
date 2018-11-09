@@ -1,7 +1,9 @@
 package es.unex.asee.proyectoasee.fragments.comics;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -17,6 +19,7 @@ import java.util.Date;
 
 import es.unex.asee.proyectoasee.adapters.ViewPagerAdapter;
 import es.unex.asee.proyectoasee.client.APIClient;
+import es.unex.asee.proyectoasee.database.ViewModel.ComicViewModel;
 import es.unex.asee.proyectoasee.interfaces.ApiInterface;
 import es.unex.asee.proyectoasee.pojo.marvel.comicDetails.ComicDetails;
 import es.unex.asee.proyectoasee.utils.Utils;
@@ -29,12 +32,6 @@ public class ComicDetailMainFragment extends Fragment {
     private View view;
     private Integer id;
 
-    private static final String TAG = "CharacterDFragment";
-    private static final String apiKey = "8930b8251773dc6334474b306aaaa6b6";
-    private static final String privateKey = "a6fd8f30a718e8f8f2e8f462ef36a46ee94f9309";
-
-    private ApiInterface apiInterface;
-
     private ComicDetails comic;
 
     private TabLayout tabLayout;
@@ -43,18 +40,17 @@ public class ComicDetailMainFragment extends Fragment {
 
 
     private ComicDetailListener mCallback;
+    private ComicViewModel mComicViewModel;
 
+
+    public void receiveId(Integer id) {
+        this.id = id;
+    }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments().containsKey("id")) {
-            id = getArguments().getInt("id");
-
-            Log.d(TAG, "onCreate: id " + id);
-
-        }
-
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putInt("id", id);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -66,6 +62,12 @@ public class ComicDetailMainFragment extends Fragment {
         tabLayout = (TabLayout) view.findViewById(R.id.tabLayout);
         viewPager = (ViewPager) view.findViewById(R.id.viewPager);
 
+        mComicViewModel = ViewModelProviders.of(this).get(ComicViewModel.class);
+
+        if (savedInstanceState != null) {
+            id = savedInstanceState.getInt("id");
+        }
+
         setHasOptionsMenu(false);
 
         requestComicDetails();
@@ -75,40 +77,9 @@ public class ComicDetailMainFragment extends Fragment {
 
     public void requestComicDetails() {
 
-        apiInterface = APIClient.getClient().create(ApiInterface.class);
+        comic = mComicViewModel.getComicById(id);
 
-
-        Long tsLong = new Date().getTime();
-        String ts = tsLong.toString();
-
-        //Tercer parámetro: md5(ts + privatekey + publickey (apikey))
-        String hash = ts + privateKey + apiKey;
-        String hashResult = Utils.MD5_Hash(hash);
-
-        Call<ComicDetails> comicCall = apiInterface.getComicDetails(id, ts, apiKey, hashResult);
-
-
-        comicCall.enqueue(new Callback<ComicDetails>() {
-            @Override
-            public void onResponse(Call<ComicDetails> call, Response<ComicDetails> response) {
-
-                if (response.code() == 401) {
-                    requestComicDetails();
-                } else {
-
-                    comic = response.body();
-
-                    generateTabs();
-
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<ComicDetails> call, Throwable t) {
-                Log.d(TAG, "onResponse: " + t.getMessage());
-            }
-        });
+        generateTabs();
 
     }
 
@@ -119,13 +90,11 @@ public class ComicDetailMainFragment extends Fragment {
         ComicInformationFragment comicInformationFragment = new ComicInformationFragment();
         Comic_CharactersInDetailsFragment comic_charactersInDetailsFragment = new Comic_CharactersInDetailsFragment();
 
-        viewPagerAdapter.addFragmentComics(comicInformationFragment, "Information", comic);
-        viewPagerAdapter.addFragmentComics(comic_charactersInDetailsFragment, "CharacterEntity", comic);
-        //viewPagerAdapter.addFragmentComics(new Comic_SeriesInDetailsFragment(), "Series", comic);
+        viewPagerAdapter.addFragment(comicInformationFragment, "Information");
+        viewPagerAdapter.addFragment(comic_charactersInDetailsFragment, "Character");
 
         mCallback.sendComic(comic, comicInformationFragment);
         mCallback.sendComic(comic, comic_charactersInDetailsFragment);
-        //mCallback.sendComic(comic, seriesInDetailsFragment);
 
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
@@ -136,7 +105,6 @@ public class ComicDetailMainFragment extends Fragment {
     public interface ComicDetailListener {
         void sendComic(ComicDetails comic, ComicInformationFragment fragment);
         void sendComic(ComicDetails comic, Comic_CharactersInDetailsFragment fragment);
-        //void sendComic(ComicDetails comic, Comic_SeriesInDetailsFragment fragment);
     }
 
 

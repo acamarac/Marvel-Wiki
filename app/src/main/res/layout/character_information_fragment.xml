@@ -6,100 +6,186 @@
     android:layout_marginTop="56dp"
     android:orientation="vertical">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/relative_layout_character"
-        android:layout_width="fill_parent"
-        android:layout_height="261dp">
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-        <com.github.ivbaranov.mfb.MaterialFavoriteButton
-            android:id="@+id/characterFavButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:elevation="10dp"
-            app:mfb_animate_favorite="true"
-            app:mfb_animate_unfavorite="false"
-            app:mfb_bounce_duration="300"
-            app:mfb_color="black"
-            app:mfb_favorite_image="@drawable/ic_fav"
-            app:mfb_not_favorite_image="@drawable/ic_no_fav"
-            app:mfb_padding="12"
-            app:mfb_rotation_angle="360"
-            app:mfb_rotation_duration="400"
-            app:mfb_size="60"
-            app:mfb_type="heart" />
-
-        <ImageView
-            android:id="@+id/ivCharacterImage"
+        <TableLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:contentDescription="@string/characterImageDescription" />
+            android:stretchColumns="1">
 
-    </RelativeLayout>
+            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/relative_layout_character"
+                android:layout_width="fill_parent"
+                android:layout_height="222dp">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+                <com.github.ivbaranov.mfb.MaterialFavoriteButton
+                    android:id="@+id/characterFavButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
+                    android:elevation="10dp"
+                    app:mfb_animate_favorite="true"
+                    app:mfb_animate_unfavorite="false"
+                    app:mfb_bounce_duration="300"
+                    app:mfb_color="black"
+                    app:mfb_favorite_image="@drawable/ic_fav"
+                    app:mfb_not_favorite_image="@drawable/ic_no_fav"
+                    app:mfb_padding="12"
+                    app:mfb_rotation_angle="360"
+                    app:mfb_rotation_duration="400"
+                    app:mfb_size="60"
+                    app:mfb_type="heart" />
 
-        <TextView
-            android:id="@+id/tvCharacterName"
-            android:layout_width="205dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="5dp"
-            android:layout_weight="1"
-            android:paddingLeft="10dp"
-            android:paddingTop="5dp"
-            android:text="TextView"
-            android:textSize="20dp"
-            android:textStyle="bold" />
+                <ImageView
+                    android:id="@+id/ivCharacterImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="223dp"
+                    android:contentDescription="@string/characterImageDescription" />
 
-        <RatingBar
-            android:id="@+id/characterRatingBar"
-            android:layout_width="wrap_content"
-            android:layout_height="47dp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="50dp"
-            android:numStars="5"
-            android:progressTint="@color/redToolBar"
-            android:stepSize="0.5" />
-
-        <Button
-            android:id="@+id/bShowWeb"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="30dp"
-            android:backgroundTint="@color/redToolBar"
-            android:text="@string/openWeb"
-            android:textColor="@color/white" />
-
-    </RelativeLayout>
+            </RelativeLayout>
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="20dp"
-        android:orientation="vertical">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tvCharacterName"
+                    android:layout_width="314dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="20dp"
+                    android:layout_weight="1"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="15dp"
+                    android:text="TextView"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
+
+                <ImageButton
+                    android:id="@+id/bShowWeb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="11dp"
+                    android:layout_toEndOf="@+id/tvCharacterName"
+                    android:background="@drawable/web" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp">
+
+                <RatingBar
+                    android:id="@+id/characterRatingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="47dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:numStars="5"
+                    android:progressTint="@color/redToolBar"
+                    android:stepSize="0.5" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/comicRadioButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
+
+                <RadioGroup
+                    android:id="@+id/radioButtonGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <RadioButton
+                        android:id="@+id/readComic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:buttonTint="@color/redToolBar"
+                        android:text="@string/read" />
+
+                    <RadioButton
+                        android:id="@+id/readingComic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:buttonTint="@color/redToolBar"
+                        android:text="@string/reading" />
+                </RadioGroup>
 
 
-        <TextView
-            android:id="@+id/tvChIntroduction"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/descriptionString"
-            android:textSize="20dp"
-            android:textStyle="bold" />
+            </LinearLayout>
 
-        <TextView
-            android:id="@+id/tvCharacterDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
 
-    </LinearLayout>
+            <LinearLayout
+                android:id="@+id/seriesRadioButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
+
+                <RadioGroup
+                    android:id="@+id/seriesRadioButtonGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <RadioButton
+                        android:id="@+id/seenSeries"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/seen"
+                        android:buttonTint="@color/redToolBar"/>
+                    <RadioButton
+                        android:id="@+id/pendingSeries"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pending"
+                        android:buttonTint="@color/redToolBar"/>
+                    <RadioButton
+                        android:id="@+id/followingSeries"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/following"
+                        android:buttonTint="@color/redToolBar"/>
+                </RadioGroup>
+
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp"
+                android:orientation="vertical">
+
+
+                <TextView
+                    android:id="@+id/tvChIntroduction"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/descriptionString"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvCharacterDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+        </TableLayout>
+    </ScrollView>
 
 </LinearLayout>

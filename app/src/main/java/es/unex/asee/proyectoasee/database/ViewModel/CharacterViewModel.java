@@ -9,6 +9,7 @@ import java.util.List;
 
 import es.unex.asee.proyectoasee.database.Entities.CharacterEntity;
 import es.unex.asee.proyectoasee.database.Repository.CharacterRepository;
+import es.unex.asee.proyectoasee.pojo.marvel.characterDetails.CharacterDetails;
 import es.unex.asee.proyectoasee.pojo.marvel.characters.Result;
 
 public class CharacterViewModel extends AndroidViewModel {
@@ -42,6 +43,10 @@ public class CharacterViewModel extends AndroidViewModel {
 
     public LiveData<List<Result>> getCharacterByName(String name) {
         return mRepository.getCharacterByName(name);
+    }
+
+    public CharacterDetails getCharacterById(Integer id) {
+        return mRepository.getCharacterById(id);
     }
 
 }

@@ -1,7 +1,6 @@
-package es.unex.asee.proyectoasee.adapters;
+package es.unex.asee.proyectoasee.adapters.series;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -15,59 +14,58 @@ import android.widget.TextView;
 import com.example.android.proyectoasee.R;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import es.unex.asee.proyectoasee.fragments.characters.CharacterDetailMainFragment;
-import es.unex.asee.proyectoasee.fragments.comics.ComicDetailMainFragment;
-import es.unex.asee.proyectoasee.pojo.marvel.comics.Result;
+import es.unex.asee.proyectoasee.fragments.series.SeriesDetailMainFragment;
+import es.unex.asee.proyectoasee.pojo.marvel.series.Result;
 
-public class ComicsAdapter extends RecyclerView.Adapter<ComicsAdapter.ComicsViewHolder> {
+public class SeriesAdapter extends RecyclerView.Adapter<SeriesAdapter.SeriesViewHolder> {
 
-    private List<Result> comicsList;
+    private List<Result> seriesList;
     private Context context;
+
+    private SeriesAdapterListener mCallback;
 
     private static final String imageSize = "/standard_large";
 
-    public ComicsAdapter(List<Result> comicsList, Context context) {
-        this.comicsList = comicsList;
+    public SeriesAdapter(Context context, SeriesAdapterListener mCallback) {
+        seriesList = new ArrayList<>();
         this.context = context;
+        this.mCallback = mCallback;
     }
 
     @NonNull
     @Override
-    public ComicsViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public SeriesViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
 
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.r_view_character_layout, viewGroup, false);
-        ComicsViewHolder comicsViewHolder = new ComicsViewHolder(view);
+        SeriesViewHolder comicsViewHolder = new SeriesViewHolder(view);
 
         return comicsViewHolder;
-
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ComicsViewHolder comicsViewHolder, int i) {
+    public void onBindViewHolder(@NonNull SeriesViewHolder seriesViewHolder, int i) {
 
-        final Result comic = comicsList.get(i);
+        final Result comic = seriesList.get(i);
         String imagePath = comic.getThumbnail().getPath();
         String imageExtension = comic.getThumbnail().getExtension();
         String finalImagePath = imagePath + imageSize + "." + imageExtension;
 
-        comicsViewHolder.mTextViewCharacter.setText(comic.getTitle());
-        Picasso.with(context).load(finalImagePath).into(comicsViewHolder.mImageViewCharacter);
+        seriesViewHolder.mTextViewCharacter.setText(comic.getTitle());
+        Picasso.with(context).load(finalImagePath).into(seriesViewHolder.mImageViewCharacter);
 
-        comicsViewHolder.mCardView.setOnClickListener(new View.OnClickListener() {
+        seriesViewHolder.mCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 AppCompatActivity mainActivity = (AppCompatActivity) v.getContext();
 
-                ComicDetailMainFragment comicFragment= new ComicDetailMainFragment();
-                Bundle bundle = new Bundle();
-                bundle.putInt("id", comic.getId());
-                comicFragment.setArguments(bundle);
-
+                SeriesDetailMainFragment seriesFragment= new SeriesDetailMainFragment();
+                mCallback.sendSeriesId(comic.getId(), seriesFragment);
                 mainActivity.getSupportFragmentManager().beginTransaction()
-                        .add(R.id.fragment, comicFragment)
+                        .add(R.id.fragment, seriesFragment)
                         .addToBackStack(null)
                         .commit();
 
@@ -78,24 +76,27 @@ public class ComicsAdapter extends RecyclerView.Adapter<ComicsAdapter.ComicsView
 
     @Override
     public int getItemCount() {
-        return comicsList.size();
+        return seriesList.size();
     }
 
-    public void addComicsPagination(List<Result> comics) {
+    public void addSeriesPagination(List<Result> series) {
 
-        comicsList.addAll(comics);
+        seriesList.addAll(series);
         notifyDataSetChanged();
 
     }
 
+    public void clearList() {
+        seriesList.clear();
+    }
 
-    public static class ComicsViewHolder extends RecyclerView.ViewHolder {
+    public static class SeriesViewHolder extends RecyclerView.ViewHolder {
 
         private TextView mTextViewCharacter;
         private ImageView mImageViewCharacter;
         private CardView mCardView;
 
-        ComicsViewHolder (View v) {
+        SeriesViewHolder (View v) {
             super(v);
 
             mTextViewCharacter =  (TextView)v.findViewById(R.id.tvCharacter);
@@ -103,6 +104,11 @@ public class ComicsAdapter extends RecyclerView.Adapter<ComicsAdapter.ComicsView
             mCardView = (CardView) v.findViewById(R.id.rvCardView);
         }
 
+    }
+
+    //Method to communicate fragments
+    public interface SeriesAdapterListener {
+        void sendSeriesId(Integer id, SeriesDetailMainFragment fragment);
     }
 
 }

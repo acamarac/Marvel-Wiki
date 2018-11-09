@@ -12,4 +12,9 @@
     <string name="comicsString">Comics</string>
     <string name="search">Search</string>
     <string name="fav">Favorite</string>
+    <string name="read">Read</string>
+    <string name="reading">Reading</string>
+    <string name="seen">Seen</string>
+    <string name="following">Following</string>
+    <string name="pending">Pending</string>
 </resources>

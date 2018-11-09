@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/rvCardView"
     android:layout_width="110dp"
-    android:layout_height="170dp"
+    android:layout_height="wrap_content"
     android:layout_margin="5dp"
     app:cardCornerRadius="5dp">
 
@@ -20,9 +20,11 @@
         <TextView
             android:id="@+id/tvCharacter"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:textColor="#696969"
             android:gravity="center"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
             />
 
     </LinearLayout>

@@ -1,4 +1,4 @@
-package es.unex.asee.proyectoasee.adapters;
+package es.unex.asee.proyectoasee.adapters.series;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -12,31 +12,30 @@ import com.example.android.proyectoasee.R;
 
 import java.util.List;
 
-import es.unex.asee.proyectoasee.pojo.marvel.comicDetails.Item_;
+import es.unex.asee.proyectoasee.pojo.marvel.seriesDetails.Item_;
 
-
-public class Comic_CharactersInDetailsAdapter extends RecyclerView.Adapter<Comic_CharactersInDetailsAdapter.CharactersViewHolder> {
+public class Series_CharactersInDetailsAdapter extends RecyclerView.Adapter<Series_CharactersInDetailsAdapter.CharactersViewHolder> {
 
     private List<Item_> charactersList;
     private Context context;
 
-    public Comic_CharactersInDetailsAdapter(List<Item_> charactersList, Context context) {
+    public Series_CharactersInDetailsAdapter(List<Item_> charactersList, Context context) {
         this.charactersList = charactersList;
         this.context = context;
     }
 
     @NonNull
     @Override
-    public Comic_CharactersInDetailsAdapter.CharactersViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public Series_CharactersInDetailsAdapter.CharactersViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
 
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_comics_detail_list, viewGroup, false);
-        Comic_CharactersInDetailsAdapter.CharactersViewHolder charactersViewHolder = new Comic_CharactersInDetailsAdapter.CharactersViewHolder(v);
+        Series_CharactersInDetailsAdapter.CharactersViewHolder charactersViewHolder = new Series_CharactersInDetailsAdapter.CharactersViewHolder(v);
 
         return charactersViewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull Comic_CharactersInDetailsAdapter.CharactersViewHolder charactersViewHolder, int i) {
+    public void onBindViewHolder(@NonNull Series_CharactersInDetailsAdapter.CharactersViewHolder charactersViewHolder, int i) {
 
         Item_ series = charactersList.get(i);
 

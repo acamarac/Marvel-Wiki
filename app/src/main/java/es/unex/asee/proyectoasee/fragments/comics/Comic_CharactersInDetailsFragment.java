@@ -6,14 +6,13 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.android.proyectoasee.R;
 
-import es.unex.asee.proyectoasee.adapters.Comic_CharactersInDetailsAdapter;
+import es.unex.asee.proyectoasee.adapters.comics.Comic_CharactersInDetailsAdapter;
 import es.unex.asee.proyectoasee.pojo.marvel.comicDetails.ComicDetails;
 
 public class Comic_CharactersInDetailsFragment extends Fragment{
@@ -40,6 +39,12 @@ public class Comic_CharactersInDetailsFragment extends Fragment{
         this.comic = comic;
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putSerializable("comic", comic);
+        super.onSaveInstanceState(outState);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -51,6 +56,10 @@ public class Comic_CharactersInDetailsFragment extends Fragment{
 
         mLinearLayoutManager = new LinearLayoutManager(getContext());
         rvCharacters.setLayoutManager(mLinearLayoutManager);
+
+        if (savedInstanceState != null) {
+            comic = (ComicDetails) savedInstanceState.getSerializable("comic");
+        }
 
         adapter = new Comic_CharactersInDetailsAdapter(comic.getData().getResults().get(0).getCharacters().getItems(), view.getContext());
         rvCharacters.setAdapter(adapter);

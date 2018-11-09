@@ -4,7 +4,9 @@ package es.unex.asee.proyectoasee.pojo.marvel.comicDetails;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Date {
+import java.io.Serializable;
+
+public class Date implements Serializable{
 
     @SerializedName("type")
     @Expose

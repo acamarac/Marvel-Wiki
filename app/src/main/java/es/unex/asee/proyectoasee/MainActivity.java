@@ -2,7 +2,6 @@ package es.unex.asee.proyectoasee;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -23,12 +22,19 @@ import es.unex.asee.proyectoasee.fragments.comics.ComicDetailMainFragment;
 import es.unex.asee.proyectoasee.fragments.comics.ComicInformationFragment;
 import es.unex.asee.proyectoasee.fragments.comics.Comic_CharactersInDetailsFragment;
 import es.unex.asee.proyectoasee.fragments.comics.ComicsListFragment;
+import es.unex.asee.proyectoasee.fragments.series.SeriesDetailMainFragment;
+import es.unex.asee.proyectoasee.fragments.series.SeriesInformationFragment;
+import es.unex.asee.proyectoasee.fragments.series.SeriesListFragment;
+import es.unex.asee.proyectoasee.fragments.series.Series_CharactersInDetailsFragment;
+import es.unex.asee.proyectoasee.fragments.series.Series_ComicsInDetailsFragment;
 import es.unex.asee.proyectoasee.pojo.marvel.characterDetails.CharacterDetails;
 import es.unex.asee.proyectoasee.pojo.marvel.comicDetails.ComicDetails;
+import es.unex.asee.proyectoasee.pojo.marvel.seriesDetails.SeriesDetails;
 
 public class MainActivity extends AppCompatActivity
         implements CharacterDetailMainFragment.CharacterDetailListener,
-        ComicDetailMainFragment.ComicDetailListener {
+        ComicDetailMainFragment.ComicDetailListener,
+        SeriesDetailMainFragment.SeriesDetailListener{
 
     DrawerLayout drawerLayout;
     Toolbar toolbar;
@@ -120,11 +126,11 @@ public class MainActivity extends AppCompatActivity
                 fragmentTransaction.replace(R.id.fragment, comicsFragment);
                 fragmentTransaction.commit();
                 break;
-            /*case 3:
+            case 3:
                 SeriesListFragment seriesFragment = new SeriesListFragment();
                 fragmentTransaction.replace(R.id.fragment, seriesFragment);
                 fragmentTransaction.commit();
-                break;*/
+                break;
         }
     }
 
@@ -151,5 +157,20 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void sendComic(ComicDetails comic, Comic_CharactersInDetailsFragment fragment) {
         fragment.reciveComic(comic);
+    }
+
+    @Override
+    public void sendSeries(SeriesDetails series, SeriesInformationFragment fragment) {
+        fragment.receiveSeries(series);
+    }
+
+    @Override
+    public void sendSeries(SeriesDetails series, Series_ComicsInDetailsFragment fragment) {
+        fragment.receiveSeries(series);
+    }
+
+    @Override
+    public void sendSeries(SeriesDetails series, Series_CharactersInDetailsFragment fragment) {
+        fragment.receiveSeries(series);
     }
 }

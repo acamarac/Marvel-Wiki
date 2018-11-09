@@ -1,8 +1,10 @@
 package es.unex.asee.proyectoasee.fragments.comics;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -10,7 +12,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -20,7 +26,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import es.unex.asee.proyectoasee.databaseOLD.DatabaseManager;
+import es.unex.asee.proyectoasee.database.Entities.ComicEntity;
+import es.unex.asee.proyectoasee.database.ViewModel.ComicViewModel;
 import es.unex.asee.proyectoasee.pojo.marvel.comicDetails.ComicDetails;
 import es.unex.asee.proyectoasee.pojo.marvel.comicDetails.Result;
 
@@ -34,17 +41,25 @@ public class ComicInformationFragment extends Fragment{
     private TextView tvComicName;
     private TextView tvComicDescription;
     private ImageView ivComicImage;
-    private Button webButton;
+    private ImageButton webButton;
+    private RadioButton rbRead;
+    private RadioButton rbReading;
+    private RadioGroup radioGroup;
+
+    private LinearLayout mLinearLayout;
 
     private static final String imageSize = "/landscape_incredible";
 
-    private DatabaseManager dbManager;
-    //private ComicDb comicDb;
+    private ComicViewModel mComicViewModel;
+    private ComicEntity comicDb;
+    private Integer idComic;
 
     private MaterialFavoriteButton favButton;
     private RatingBar ratingBar;
 
     private boolean favComic = false;
+    private boolean readComic = false;
+    private boolean readingComic = false;
     private float ratingComic = 0;
 
     @Override
@@ -58,6 +73,11 @@ public class ComicInformationFragment extends Fragment{
         this.comic = comic;
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putSerializable("comic", comic);
+        super.onSaveInstanceState(outState);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -65,18 +85,28 @@ public class ComicInformationFragment extends Fragment{
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.character_information_fragment, container, false);
 
-        //dbManager = new DatabaseManager(view.getContext());
-        //dbManager.open();
+        mComicViewModel = ViewModelProviders.of(this).get(ComicViewModel.class);
 
         tvComicName = (TextView) view.findViewById(R.id.tvCharacterName);
         tvComicDescription = (TextView) view.findViewById(R.id.tvCharacterDescription);
         ivComicImage = (ImageView) view.findViewById(R.id.ivCharacterImage);
-        webButton = (Button) view.findViewById(R.id.bShowWeb);
+        webButton = (ImageButton) view.findViewById(R.id.bShowWeb);
         favButton = (MaterialFavoriteButton) view.findViewById(R.id.characterFavButton);
         ratingBar = (RatingBar) view.findViewById(R.id.characterRatingBar);
+        rbRead = (RadioButton) view.findViewById(R.id.readComic);
+        rbReading = (RadioButton) view.findViewById(R.id.readingComic);
+        radioGroup = (RadioGroup) view.findViewById(R.id.radioButtonGroup);
 
+        mLinearLayout = (LinearLayout) view.findViewById(R.id.comicRadioButton);
+        mLinearLayout.setVisibility(View.VISIBLE);
 
-        //comicDb = dbManager.getCharacterInformation(comic.getData().getResults().get(0).getId());
+        if (savedInstanceState != null) {
+            comic = (ComicDetails) savedInstanceState.getSerializable("comic");
+        }
+
+        idComic = comic.getData().getResults().get(0).getId();
+
+        comicDb = mComicViewModel.getComic(idComic);
 
         loadComicData();
 
@@ -84,7 +114,6 @@ public class ComicInformationFragment extends Fragment{
             @Override
             public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
                 favComic = favorite;
-                Log.d(TAG, "Soy el botón de fav");
             }
         });
 
@@ -93,13 +122,27 @@ public class ComicInformationFragment extends Fragment{
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
                 ratingComic = rating;
-                Log.d(TAG, "Soy el botón de rating");
+            }
+        });
+
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+                    case R.id.readComic:
+                        readComic = true;
+                        readingComic = false;
+                        break;
+                    case R.id.readingComic:
+                        readingComic = true;
+                        readComic = false;
+                        break;
+                }
             }
         });
 
         return view;
     }
-
 
     private void loadComicData() {
 
@@ -151,10 +194,12 @@ public class ComicInformationFragment extends Fragment{
                 }
             });
 
-            /*if (comicDb != null) {
+            if (comicDb != null) {
 
-                favComic = (comicDb.getFavorite() == 0)?false:true;
+                favComic = comicDb.isFavorite();
                 ratingComic = comicDb.getRating();
+                readComic = comicDb.isRead();
+                readingComic = comicDb.isReading();
 
                 if (favComic == false) favButton.setFavorite(false);
                 else favButton.setFavorite(true);
@@ -163,7 +208,13 @@ public class ComicInformationFragment extends Fragment{
                     ratingBar.setRating(ratingComic);
                 }
 
-            }*/
+                if(readComic) rbRead.setChecked(true);
+                else rbRead.setChecked(false);
+
+                if(readingComic) rbReading.setChecked(true);
+                else rbReading.setChecked(false);
+
+            }
 
         }
     }
@@ -171,20 +222,28 @@ public class ComicInformationFragment extends Fragment{
 
     @Override
     public void onStop() {
-        Log.d(TAG, "Soy el fragment, en onStop");
 
-        /*Integer idCharacter = comic.getData().getResults().get(0).getId();
-        Integer favInsert = (favComic ==true)?1:0;
+        Result comicDetails = comic.getData().getResults().get(0);
 
-        CharacterDb characterInsert = new CharacterDb(idCharacter.longValue(), favInsert.longValue(), ratingComic);
+        //Si el usuario ya no está interesado, borramos el registro (en caso de que exista)
+        if (favComic == false && readingComic ==false && readComic == false && ratingComic == 0) {
 
-        if (comicDb == null) {
-            dbManager.insertCharacterInformation(characterInsert);
+            if (comicDb != null) mComicViewModel.deleteComic(comicDetails.getId());
+
         } else {
-            dbManager.updateCharacterInformation(characterInsert);
+
+            ComicEntity comicInsert = new ComicEntity(idComic, comicDetails.getTitle(),
+                    comicDetails.getThumbnail().getPath(), comicDetails.getThumbnail().getExtension(),
+                    favComic, readComic, readingComic, ratingComic);
+
+            if (comicDb == null) {
+                mComicViewModel.insertComic(comicInsert);
+            } else {
+                mComicViewModel.updateComic(comicInsert);
+            }
+
         }
 
-        dbManager.close();*/
         super.onStop();
     }
 

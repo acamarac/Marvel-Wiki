@@ -55,8 +55,4 @@ public class ViewPagerAdapter extends FragmentPagerAdapter{
         fragmentsNames.add(fragmentName);
     }
 
-
-
-
-
 }

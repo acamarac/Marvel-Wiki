@@ -4,7 +4,9 @@ package es.unex.asee.proyectoasee.pojo.marvel.characterDetails;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class CharacterDetails {
+import java.io.Serializable;
+
+public class CharacterDetails implements Serializable {
 
     @SerializedName("code")
     @Expose

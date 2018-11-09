@@ -16,6 +16,7 @@ import es.unex.asee.proyectoasee.database.Entities.CharacterEntity;
 import es.unex.asee.proyectoasee.database.ROOM.CharacterRoomDatabase;
 import es.unex.asee.proyectoasee.client.APIClient;
 import es.unex.asee.proyectoasee.interfaces.ApiInterface;
+import es.unex.asee.proyectoasee.pojo.marvel.characterDetails.CharacterDetails;
 import es.unex.asee.proyectoasee.pojo.marvel.characters.Characters;
 import es.unex.asee.proyectoasee.pojo.marvel.characters.Result;
 import es.unex.asee.proyectoasee.pojo.marvel.characters.Thumbnail;
@@ -26,8 +27,8 @@ import retrofit2.Response;
 
 public class CharacterRepository {
 
-    private static final String apiKey = "8930b8251773dc6334474b306aaaa6b6";
-    private static final String privateKey = "a6fd8f30a718e8f8f2e8f462ef36a46ee94f9309";
+    private static final String apiKey = Utils.apiKey;
+    private static final String privateKey = Utils.privateKey;
 
     //Para consultas de la base de datos local
     private CharacterDAO mCharacterDAO;
@@ -45,7 +46,7 @@ public class CharacterRepository {
 
 
     /***********************
-         - DAO METHODS -
+     - DAO METHODS -
      ***********************/
 
 
@@ -63,6 +64,7 @@ public class CharacterRepository {
     /**
      * Método que devuelve todos los personajes que se han marcado como favoritos.
      * Lo devuelve como lista de resultados para poder usar el mismo adapter del RecyclerView
+     *
      * @return
      */
     public List<Result> getAllFavoriteCharacters() {
@@ -87,7 +89,7 @@ public class CharacterRepository {
 
 
     /***********************
-         - API METHODS -
+        - API METHODS -
      ***********************/
 
 
@@ -100,108 +102,119 @@ public class CharacterRepository {
             e.printStackTrace();
         }
         return null;
-     }
+    }
 
 
-     public LiveData<List<Result>> getCharacterByName(String name) {
-         try {
-             return new getCharacterByNameAsyncTask(mApiInterface).execute(name).get();
-         } catch (InterruptedException e) {
-             e.printStackTrace();
-         } catch (ExecutionException e) {
-             e.printStackTrace();
-         }
-         return null;
-     }
+    public LiveData<List<Result>> getCharacterByName(String name) {
+        try {
+            return new getCharacterByNameAsyncTask(mApiInterface).execute(name).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
-                /***********************
-                 - ASYNC TASK SELECTS -
-                 ***********************/
+    public CharacterDetails getCharacterById(Integer id) {
+        try {
+            return new getCharacterByIdAsyncTask(mApiInterface).execute(id).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
-         private static class getCharacterAsyncTask extends AsyncTask<Integer, Void, CharacterEntity> {
+    /***********************
+     - ASYNC TASK SELECTS -
+     ***********************/
 
-             private CharacterDAO mAsyncTaskDao;
+    private static class getCharacterAsyncTask extends AsyncTask<Integer, Void, CharacterEntity> {
 
-             getCharacterAsyncTask(CharacterDAO dao) {
-                 mAsyncTaskDao = dao;
-             }
+        private CharacterDAO mAsyncTaskDao;
 
-             @Override
-             protected CharacterEntity doInBackground(final Integer... params) {
-                 return mAsyncTaskDao.getCharacter(params[0]);
-             }
-         }
-
-        private static class getAllFavoriteCharactersAsyncTask extends AsyncTask<Void, Void, List<Result>> {
-
-            private CharacterDAO mAsyncTaskDao;
-
-            getAllFavoriteCharactersAsyncTask(CharacterDAO dao) {
-                mAsyncTaskDao = dao;
-            }
-
-            @Override
-            protected List<Result> doInBackground(Void... voids) {
-                List<CharacterEntity> characterEntities = mAsyncTaskDao.getAllFavoriteCharacters();
-                List<Result> results = new ArrayList<>();
-
-                for (CharacterEntity character : characterEntities) {
-
-                    Result result = new Result();
-                    Thumbnail th = new Thumbnail();
-
-                    result.setId(character.getId());
-                    result.setName(character.getName());
-                    th.setPath(character.getThumbnailPath());
-                    th.setExtension(character.getThumbnailExtension());
-                    result.setThumbnail(th);
-
-                    results.add(result);
-                }
-                
-                return results;
-            }
+        getCharacterAsyncTask(CharacterDAO dao) {
+            mAsyncTaskDao = dao;
         }
 
-        private static class getAllCharactersAsyncTask extends AsyncTask<Integer, Void, LiveData<List<Result>>> {
-
-            private ApiInterface mAsyncTaskInterface;
-            private MutableLiveData<List<Result>> results;
-
-            getAllCharactersAsyncTask(ApiInterface interf) {
-                mAsyncTaskInterface = interf;
-            }
-
-            @Override
-            protected LiveData<List<Result>> doInBackground(final Integer... params) {
-
-                Long tsLong = new Date().getTime();
-                String ts = tsLong.toString();
-
-                //Tercer parámetro: md5(ts + privatekey + publickey (apikey))
-                String hash = ts + privateKey + apiKey;
-                String hashResult = Utils.MD5_Hash(hash);
-
-                Call<Characters> charactersCall = mAsyncTaskInterface.getCharactersData(ts, apiKey, hashResult, params[0]);
-
-                results = new MutableLiveData<>();
-
-                Characters characters;
-                try {
-                    Response<Characters> response = charactersCall.execute();
-                    if (response.code() == 401) {
-                        doInBackground(params);
-                    } else {
-                        characters = response.body();
-                        results.postValue(characters.getData().getResults());
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                return results;
-            }
+        @Override
+        protected CharacterEntity doInBackground(final Integer... params) {
+            return mAsyncTaskDao.getCharacter(params[0]);
         }
+    }
+
+    private static class getAllFavoriteCharactersAsyncTask extends AsyncTask<Void, Void, List<Result>> {
+
+        private CharacterDAO mAsyncTaskDao;
+
+        getAllFavoriteCharactersAsyncTask(CharacterDAO dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected List<Result> doInBackground(Void... voids) {
+            List<CharacterEntity> characterEntities = mAsyncTaskDao.getAllFavoriteCharacters();
+            List<Result> results = new ArrayList<>();
+
+            for (CharacterEntity character : characterEntities) {
+
+                Result result = new Result();
+                Thumbnail th = new Thumbnail();
+
+                result.setId(character.getId());
+                result.setName(character.getName());
+                th.setPath(character.getThumbnailPath());
+                th.setExtension(character.getThumbnailExtension());
+                result.setThumbnail(th);
+
+                results.add(result);
+            }
+
+            return results;
+        }
+    }
+
+    private static class getAllCharactersAsyncTask extends AsyncTask<Integer, Void, LiveData<List<Result>>> {
+
+        private ApiInterface mAsyncTaskInterface;
+        private MutableLiveData<List<Result>> results;
+
+        getAllCharactersAsyncTask(ApiInterface interf) {
+            mAsyncTaskInterface = interf;
+        }
+
+        @Override
+        protected LiveData<List<Result>> doInBackground(final Integer... params) {
+
+            Long tsLong = new Date().getTime();
+            String ts = tsLong.toString();
+
+            //Tercer parámetro: md5(ts + privatekey + publickey (apikey))
+            String hash = ts + privateKey + apiKey;
+            String hashResult = Utils.MD5_Hash(hash);
+
+            Call<Characters> charactersCall = mAsyncTaskInterface.getCharactersData(ts, apiKey, hashResult, params[0]);
+
+            results = new MutableLiveData<>();
+
+            Characters characters;
+            try {
+                Response<Characters> response = charactersCall.execute();
+                if (response.code() == 401) {
+                    doInBackground(params);
+                } else {
+                    characters = response.body();
+                    results.postValue(characters.getData().getResults());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return results;
+        }
+    }
 
 
     private static class getCharacterByNameAsyncTask extends AsyncTask<String, Void, LiveData<List<Result>>> {
@@ -244,46 +257,86 @@ public class CharacterRepository {
         }
     }
 
+    private static class getCharacterByIdAsyncTask extends AsyncTask<Integer, Void, CharacterDetails> {
 
-        /***********************
-         - ASYNC TASK INSERTS -
-         ***********************/
+        private ApiInterface mAsyncTaskInterface;
+        private CharacterDetails result;
 
-
-        private static class insertAsyncTask extends AsyncTask<CharacterEntity, Void, Void> {
-
-            private CharacterDAO mAsyncTaskDao;
-
-            insertAsyncTask(CharacterDAO dao) {
-                mAsyncTaskDao = dao;
-            }
-
-            @Override
-            protected Void doInBackground(final CharacterEntity... params) {
-                mAsyncTaskDao.insertCharacter(params[0]);
-                return null;
-            }
+        getCharacterByIdAsyncTask(ApiInterface interf) {
+            mAsyncTaskInterface = interf;
         }
 
+        @Override
+        protected CharacterDetails doInBackground(final Integer... params) {
 
-        /***********************
-         - ASYNC TASK UPDATES -
-         ***********************/
+            Long tsLong = new Date().getTime();
+            String ts = tsLong.toString();
 
+            //Tercer parámetro: md5(ts + privatekey + publickey (apikey))
+            String hash = ts + privateKey + apiKey;
+            String hashResult = Utils.MD5_Hash(hash);
 
-        private static class updateAsyncTask extends AsyncTask<CharacterEntity, Void, Void> {
+            Integer id = params[0];
 
-            private CharacterDAO mAsyncTaskDao;
+            Call<CharacterDetails> comicCall = mAsyncTaskInterface.getCharacterDetails(id,ts, apiKey, hashResult);
 
-            updateAsyncTask(CharacterDAO dao) {
-                mAsyncTaskDao = dao;
+            result = new CharacterDetails();
+
+            try {
+                Response<CharacterDetails> response = comicCall.execute();
+                if (response.code() == 401) {
+                    doInBackground(params);
+                } else {
+                    result = response.body();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
 
-            @Override
-            protected Void doInBackground(final CharacterEntity... params) {
-                mAsyncTaskDao.updateCharacter(params[0]);
-                return null;
-            }
+            return result;
         }
-
     }
+
+
+    /***********************
+     - ASYNC TASK INSERTS -
+     ***********************/
+
+
+    private static class insertAsyncTask extends AsyncTask<CharacterEntity, Void, Void> {
+
+        private CharacterDAO mAsyncTaskDao;
+
+        insertAsyncTask(CharacterDAO dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(final CharacterEntity... params) {
+            mAsyncTaskDao.insertCharacter(params[0]);
+            return null;
+        }
+    }
+
+
+    /***********************
+     - ASYNC TASK UPDATES -
+     ***********************/
+
+
+    private static class updateAsyncTask extends AsyncTask<CharacterEntity, Void, Void> {
+
+        private CharacterDAO mAsyncTaskDao;
+
+        updateAsyncTask(CharacterDAO dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(final CharacterEntity... params) {
+            mAsyncTaskDao.updateCharacter(params[0]);
+            return null;
+        }
+    }
+
+}

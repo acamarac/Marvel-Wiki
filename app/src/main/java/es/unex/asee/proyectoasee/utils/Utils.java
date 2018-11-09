@@ -6,6 +6,9 @@ import java.security.NoSuchAlgorithmException;
 
 public class Utils {
 
+    public static final String apiKey = "8930b8251773dc6334474b306aaaa6b6";
+    public static final String privateKey = "a6fd8f30a718e8f8f2e8f462ef36a46ee94f9309";
+
     /**
      * Método que permite calcular el md5 de un string.
      * Será utilizado para calcular el hash que debe pasarse por parámetro en la url

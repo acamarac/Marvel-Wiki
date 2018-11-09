@@ -6,12 +6,20 @@ import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
 import es.unex.asee.proyectoasee.database.DAO.CharacterDAO;
+import es.unex.asee.proyectoasee.database.DAO.ComicDAO;
+import es.unex.asee.proyectoasee.database.DAO.SeriesDAO;
 import es.unex.asee.proyectoasee.database.Entities.CharacterEntity;
+import es.unex.asee.proyectoasee.database.Entities.ComicEntity;
+import es.unex.asee.proyectoasee.database.Entities.SeriesEntity;
 
-@Database(entities = {CharacterEntity.class}, version = 2)
+@Database(entities = {CharacterEntity.class, ComicEntity.class, SeriesEntity.class}, version = 4)
 public abstract class CharacterRoomDatabase extends RoomDatabase {
 
     public abstract CharacterDAO characterDao();
+
+    public abstract ComicDAO comicDao();
+
+    public abstract SeriesDAO seriesDao();
 
     private static volatile CharacterRoomDatabase INSTANCE;
 

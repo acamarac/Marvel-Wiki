@@ -4,6 +4,8 @@ import es.unex.asee.proyectoasee.pojo.marvel.characterDetails.CharacterDetails;
 import es.unex.asee.proyectoasee.pojo.marvel.characters.Characters;
 import es.unex.asee.proyectoasee.pojo.marvel.comicDetails.ComicDetails;
 import es.unex.asee.proyectoasee.pojo.marvel.comics.Comics;
+import es.unex.asee.proyectoasee.pojo.marvel.series.Series;
+import es.unex.asee.proyectoasee.pojo.marvel.seriesDetails.SeriesDetails;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -11,7 +13,9 @@ import retrofit2.http.Query;
 
 public interface ApiInterface {
 
-    //CHARACTERS
+    /***********************
+         - CHARACTERS -
+     ***********************/
 
     @GET("characters")
     Call<Characters> getCharactersData(@Query("ts") String ts, @Query("apikey") String apiKey, @Query("hash") String hash,
@@ -26,7 +30,9 @@ public interface ApiInterface {
                                        @Query("nameStartsWith") String name);
 
 
-    //COMICS
+    /***********************
+           - COMICS -
+     ***********************/
 
     @GET("comics")
     Call<Comics> getComicsData(@Query("ts") String ts, @Query("apikey") String apiKey, @Query("hash") String hash,
@@ -40,5 +46,25 @@ public interface ApiInterface {
     @GET("comics")
     Call<Comics> getComicByName(@Query("ts") String ts, @Query("apikey") String apiKey, @Query("hash") String hash,
                                         @Query("titleStartsWith") String title);
+
+
+
+    /***********************
+           - SERIES -
+     ***********************/
+
+    @GET("series")
+    Call<Series> getSeriesData(@Query("ts") String ts, @Query("apikey") String apiKey, @Query("hash") String hash,
+                               @Query("offset") Integer offset);
+
+
+    @GET("series/{id}")
+    Call<SeriesDetails> getSeriesDetails(@Path("id") Integer id, @Query("ts") String ts, @Query("apikey") String apiKey,
+                                         @Query("hash") String hash);
+
+    @GET("series")
+    Call<Series> getSeriesByName(@Query("ts") String ts, @Query("apikey") String apiKey, @Query("hash") String hash,
+                                @Query("titleStartsWith") String title);
+
 
 }

@@ -1,4 +1,4 @@
-package es.unex.asee.proyectoasee.adapters;
+package es.unex.asee.proyectoasee.adapters.series;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -10,37 +10,34 @@ import android.widget.TextView;
 
 import com.example.android.proyectoasee.R;
 
-import org.w3c.dom.Text;
-
 import java.util.List;
 
-import es.unex.asee.proyectoasee.pojo.marvel.characterDetails.Comics;
-import es.unex.asee.proyectoasee.pojo.marvel.characterDetails.Item;
+import es.unex.asee.proyectoasee.pojo.marvel.seriesDetails.Item___;
 
-public class ComicsInDetailsAdapter extends RecyclerView.Adapter<ComicsInDetailsAdapter.ComicsViewHolder> {
+public class Series_ComicsInDetailsAdapter extends RecyclerView.Adapter<Series_ComicsInDetailsAdapter.ComicsViewHolder> {
 
-    private List<Item> comicsList;
+    private List<Item___> comicsList;
     private Context context;
 
-    public ComicsInDetailsAdapter(List<Item> comicsList, Context context) {
+    public Series_ComicsInDetailsAdapter(List<Item___> comicsList, Context context) {
         this.comicsList = comicsList;
         this.context = context;
     }
 
     @NonNull
     @Override
-    public ComicsViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public Series_ComicsInDetailsAdapter.ComicsViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
 
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_comics_detail_list, viewGroup, false);
-        ComicsViewHolder comicsViewHolder = new ComicsViewHolder(v);
+        Series_ComicsInDetailsAdapter.ComicsViewHolder comicsViewHolder = new Series_ComicsInDetailsAdapter.ComicsViewHolder(v);
 
         return comicsViewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ComicsInDetailsAdapter.ComicsViewHolder comicsViewHolder, int i) {
+    public void onBindViewHolder(@NonNull Series_ComicsInDetailsAdapter.ComicsViewHolder comicsViewHolder, int i) {
 
-        Item comic = comicsList.get(i);
+        Item___ comic = comicsList.get(i);
 
         comicsViewHolder.mTvComicTitle.setText(comic.getName());
 
@@ -62,4 +59,5 @@ public class ComicsInDetailsAdapter extends RecyclerView.Adapter<ComicsInDetails
             mTvComicTitle = (TextView) itemView.findViewById(R.id.tvComicName);
         }
     }
+
 }
