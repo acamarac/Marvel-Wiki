@@ -15,6 +15,10 @@
             android:id="@+id/item_series"
             android:icon="@drawable/ic_series"
             android:title="@string/series"/>
+        <item
+            android:id="@+id/item_preferences"
+            android:icon="@drawable/settings"
+            android:title="@string/settings"/>
     </group>
 
 </menu>

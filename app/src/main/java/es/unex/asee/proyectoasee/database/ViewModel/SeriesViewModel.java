@@ -53,8 +53,8 @@ public class SeriesViewModel extends AndroidViewModel {
         mRepository.deleteComic(id);
     }
 
-    public LiveData<List<Result>> getAllSeries(Integer offset) {
-        return mRepository.getAllSeries(offset);
+    public LiveData<List<Result>> getAllSeries(Integer offset, Integer limit) {
+        return mRepository.getAllSeries(offset,limit);
     }
 
     public LiveData<List<Result>> getSeriesByName(String name) {

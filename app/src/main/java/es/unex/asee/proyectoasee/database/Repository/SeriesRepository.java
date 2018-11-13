@@ -119,9 +119,9 @@ public class SeriesRepository {
         - API METHODS -
      ***********************/
 
-    public LiveData<List<Result>> getAllSeries(final int offset) {
+    public LiveData<List<Result>> getAllSeries(final int offset, final int limit) {
         try {
-            return new getAllSeriesAsyncTask(mApiInterface).execute(offset).get();
+            return new getAllSeriesAsyncTask(mApiInterface).execute(offset,limit).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -313,7 +313,7 @@ public class SeriesRepository {
             String hash = ts + privateKey + apiKey;
             String hashResult = Utils.MD5_Hash(hash);
 
-            Call<Series> seriesCall = mAsyncTaskInterface.getSeriesData(ts, apiKey, hashResult, params[0]);
+            Call<Series> seriesCall = mAsyncTaskInterface.getSeriesData(ts, apiKey, hashResult, params[0], params[1]);
 
             results = new MutableLiveData<>();
 

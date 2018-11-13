@@ -29,4 +29,10 @@ public class Utils {
         return hash;
     }
 
+    public static Integer getResourceId(String resource) {
+        int index = resource.lastIndexOf('/');
+        String result = resource.substring(index+1, resource.length());
+        return Integer.parseInt(result);
+    }
+
 }

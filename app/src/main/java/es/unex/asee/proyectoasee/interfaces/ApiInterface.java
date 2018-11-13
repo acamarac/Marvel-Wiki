@@ -19,7 +19,7 @@ public interface ApiInterface {
 
     @GET("characters")
     Call<Characters> getCharactersData(@Query("ts") String ts, @Query("apikey") String apiKey, @Query("hash") String hash,
-                                       @Query("offset") Integer offset);
+                                       @Query("offset") Integer offset, @Query("limit") Integer limit);
 
     @GET("characters/{id}")
     Call<CharacterDetails> getCharacterDetails(@Path("id") Integer id, @Query("ts") String ts, @Query("apikey") String apiKey,
@@ -36,7 +36,7 @@ public interface ApiInterface {
 
     @GET("comics")
     Call<Comics> getComicsData(@Query("ts") String ts, @Query("apikey") String apiKey, @Query("hash") String hash,
-                               @Query("offset") Integer offset);
+                               @Query("offset") Integer offset, @Query("limit") Integer limit);
 
 
     @GET("comics/{id}")
@@ -55,7 +55,7 @@ public interface ApiInterface {
 
     @GET("series")
     Call<Series> getSeriesData(@Query("ts") String ts, @Query("apikey") String apiKey, @Query("hash") String hash,
-                               @Query("offset") Integer offset);
+                               @Query("offset") Integer offset, @Query("limit") Integer limit);
 
 
     @GET("series/{id}")

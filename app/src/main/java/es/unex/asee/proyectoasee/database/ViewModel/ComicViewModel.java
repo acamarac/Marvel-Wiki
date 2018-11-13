@@ -49,8 +49,8 @@ public class ComicViewModel extends AndroidViewModel {
         mRepository.deleteComic(id);
     }
 
-    public LiveData<List<Result>> getAllComics(Integer offset) {
-        return mRepository.getAllComics(offset);
+    public LiveData<List<Result>> getAllComics(Integer offset, Integer limit) {
+        return mRepository.getAllComics(offset,limit);
     }
 
     public LiveData<List<Result>> getComicByName(String name) {

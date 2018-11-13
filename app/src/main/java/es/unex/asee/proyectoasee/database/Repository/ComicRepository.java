@@ -107,9 +107,9 @@ public class ComicRepository {
          - API METHODS -
      ***********************/
 
-    public LiveData<List<Result>> getAllComics(final int offset) {
+    public LiveData<List<Result>> getAllComics(final int offset, final int limit) {
         try {
-            return new getAllComicsAsyncTask(mApiInterface).execute(offset).get();
+            return new getAllComicsAsyncTask(mApiInterface).execute(offset,limit).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -270,7 +270,7 @@ public class ComicRepository {
             String hash = ts + privateKey + apiKey;
             String hashResult = Utils.MD5_Hash(hash);
 
-            Call<Comics> comicsCall = mAsyncTaskInterface.getComicsData(ts, apiKey, hashResult, params[0]);
+            Call<Comics> comicsCall = mAsyncTaskInterface.getComicsData(ts, apiKey, hashResult, params[0], params[1]);
 
             results = new MutableLiveData<>();
 

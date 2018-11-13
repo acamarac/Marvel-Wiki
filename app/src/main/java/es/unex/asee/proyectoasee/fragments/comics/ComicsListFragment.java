@@ -2,7 +2,9 @@ package es.unex.asee.proyectoasee.fragments.comics;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -25,6 +27,7 @@ import es.unex.asee.proyectoasee.MainActivity;
 import es.unex.asee.proyectoasee.adapters.comics.ComicsAdapter;
 import es.unex.asee.proyectoasee.database.ViewModel.ComicViewModel;
 import es.unex.asee.proyectoasee.pojo.marvel.comics.Result;
+import es.unex.asee.proyectoasee.preferences.SettingsFragment;
 
 public class ComicsListFragment extends Fragment implements ComicsAdapter.ComicsAdapterListener{
 
@@ -45,6 +48,9 @@ public class ComicsListFragment extends Fragment implements ComicsAdapter.Comics
     boolean onSearch = false;
 
     private ComicViewModel mComicViewModel;
+
+    private SharedPreferences prefs;
+    private int limitPreference = 0;
 
 
     @Override
@@ -68,6 +74,11 @@ public class ComicsListFragment extends Fragment implements ComicsAdapter.Comics
         mRecyclerView.setAdapter(adapter);
 
         mComicViewModel = ViewModelProviders.of(this).get(ComicViewModel.class);
+
+        prefs = PreferenceManager.getDefaultSharedPreferences(view.getContext());
+
+        String limitGet = prefs.getString(SettingsFragment.KEY_PREF_LIMIT, "");
+        limitPreference = Integer.valueOf(limitGet);
 
         requestComics();
 
@@ -103,7 +114,7 @@ public class ComicsListFragment extends Fragment implements ComicsAdapter.Comics
 
     public void requestComics() {
         progressBar.setVisibility(View.VISIBLE);
-        mComicViewModel.getAllComics(offset).observe(getActivity(), new Observer<List<Result>>() {
+        mComicViewModel.getAllComics(offset,limitPreference).observe(getActivity(), new Observer<List<Result>>() {
             @Override
             public void onChanged(@Nullable List<Result> results) {
                 adapter.addComicsPagination(results);

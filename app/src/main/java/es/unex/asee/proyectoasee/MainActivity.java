@@ -30,6 +30,7 @@ import es.unex.asee.proyectoasee.fragments.series.Series_ComicsInDetailsFragment
 import es.unex.asee.proyectoasee.pojo.marvel.characterDetails.CharacterDetails;
 import es.unex.asee.proyectoasee.pojo.marvel.comicDetails.ComicDetails;
 import es.unex.asee.proyectoasee.pojo.marvel.seriesDetails.SeriesDetails;
+import es.unex.asee.proyectoasee.preferences.SettingsFragment;
 
 public class MainActivity extends AppCompatActivity
         implements CharacterDetailMainFragment.CharacterDetailListener,
@@ -98,6 +99,11 @@ public class MainActivity extends AppCompatActivity
                                 fragmentSwitcher(3);
                                 drawerLayout.closeDrawer(GravityCompat.START);
                                 return true;
+                            case R.id.item_preferences:
+                                menuItem.setChecked(true);
+                                fragmentSwitcher(4);
+                                drawerLayout.closeDrawer(GravityCompat.START);
+                                return true;
                         }
                         return true;
                     }
@@ -129,6 +135,11 @@ public class MainActivity extends AppCompatActivity
             case 3:
                 SeriesListFragment seriesFragment = new SeriesListFragment();
                 fragmentTransaction.replace(R.id.fragment, seriesFragment);
+                fragmentTransaction.commit();
+                break;
+            case 4:
+                SettingsFragment settings = new SettingsFragment();
+                fragmentTransaction.replace(R.id.fragment, settings);
                 fragmentTransaction.commit();
                 break;
         }

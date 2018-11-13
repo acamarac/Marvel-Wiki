@@ -2,7 +2,9 @@ package es.unex.asee.proyectoasee.fragments.series;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -25,6 +27,7 @@ import es.unex.asee.proyectoasee.MainActivity;
 import es.unex.asee.proyectoasee.adapters.series.SeriesAdapter;
 import es.unex.asee.proyectoasee.database.ViewModel.SeriesViewModel;
 import es.unex.asee.proyectoasee.pojo.marvel.series.Result;
+import es.unex.asee.proyectoasee.preferences.SettingsFragment;
 
 public class SeriesListFragment extends Fragment implements SeriesAdapter.SeriesAdapterListener{
 
@@ -45,6 +48,9 @@ public class SeriesListFragment extends Fragment implements SeriesAdapter.Series
     boolean onSearch = false;
 
     private SeriesViewModel mSeriesViewModel;
+
+    private SharedPreferences prefs;
+    private int limitPreference = 0;
 
 
     @Override
@@ -68,6 +74,11 @@ public class SeriesListFragment extends Fragment implements SeriesAdapter.Series
         mRecyclerView.setAdapter(adapter);
 
         mSeriesViewModel = ViewModelProviders.of(this).get(SeriesViewModel.class);
+
+        prefs = PreferenceManager.getDefaultSharedPreferences(view.getContext());
+
+        String limitGet = prefs.getString(SettingsFragment.KEY_PREF_LIMIT, "");
+        limitPreference = Integer.valueOf(limitGet);
 
         requestSeries();
 
@@ -102,7 +113,7 @@ public class SeriesListFragment extends Fragment implements SeriesAdapter.Series
 
     public void requestSeries() {
         progressBar.setVisibility(View.VISIBLE);
-        mSeriesViewModel.getAllSeries(offset).observe(getActivity(), new Observer<List<Result>>() {
+        mSeriesViewModel.getAllSeries(offset,limitPreference).observe(getActivity(), new Observer<List<Result>>() {
             @Override
             public void onChanged(@Nullable List<Result> results) {
                 adapter.addSeriesPagination(results);

@@ -17,4 +17,10 @@
     <string name="seen">Seen</string>
     <string name="following">Following</string>
     <string name="pending">Pending</string>
+    <string name="load_images">Load images</string>
+    <string name="load_images_summary">Not loading images allows you to save data</string>
+    <string name="limit_api">Number of resources downloaded</string>
+    <string name="limit_api_summary">Select the number of resources to download each time</string>
+    <string name="limit_api_dialog">Number of resources</string>
+    <string name="settings">Settings</string>
 </resources>

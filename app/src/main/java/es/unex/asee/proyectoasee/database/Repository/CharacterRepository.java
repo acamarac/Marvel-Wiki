@@ -36,12 +36,14 @@ public class CharacterRepository {
     //Para consultas a la Marvel API
     private ApiInterface mApiInterface;
 
+    AsyncResponseInterface mCallback;
 
-    public CharacterRepository(Application application) {
+
+    public CharacterRepository(Application application, AsyncResponseInterface mCallback) {
         CharacterRoomDatabase db = CharacterRoomDatabase.getDatabase(application);
         mCharacterDAO = db.characterDao();
         mApiInterface = APIClient.getClient().create(ApiInterface.class);
-        //characters = getAllCharacters(0);
+        this.mCallback = mCallback;
     }
 
 
@@ -67,7 +69,7 @@ public class CharacterRepository {
      *
      * @return
      */
-    public List<Result> getAllFavoriteCharacters() {
+    /*public List<Result> getAllFavoriteCharacters() {
         try {
             return new getAllFavoriteCharactersAsyncTask(mCharacterDAO).execute().get();
         } catch (InterruptedException e) {
@@ -76,6 +78,10 @@ public class CharacterRepository {
             e.printStackTrace();
         }
         return null;
+    }*/
+
+    public void getAllFavoriteCharacters() {
+        new getAllFavoriteCharactersAsyncTask(mCharacterDAO, mCallback).execute();
     }
 
 
@@ -93,27 +99,13 @@ public class CharacterRepository {
      ***********************/
 
 
-    public LiveData<List<Result>> getAllCharacters(final int offset) {
-        try {
-            return new getAllCharactersAsyncTask(mApiInterface).execute(offset).get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public void getAllCharacters(final int offset, final int limit) {
+        new getAllCharactersAsyncTask(mApiInterface, mCallback).execute(offset, limit);
     }
 
 
-    public LiveData<List<Result>> getCharacterByName(String name) {
-        try {
-            return new getCharacterByNameAsyncTask(mApiInterface).execute(name).get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public void getCharacterByName(String name) {
+        new getCharacterByNameAsyncTask(mApiInterface,mCallback).execute(name);
     }
 
     public CharacterDetails getCharacterById(Integer id) {
@@ -125,6 +117,15 @@ public class CharacterRepository {
             e.printStackTrace();
         }
         return null;
+    }
+
+
+    /*********************************
+     - INTERFACE PARA LOS CALLBACKS -
+     *********************************/
+
+    public interface AsyncResponseInterface {
+        void sendAllCharacters(List<Result> result);
     }
 
     /***********************
@@ -148,9 +149,11 @@ public class CharacterRepository {
     private static class getAllFavoriteCharactersAsyncTask extends AsyncTask<Void, Void, List<Result>> {
 
         private CharacterDAO mAsyncTaskDao;
+        private AsyncResponseInterface mCallback;
 
-        getAllFavoriteCharactersAsyncTask(CharacterDAO dao) {
+        getAllFavoriteCharactersAsyncTask(CharacterDAO dao, AsyncResponseInterface mCallback) {
             mAsyncTaskDao = dao;
+            this.mCallback = mCallback;
         }
 
         @Override
@@ -174,19 +177,28 @@ public class CharacterRepository {
 
             return results;
         }
+
+        @Override
+        protected void onPostExecute(List<Result> results) {
+            mCallback.sendAllCharacters(results);
+            super.onPostExecute(results);
+        }
     }
 
-    private static class getAllCharactersAsyncTask extends AsyncTask<Integer, Void, LiveData<List<Result>>> {
+
+    private static class getAllCharactersAsyncTask extends AsyncTask<Integer, Void, List<Result>> {
 
         private ApiInterface mAsyncTaskInterface;
-        private MutableLiveData<List<Result>> results;
+        private List<Result> results;
+        private AsyncResponseInterface mCallback;
 
-        getAllCharactersAsyncTask(ApiInterface interf) {
+        getAllCharactersAsyncTask(ApiInterface interf, AsyncResponseInterface mCallback) {
             mAsyncTaskInterface = interf;
+            this.mCallback = mCallback;
         }
 
         @Override
-        protected LiveData<List<Result>> doInBackground(final Integer... params) {
+        protected List<Result> doInBackground(final Integer... params) {
 
             Long tsLong = new Date().getTime();
             String ts = tsLong.toString();
@@ -195,9 +207,9 @@ public class CharacterRepository {
             String hash = ts + privateKey + apiKey;
             String hashResult = Utils.MD5_Hash(hash);
 
-            Call<Characters> charactersCall = mAsyncTaskInterface.getCharactersData(ts, apiKey, hashResult, params[0]);
+            Call<Characters> charactersCall = mAsyncTaskInterface.getCharactersData(ts, apiKey, hashResult, params[0], params[1]);
 
-            results = new MutableLiveData<>();
+            results = new ArrayList<>();
 
             Characters characters;
             try {
@@ -206,28 +218,36 @@ public class CharacterRepository {
                     doInBackground(params);
                 } else {
                     characters = response.body();
-                    results.postValue(characters.getData().getResults());
+                    results = characters.getData().getResults();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
             return results;
+
+        }
+
+        @Override
+        protected void onPostExecute(List<Result> list) {
+            mCallback.sendAllCharacters(list);
+            super.onPostExecute(list);
         }
     }
 
 
-    private static class getCharacterByNameAsyncTask extends AsyncTask<String, Void, LiveData<List<Result>>> {
+    private static class getCharacterByNameAsyncTask extends AsyncTask<String, Void, List<Result>> {
 
         private ApiInterface mAsyncTaskInterface;
-        private MutableLiveData<List<Result>> results;
+        private List<Result> results;
+        private AsyncResponseInterface mCallback;
 
-        getCharacterByNameAsyncTask(ApiInterface interf) {
+        getCharacterByNameAsyncTask(ApiInterface interf, AsyncResponseInterface mCallback) {
             mAsyncTaskInterface = interf;
+            this.mCallback = mCallback;
         }
 
         @Override
-        protected LiveData<List<Result>> doInBackground(final String... params) {
+        protected List<Result> doInBackground(final String... params) {
 
             Long tsLong = new Date().getTime();
             String ts = tsLong.toString();
@@ -238,7 +258,7 @@ public class CharacterRepository {
 
             Call<Characters> charactersCall = mAsyncTaskInterface.getCharacterByName(ts, apiKey, hashResult, params[0]);
 
-            results = new MutableLiveData<>();
+            results = new ArrayList<>();
 
             Characters characters;
             try {
@@ -247,13 +267,18 @@ public class CharacterRepository {
                     doInBackground(params);
                 } else {
                     characters = response.body();
-                    results.postValue(characters.getData().getResults());
+                    results = characters.getData().getResults();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
             return results;
+        }
+
+        @Override
+        protected void onPostExecute(List<Result> list) {
+            mCallback.sendAllCharacters(list);
+            super.onPostExecute(list);
         }
     }
 
@@ -295,6 +320,7 @@ public class CharacterRepository {
 
             return result;
         }
+
     }
 
 

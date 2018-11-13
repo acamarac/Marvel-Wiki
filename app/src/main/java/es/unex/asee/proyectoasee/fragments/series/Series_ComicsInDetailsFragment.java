@@ -13,10 +13,11 @@ import android.view.ViewGroup;
 import com.example.android.proyectoasee.R;
 
 import es.unex.asee.proyectoasee.adapters.series.Series_ComicsInDetailsAdapter;
+import es.unex.asee.proyectoasee.fragments.comics.ComicDetailMainFragment;
 import es.unex.asee.proyectoasee.pojo.marvel.seriesDetails.SeriesDetails;
 
 
-public class Series_ComicsInDetailsFragment extends Fragment{
+public class Series_ComicsInDetailsFragment extends Fragment implements Series_ComicsInDetailsAdapter.Series_ComicsInDetailsAdapterListener{
 
     View view;
 
@@ -61,11 +62,15 @@ public class Series_ComicsInDetailsFragment extends Fragment{
             series = (SeriesDetails) savedInstanceState.getSerializable("series");
         }
 
-        adapter = new Series_ComicsInDetailsAdapter(series.getData().getResults().get(0).getComics().getItems(), view.getContext());
+        adapter = new Series_ComicsInDetailsAdapter(series.getData().getResults().get(0).getComics().getItems(), view.getContext(), Series_ComicsInDetailsFragment.this);
         rvComics.setAdapter(adapter);
 
         return view;
 
     }
 
+    @Override
+    public void sendId(Integer id, ComicDetailMainFragment fragment) {
+        fragment.receiveId(id);
+    }
 }
