@@ -80,7 +80,17 @@ public class SeriesListFragment extends Fragment implements SeriesAdapter.Series
         String limitGet = prefs.getString(SettingsFragment.KEY_PREF_LIMIT, "");
         limitPreference = Integer.valueOf(limitGet);
 
-        requestSeries();
+        requestMoreSeries();
+
+        mSeriesViewModel.getmAllSeries().observe(getActivity(), new Observer<List<Result>>() {
+            @Override
+            public void onChanged(@Nullable List<Result> results) {
+                progressBar.setVisibility(View.VISIBLE);
+                adapter.addSeriesPagination(results);
+                offset = offset + results.size();
+                progressBar.setVisibility(View.GONE);
+            }
+        });
 
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
@@ -100,7 +110,7 @@ public class SeriesListFragment extends Fragment implements SeriesAdapter.Series
                         }
                     } else {
                         if ((totalItemCount - visibleItemCount) <= (pastVisibleItems + limit) && !onSearch) {
-                            requestSeries();
+                            requestMoreSeries();
                             isLoading = true;
                         }
                     }
@@ -111,59 +121,35 @@ public class SeriesListFragment extends Fragment implements SeriesAdapter.Series
         return view;
     }
 
-    public void requestSeries() {
-        progressBar.setVisibility(View.VISIBLE);
-        mSeriesViewModel.getAllSeries(offset,limitPreference).observe(getActivity(), new Observer<List<Result>>() {
-            @Override
-            public void onChanged(@Nullable List<Result> results) {
-                adapter.addSeriesPagination(results);
-                offset = offset + results.size();
-            }
-        });
-        progressBar.setVisibility(View.GONE);
+    public void requestMoreSeries() {
+        mSeriesViewModel.getAllSeries(offset, limitPreference);
     }
 
 
     private void searchSeriesByName(final String name) {
         adapter.clearList();
-        progressBar.setVisibility(View.VISIBLE);
-        mSeriesViewModel.getSeriesByName(name).observe(getActivity(), new Observer<List<Result>>() {
-            @Override
-            public void onChanged(@Nullable List<Result> results) {
-                adapter.addSeriesPagination(results);
-                offset = offset + results.size();
-            }
-        });
-        progressBar.setVisibility(View.GONE);
+        mSeriesViewModel.getSeriesByName(name);
     }
 
 
     private void displayFavSeries() {
-        progressBar.setVisibility(View.VISIBLE);
         adapter.clearList();
-        adapter.addSeriesPagination(mSeriesViewModel.getFavoriteSeries());
-        progressBar.setVisibility(View.GONE);
+        mSeriesViewModel.getFavoriteSeries();
     }
 
     private void displaySeenseries() {
-        progressBar.setVisibility(View.VISIBLE);
         adapter.clearList();
-        adapter.addSeriesPagination(mSeriesViewModel.getSeenSeries());
-        progressBar.setVisibility(View.GONE);
+        mSeriesViewModel.getSeenSeries();
     }
 
     private void displayPendingSeries() {
-        progressBar.setVisibility(View.VISIBLE);
         adapter.clearList();
-        adapter.addSeriesPagination(mSeriesViewModel.getPendingSeries());
-        progressBar.setVisibility(View.GONE);
+        mSeriesViewModel.getPendingSeries();
     }
 
     private void displayFollowingSeries() {
-        progressBar.setVisibility(View.VISIBLE);
         adapter.clearList();
-        adapter.addSeriesPagination(mSeriesViewModel.getFollowingSeries());
-        progressBar.setVisibility(View.GONE);
+        mSeriesViewModel.getFollowingSeries();
     }
 
 
@@ -193,7 +179,7 @@ public class SeriesListFragment extends Fragment implements SeriesAdapter.Series
             public boolean onClose() {
                 offset = 0;
                 adapter.clearList();
-                requestSeries();
+                requestMoreSeries();
                 return false;
             }
         });

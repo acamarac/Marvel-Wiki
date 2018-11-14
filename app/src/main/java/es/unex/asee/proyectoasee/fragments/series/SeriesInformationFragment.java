@@ -2,11 +2,13 @@ package es.unex.asee.proyectoasee.fragments.series;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +30,7 @@ import es.unex.asee.proyectoasee.database.Entities.SeriesEntity;
 import es.unex.asee.proyectoasee.database.ViewModel.SeriesViewModel;
 import es.unex.asee.proyectoasee.pojo.marvel.seriesDetails.Result;
 import es.unex.asee.proyectoasee.pojo.marvel.seriesDetails.SeriesDetails;
+import es.unex.asee.proyectoasee.preferences.SettingsFragment;
 
 public class SeriesInformationFragment extends Fragment {
 
@@ -61,6 +64,10 @@ public class SeriesInformationFragment extends Fragment {
     private boolean followingSeries = false;
     private boolean pendingSeries = false;
     private float ratingComic = 0;
+
+    private SharedPreferences prefs;
+    private boolean loadImages;
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -97,6 +104,9 @@ public class SeriesInformationFragment extends Fragment {
         rbFollowing = (RadioButton) view.findViewById(R.id.followingSeries);
         rbPending = (RadioButton) view.findViewById(R.id.pendingSeries);
         radioGroup = (RadioGroup) view.findViewById(R.id.seriesRadioButtonGroup);
+
+        prefs = PreferenceManager.getDefaultSharedPreferences(view.getContext());
+        loadImages = prefs.getBoolean(SettingsFragment.KEY_PREF_LOAD_IMAGES, true);
 
         mLinearLayout = (LinearLayout) view.findViewById(R.id.seriesRadioButton);
         mLinearLayout.setVisibility(View.VISIBLE);
@@ -161,9 +171,6 @@ public class SeriesInformationFragment extends Fragment {
 
             final Result comicDetail = comicData.get(0);
 
-            String imagePath = comicDetail.getThumbnail().getPath();
-            String imageExtension = comicDetail.getThumbnail().getExtension();
-            String finalImagePath = imagePath + imageSize + "." + imageExtension;
 
             tvComicName.setText(comicDetail.getTitle());
 
@@ -173,11 +180,21 @@ public class SeriesInformationFragment extends Fragment {
             else
                 tvComicDescription.setText(comicDetail.getDescription());
 
+            if(loadImages) {
+                String imagePath = comicDetail.getThumbnail().getPath();
+                String imageExtension = comicDetail.getThumbnail().getExtension();
+                String finalImagePath = imagePath + imageSize + "." + imageExtension;
+                Picasso.with(this.getContext())
+                        .load(finalImagePath)
+                        .fit()
+                        .into(ivComicImage);
+            } else {
+                Picasso.with(this.getContext())
+                        .load(R.drawable.placeholder_landscape)
+                        .fit()
+                        .into(ivComicImage);
+            }
 
-            Picasso.with(this.getContext())
-                    .load(finalImagePath)
-                    .fit()
-                    .into(ivComicImage);
 
 
 

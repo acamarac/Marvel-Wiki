@@ -18,12 +18,26 @@ public class CharacterViewModel extends AndroidViewModel implements CharacterRep
     private CharacterRepository mRepository;
     private MutableLiveData<List<Result>> mAllCharacters;
 
+    /***********************
+        - CONSTRUCTOR -
+     ***********************/
     public CharacterViewModel(@NonNull Application application) {
         super(application);
         mRepository = new CharacterRepository(application, CharacterViewModel.this);
         mAllCharacters = new MutableLiveData<>();
     }
 
+    /***********************
+           - GETTERS -
+     ***********************/
+    public MutableLiveData<List<Result>> getmAllCharacters() {
+        return mAllCharacters;
+    }
+
+
+    /***********************
+          - METHODS -
+     ***********************/
     public CharacterEntity getCharacter(Integer id) {
         return mRepository.getCharacter(id);
     }
@@ -52,10 +66,10 @@ public class CharacterViewModel extends AndroidViewModel implements CharacterRep
         return mRepository.getCharacterById(id);
     }
 
-    public MutableLiveData<List<Result>> getmAllCharacters() {
-        return mAllCharacters;
-    }
 
+    /***********************
+       - INTERFACE METHOD -
+     ***********************/
     @Override
     public void sendAllCharacters(List<Result> result) {
         mAllCharacters.postValue(result);

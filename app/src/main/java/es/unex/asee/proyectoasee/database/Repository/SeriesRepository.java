@@ -35,11 +35,14 @@ public class SeriesRepository {
     //Para consultas a la Marvel API
     private ApiInterface mApiInterface;
 
+    private AsyncResponseInterfaceSeries mCallback;
 
-    public SeriesRepository(Application application) {
+
+    public SeriesRepository(Application application, AsyncResponseInterfaceSeries mCallback) {
         CharacterRoomDatabase db = CharacterRoomDatabase.getDatabase(application);
         mSeriesDAO = db.seriesDao();
         mApiInterface = APIClient.getClient().create(ApiInterface.class);
+        this.mCallback = mCallback;
     }
 
 
@@ -58,48 +61,20 @@ public class SeriesRepository {
         return null;
     }
 
-    public List<Result> getFavoriteSeries() {
-        try {
-            return new getFavoriteSeriesAsyncTask(mSeriesDAO).execute().get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public void getFavoriteSeries() {
+        new getFavoriteSeriesAsyncTask(mSeriesDAO,mCallback).execute();
     }
 
-    public List<Result> getSeenSeries() {
-        try {
-            return new getSeenSeriesAsyncTask(mSeriesDAO).execute().get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public void getSeenSeries() {
+        new getSeenSeriesAsyncTask(mSeriesDAO,mCallback).execute();
     }
 
-    public List<Result> getPendingSeries() {
-        try {
-            return new getPendingSeriesAsyncTask(mSeriesDAO).execute().get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public void getPendingSeries() {
+        new getPendingSeriesAsyncTask(mSeriesDAO,mCallback).execute();
     }
 
-    public List<Result> getFollowingSeries() {
-        try {
-            return new getFollowingSeriesAsyncTask(mSeriesDAO).execute().get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public void getFollowingSeries() {
+        new getFollowingSeriesAsyncTask(mSeriesDAO,mCallback).execute();
     }
 
     public void insertSeries(SeriesEntity series) {
@@ -119,26 +94,13 @@ public class SeriesRepository {
         - API METHODS -
      ***********************/
 
-    public LiveData<List<Result>> getAllSeries(final int offset, final int limit) {
-        try {
-            return new getAllSeriesAsyncTask(mApiInterface).execute(offset,limit).get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public void getAllSeries(final int offset, final int limit) {
+        new getAllSeriesAsyncTask(mApiInterface,mCallback).execute(offset,limit);
     }
 
-    public LiveData<List<Result>> getSeriesByName(String name) {
-        try {
-            return new getSeriesByNameAsyncTask(mApiInterface).execute(name).get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
+    //TODO cambiar
+    public void getSeriesByName(String name) {
+        new getSeriesByNameAsyncTask(mApiInterface,mCallback).execute(name);
     }
 
     public SeriesDetails getSeriesById(Integer id) {
@@ -151,6 +113,15 @@ public class SeriesRepository {
         }
         return null;
     }
+
+
+    /*********************************
+     - INTERFACE PARA LOS CALLBACKS -
+     *********************************/
+    public interface AsyncResponseInterfaceSeries {
+        void sendAllSeries(List<Result> result);
+    }
+
 
     /***********************
      - ASYNC TASK SELECTS -
@@ -173,9 +144,11 @@ public class SeriesRepository {
     private static class getFavoriteSeriesAsyncTask extends AsyncTask<Void, Void, List<Result>> {
 
         private SeriesDAO mAsyncTaskDao;
+        private AsyncResponseInterfaceSeries mCallback;
 
-        getFavoriteSeriesAsyncTask(SeriesDAO dao) {
+        getFavoriteSeriesAsyncTask(SeriesDAO dao, AsyncResponseInterfaceSeries mCallback) {
             mAsyncTaskDao = dao;
+            this.mCallback = mCallback;
         }
 
         @Override
@@ -199,14 +172,22 @@ public class SeriesRepository {
 
             return results;
         }
+
+        @Override
+        protected void onPostExecute(List<Result> results) {
+            mCallback.sendAllSeries(results);
+            super.onPostExecute(results);
+        }
     }
 
     private static class getSeenSeriesAsyncTask extends AsyncTask<Void, Void, List<Result>> {
 
         private SeriesDAO mAsyncTaskDao;
+        private AsyncResponseInterfaceSeries mCallback;
 
-        getSeenSeriesAsyncTask(SeriesDAO dao) {
+        getSeenSeriesAsyncTask(SeriesDAO dao, AsyncResponseInterfaceSeries mCallback) {
             mAsyncTaskDao = dao;
+            this.mCallback = mCallback;
         }
 
         @Override
@@ -230,14 +211,22 @@ public class SeriesRepository {
 
             return results;
         }
+
+        @Override
+        protected void onPostExecute(List<Result> results) {
+            mCallback.sendAllSeries(results);
+            super.onPostExecute(results);
+        }
     }
 
     private static class getPendingSeriesAsyncTask extends AsyncTask<Void, Void, List<Result>> {
 
         private SeriesDAO mAsyncTaskDao;
+        private AsyncResponseInterfaceSeries mCallback;
 
-        getPendingSeriesAsyncTask(SeriesDAO dao) {
+        getPendingSeriesAsyncTask(SeriesDAO dao, AsyncResponseInterfaceSeries mCallback) {
             mAsyncTaskDao = dao;
+            this.mCallback = mCallback;
         }
 
         @Override
@@ -261,14 +250,22 @@ public class SeriesRepository {
 
             return results;
         }
+
+        @Override
+        protected void onPostExecute(List<Result> results) {
+            mCallback.sendAllSeries(results);
+            super.onPostExecute(results);
+        }
     }
 
     private static class getFollowingSeriesAsyncTask extends AsyncTask<Void, Void, List<Result>> {
 
         private SeriesDAO mAsyncTaskDao;
+        private AsyncResponseInterfaceSeries mCallback;
 
-        getFollowingSeriesAsyncTask(SeriesDAO dao) {
+        getFollowingSeriesAsyncTask(SeriesDAO dao, AsyncResponseInterfaceSeries mCallback) {
             mAsyncTaskDao = dao;
+            this.mCallback = mCallback;
         }
 
         @Override
@@ -292,19 +289,27 @@ public class SeriesRepository {
 
             return results;
         }
+
+        @Override
+        protected void onPostExecute(List<Result> results) {
+            mCallback.sendAllSeries(results);
+            super.onPostExecute(results);
+        }
     }
 
-    private static class getAllSeriesAsyncTask extends AsyncTask<Integer, Void, LiveData<List<Result>>> {
+    private static class getAllSeriesAsyncTask extends AsyncTask<Integer, Void, List<Result>> {
 
         private ApiInterface mAsyncTaskInterface;
-        private MutableLiveData<List<Result>> results;
+        private List<Result> results;
+        private AsyncResponseInterfaceSeries mCallback;
 
-        getAllSeriesAsyncTask(ApiInterface interf) {
+        getAllSeriesAsyncTask(ApiInterface interf, AsyncResponseInterfaceSeries mCallback) {
             mAsyncTaskInterface = interf;
+            this.mCallback = mCallback;
         }
 
         @Override
-        protected LiveData<List<Result>> doInBackground(final Integer... params) {
+        protected List<Result> doInBackground(final Integer... params) {
 
             Long tsLong = new Date().getTime();
             String ts = tsLong.toString();
@@ -315,8 +320,7 @@ public class SeriesRepository {
 
             Call<Series> seriesCall = mAsyncTaskInterface.getSeriesData(ts, apiKey, hashResult, params[0], params[1]);
 
-            results = new MutableLiveData<>();
-
+            results = new ArrayList<>();
             Series series;
             try {
                 Response<Series> response = seriesCall.execute();
@@ -324,7 +328,7 @@ public class SeriesRepository {
                     doInBackground(params);
                 } else {
                     series = response.body();
-                    results.postValue(series.getData().getResults());
+                    results = series.getData().getResults();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -332,19 +336,27 @@ public class SeriesRepository {
 
             return results;
         }
+
+        @Override
+        protected void onPostExecute(List<Result> results) {
+            mCallback.sendAllSeries(results);
+            super.onPostExecute(results);
+        }
     }
 
-    private static class getSeriesByNameAsyncTask extends AsyncTask<String, Void, LiveData<List<Result>>> {
+    private static class getSeriesByNameAsyncTask extends AsyncTask<String, Void, List<Result>> {
 
         private ApiInterface mAsyncTaskInterface;
-        private MutableLiveData<List<Result>> results;
+        private List<Result> results;
+        private AsyncResponseInterfaceSeries mCallback;
 
-        getSeriesByNameAsyncTask(ApiInterface interf) {
+        getSeriesByNameAsyncTask(ApiInterface interf, AsyncResponseInterfaceSeries mCallback) {
             mAsyncTaskInterface = interf;
+            this.mCallback = mCallback;
         }
 
         @Override
-        protected LiveData<List<Result>> doInBackground(final String... params) {
+        protected List<Result> doInBackground(final String... params) {
 
             Long tsLong = new Date().getTime();
             String ts = tsLong.toString();
@@ -355,7 +367,7 @@ public class SeriesRepository {
 
             Call<Series> seriesCall = mAsyncTaskInterface.getSeriesByName(ts, apiKey, hashResult, params[0]);
 
-            results = new MutableLiveData<>();
+            results = new ArrayList<>();
 
             Series series;
             try {
@@ -364,13 +376,19 @@ public class SeriesRepository {
                     doInBackground(params);
                 } else {
                     series = response.body();
-                    results.postValue(series.getData().getResults());
+                    results = series.getData().getResults();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
             return results;
+        }
+
+        @Override
+        protected void onPostExecute(List<Result> results) {
+            mCallback.sendAllSeries(results);
+            super.onPostExecute(results);
         }
     }
 

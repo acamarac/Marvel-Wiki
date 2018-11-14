@@ -89,7 +89,7 @@
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
                     android:numStars="5"
-                    android:progressTint="@color/redToolBar"
+                    android:progressTint="@color/light_red"
                     android:stepSize="0.5" />
 
             </RelativeLayout>
@@ -109,14 +109,14 @@
                         android:id="@+id/readComic"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:buttonTint="@color/redToolBar"
+                        android:buttonTint="@color/light_red"
                         android:text="@string/read" />
 
                     <RadioButton
                         android:id="@+id/readingComic"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:buttonTint="@color/redToolBar"
+                        android:buttonTint="@color/light_red"
                         android:text="@string/reading" />
                 </RadioGroup>
 
@@ -140,19 +140,19 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/seen"
-                        android:buttonTint="@color/redToolBar"/>
+                        android:buttonTint="@color/light_red"/>
                     <RadioButton
                         android:id="@+id/pendingSeries"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/pending"
-                        android:buttonTint="@color/redToolBar"/>
+                        android:buttonTint="@color/light_red"/>
                     <RadioButton
                         android:id="@+id/followingSeries"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/following"
-                        android:buttonTint="@color/redToolBar"/>
+                        android:buttonTint="@color/light_red"/>
                 </RadioGroup>
 
 

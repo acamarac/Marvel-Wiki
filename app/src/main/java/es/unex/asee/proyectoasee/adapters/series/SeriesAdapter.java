@@ -1,8 +1,10 @@
 package es.unex.asee.proyectoasee.adapters.series;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,6 +21,7 @@ import java.util.List;
 
 import es.unex.asee.proyectoasee.fragments.series.SeriesDetailMainFragment;
 import es.unex.asee.proyectoasee.pojo.marvel.series.Result;
+import es.unex.asee.proyectoasee.preferences.SettingsFragment;
 
 public class SeriesAdapter extends RecyclerView.Adapter<SeriesAdapter.SeriesViewHolder> {
 
@@ -29,10 +32,15 @@ public class SeriesAdapter extends RecyclerView.Adapter<SeriesAdapter.SeriesView
 
     private static final String imageSize = "/standard_large";
 
+    private SharedPreferences prefs;
+    private boolean loadImages;
+
     public SeriesAdapter(Context context, SeriesAdapterListener mCallback) {
         seriesList = new ArrayList<>();
         this.context = context;
         this.mCallback = mCallback;
+        prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        loadImages = prefs.getBoolean(SettingsFragment.KEY_PREF_LOAD_IMAGES, true);
     }
 
     @NonNull
@@ -49,12 +57,17 @@ public class SeriesAdapter extends RecyclerView.Adapter<SeriesAdapter.SeriesView
     public void onBindViewHolder(@NonNull SeriesViewHolder seriesViewHolder, int i) {
 
         final Result comic = seriesList.get(i);
-        String imagePath = comic.getThumbnail().getPath();
-        String imageExtension = comic.getThumbnail().getExtension();
-        String finalImagePath = imagePath + imageSize + "." + imageExtension;
 
         seriesViewHolder.mTextViewCharacter.setText(comic.getTitle());
-        Picasso.with(context).load(finalImagePath).into(seriesViewHolder.mImageViewCharacter);
+
+        if(loadImages) {
+            String imagePath = comic.getThumbnail().getPath();
+            String imageExtension = comic.getThumbnail().getExtension();
+            String finalImagePath = imagePath + imageSize + "." + imageExtension;
+            Picasso.with(context).load(finalImagePath).into(seriesViewHolder.mImageViewCharacter);
+        } else {
+            Picasso.with(context).load(R.drawable.placeholder).into(seriesViewHolder.mImageViewCharacter);
+        }
 
         seriesViewHolder.mCardView.setOnClickListener(new View.OnClickListener() {
             @Override

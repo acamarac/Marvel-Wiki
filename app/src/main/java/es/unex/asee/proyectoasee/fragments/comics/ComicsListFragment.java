@@ -80,7 +80,17 @@ public class ComicsListFragment extends Fragment implements ComicsAdapter.Comics
         String limitGet = prefs.getString(SettingsFragment.KEY_PREF_LIMIT, "");
         limitPreference = Integer.valueOf(limitGet);
 
-        requestComics();
+        requestMoreComics();
+
+        mComicViewModel.getmAllComics().observe(getActivity(), new Observer<List<Result>>() {
+            @Override
+            public void onChanged(@Nullable List<Result> results) {
+                progressBar.setVisibility(View.VISIBLE);
+                adapter.addComicsPagination(results);
+                offset += results.size();
+                progressBar.setVisibility(View.GONE);
+            }
+        });
 
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
@@ -100,7 +110,7 @@ public class ComicsListFragment extends Fragment implements ComicsAdapter.Comics
                         }
                     } else {
                         if ((totalItemCount - visibleItemCount) <= (pastVisibleItems + limit) && !onSearch) {
-                            requestComics();
+                            requestMoreComics();
                             isLoading = true;
                         }
                     }
@@ -112,7 +122,7 @@ public class ComicsListFragment extends Fragment implements ComicsAdapter.Comics
     }
 
 
-    public void requestComics() {
+    /*public void requestComics() {
         progressBar.setVisibility(View.VISIBLE);
         mComicViewModel.getAllComics(offset,limitPreference).observe(getActivity(), new Observer<List<Result>>() {
             @Override
@@ -122,10 +132,14 @@ public class ComicsListFragment extends Fragment implements ComicsAdapter.Comics
             }
         });
         progressBar.setVisibility(View.GONE);
+    }*/
+
+    public void requestMoreComics() {
+        mComicViewModel.getAllComics(offset,limitPreference);
     }
 
 
-    private void searchComicByName(final String name) {
+    /*private void searchComicByName(final String name) {
         adapter.clearList();
         progressBar.setVisibility(View.VISIBLE);
         mComicViewModel.getComicByName(name).observe(getActivity(), new Observer<List<Result>>() {
@@ -136,27 +150,26 @@ public class ComicsListFragment extends Fragment implements ComicsAdapter.Comics
             }
         });
         progressBar.setVisibility(View.GONE);
+    }*/
+
+    private void searchComicByName(final String name) {
+        adapter.clearList();
+        mComicViewModel.getComicByName(name);
     }
 
     private void displayFavComics() {
-        progressBar.setVisibility(View.VISIBLE);
         adapter.clearList();
-        adapter.addComicsPagination(mComicViewModel.getFavoriteComics());
-        progressBar.setVisibility(View.GONE);
+        mComicViewModel.getFavoriteComics();
     }
 
     private void displayReadComic() {
-        progressBar.setVisibility(View.VISIBLE);
         adapter.clearList();
-        adapter.addComicsPagination(mComicViewModel.getReadComics());
-        progressBar.setVisibility(View.GONE);
+        mComicViewModel.getReadComics();
     }
 
     private void displayReadingComic() {
-        progressBar.setVisibility(View.VISIBLE);
         adapter.clearList();
-        adapter.addComicsPagination(mComicViewModel.getReadingComics());
-        progressBar.setVisibility(View.GONE);
+        mComicViewModel.getReadingComics();
     }
 
 
@@ -186,7 +199,7 @@ public class ComicsListFragment extends Fragment implements ComicsAdapter.Comics
             public boolean onClose() {
                 offset = 0;
                 adapter.clearList();
-                requestComics();
+                requestMoreComics();
                 return false;
             }
         });

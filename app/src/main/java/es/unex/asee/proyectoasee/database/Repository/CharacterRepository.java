@@ -69,17 +69,6 @@ public class CharacterRepository {
      *
      * @return
      */
-    /*public List<Result> getAllFavoriteCharacters() {
-        try {
-            return new getAllFavoriteCharactersAsyncTask(mCharacterDAO).execute().get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }*/
-
     public void getAllFavoriteCharacters() {
         new getAllFavoriteCharactersAsyncTask(mCharacterDAO, mCallback).execute();
     }

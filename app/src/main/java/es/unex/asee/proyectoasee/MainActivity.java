@@ -129,18 +129,21 @@ public class MainActivity extends AppCompatActivity
                 break;
             case 2:
                 ComicsListFragment comicsFragment = new ComicsListFragment();
-                fragmentTransaction.replace(R.id.fragment, comicsFragment);
-                fragmentTransaction.commit();
+                fragmentTransaction.replace(R.id.fragment, comicsFragment)
+                        .addToBackStack(null)
+                        .commit();
                 break;
             case 3:
                 SeriesListFragment seriesFragment = new SeriesListFragment();
-                fragmentTransaction.replace(R.id.fragment, seriesFragment);
-                fragmentTransaction.commit();
+                fragmentTransaction.replace(R.id.fragment, seriesFragment)
+                        .addToBackStack(null)
+                        .commit();
                 break;
             case 4:
                 SettingsFragment settings = new SettingsFragment();
-                fragmentTransaction.replace(R.id.fragment, settings);
-                fragmentTransaction.commit();
+                fragmentTransaction.replace(R.id.fragment, settings)
+                        .addToBackStack(null)
+                        .commit();
                 break;
         }
     }

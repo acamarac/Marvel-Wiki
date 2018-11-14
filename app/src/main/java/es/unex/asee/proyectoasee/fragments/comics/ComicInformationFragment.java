@@ -2,11 +2,13 @@ package es.unex.asee.proyectoasee.fragments.comics;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +32,7 @@ import es.unex.asee.proyectoasee.database.Entities.ComicEntity;
 import es.unex.asee.proyectoasee.database.ViewModel.ComicViewModel;
 import es.unex.asee.proyectoasee.pojo.marvel.comicDetails.ComicDetails;
 import es.unex.asee.proyectoasee.pojo.marvel.comicDetails.Result;
+import es.unex.asee.proyectoasee.preferences.SettingsFragment;
 
 public class ComicInformationFragment extends Fragment{
 
@@ -62,10 +65,9 @@ public class ComicInformationFragment extends Fragment{
     private boolean readingComic = false;
     private float ratingComic = 0;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
+    private SharedPreferences prefs;
+    private boolean loadImages;
+
 
     // This is a public method that the Activity can use to communicate
     // directly with this Fragment
@@ -96,6 +98,9 @@ public class ComicInformationFragment extends Fragment{
         rbRead = (RadioButton) view.findViewById(R.id.readComic);
         rbReading = (RadioButton) view.findViewById(R.id.readingComic);
         radioGroup = (RadioGroup) view.findViewById(R.id.radioButtonGroup);
+
+        prefs = PreferenceManager.getDefaultSharedPreferences(view.getContext());
+        loadImages = prefs.getBoolean(SettingsFragment.KEY_PREF_LOAD_IMAGES, true);
 
         mLinearLayout = (LinearLayout) view.findViewById(R.id.comicRadioButton);
         mLinearLayout.setVisibility(View.VISIBLE);
@@ -153,10 +158,6 @@ public class ComicInformationFragment extends Fragment{
 
             final Result comicDetail = comicData.get(0);
 
-            String imagePath = comicDetail.getThumbnail().getPath();
-            String imageExtension = comicDetail.getThumbnail().getExtension();
-            String finalImagePath = imagePath + imageSize + "." + imageExtension;
-
             tvComicName.setText(comicDetail.getTitle());
 
             TextView chDesc = (TextView) view.findViewById(R.id.tvChIntroduction);
@@ -166,10 +167,21 @@ public class ComicInformationFragment extends Fragment{
                 tvComicDescription.setText(comicDetail.getDescription());
 
 
-            Picasso.with(this.getContext())
-                    .load(finalImagePath)
-                    .fit()
-                    .into(ivComicImage);
+            if(loadImages) {
+                String imagePath = comicDetail.getThumbnail().getPath();
+                String imageExtension = comicDetail.getThumbnail().getExtension();
+                String finalImagePath = imagePath + imageSize + "." + imageExtension;
+
+                Picasso.with(this.getContext())
+                        .load(finalImagePath)
+                        .fit()
+                        .into(ivComicImage);
+            } else {
+                Picasso.with(this.getContext())
+                        .load(R.drawable.placeholder_landscape)
+                        .fit()
+                        .into(ivComicImage);
+            }
 
 
 

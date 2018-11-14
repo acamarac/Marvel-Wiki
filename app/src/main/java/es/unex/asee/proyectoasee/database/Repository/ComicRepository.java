@@ -35,11 +35,14 @@ public class ComicRepository {
     //Para consultas a la Marvel API
     private ApiInterface mApiInterface;
 
+    private AsyncResponseInterfaceComic mCallback;
 
-    public ComicRepository(Application application) {
+
+    public ComicRepository(Application application, AsyncResponseInterfaceComic mCallback) {
         CharacterRoomDatabase db = CharacterRoomDatabase.getDatabase(application);
         mComicDAO = db.comicDao();
         mApiInterface = APIClient.getClient().create(ApiInterface.class);
+        this.mCallback = mCallback;
     }
 
 
@@ -58,37 +61,16 @@ public class ComicRepository {
         return null;
     }
 
-    public List<Result> getFavoriteComics()  {
-        try {
-            return new getFavoriteComicsAsyncTask(mComicDAO).execute().get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public void getFavoriteComics()  {
+        new getFavoriteComicsAsyncTask(mComicDAO, mCallback).execute();
     }
 
-    public List<Result> getReadComics() {
-        try {
-            return new getReadComicsAsyncTask(mComicDAO).execute().get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public void getReadComics() {
+        new getReadComicsAsyncTask(mComicDAO, mCallback).execute();
     }
 
-    public List<Result> getReadingComics()  {
-        try {
-            return new getReadingComicsAsyncTask(mComicDAO).execute().get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public void getReadingComics()  {
+        new getReadingComicsAsyncTask(mComicDAO, mCallback).execute();
     }
 
     public void insertComic(ComicEntity comic) {
@@ -107,26 +89,12 @@ public class ComicRepository {
          - API METHODS -
      ***********************/
 
-    public LiveData<List<Result>> getAllComics(final int offset, final int limit) {
-        try {
-            return new getAllComicsAsyncTask(mApiInterface).execute(offset,limit).get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public void getAllComics(final int offset, final int limit) {
+        new getAllComicsAsyncTask(mApiInterface,mCallback).execute(offset,limit);
     }
 
-    public LiveData<List<Result>> getComicByName(String name) {
-        try {
-            return new getComicByNameAsyncTask(mApiInterface).execute(name).get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public void getComicByName(String name) {
+        new getComicByNameAsyncTask(mApiInterface,mCallback).execute(name);
     }
 
     public ComicDetails getComicById(Integer id) {
@@ -138,6 +106,14 @@ public class ComicRepository {
             e.printStackTrace();
         }
         return null;
+    }
+
+
+    /****************************
+     - INTERFACE PARA CALLBACKS -
+     ****************************/
+    public interface AsyncResponseInterfaceComic {
+        void sendAllComics(List<Result> result);
     }
 
     /***********************
@@ -161,9 +137,11 @@ public class ComicRepository {
     private static class getFavoriteComicsAsyncTask extends AsyncTask<Void, Void, List<Result>> {
 
         private ComicDAO mAsyncTaskDao;
+        private AsyncResponseInterfaceComic mCallback;
 
-        getFavoriteComicsAsyncTask(ComicDAO dao) {
+        getFavoriteComicsAsyncTask(ComicDAO dao, AsyncResponseInterfaceComic mCallback) {
             mAsyncTaskDao = dao;
+            this.mCallback = mCallback;
         }
 
         @Override
@@ -187,14 +165,22 @@ public class ComicRepository {
 
             return results;
         }
+
+        @Override
+        protected void onPostExecute(List<Result> results) {
+            mCallback.sendAllComics(results);
+            super.onPostExecute(results);
+        }
     }
 
     private static class getReadComicsAsyncTask extends AsyncTask<Void, Void, List<Result>> {
 
         private ComicDAO mAsyncTaskDao;
+        private AsyncResponseInterfaceComic mCallback;
 
-        getReadComicsAsyncTask(ComicDAO dao) {
+        getReadComicsAsyncTask(ComicDAO dao, AsyncResponseInterfaceComic mCallback) {
             mAsyncTaskDao = dao;
+            this.mCallback = mCallback;
         }
 
         @Override
@@ -218,14 +204,22 @@ public class ComicRepository {
 
             return results;
         }
+
+        @Override
+        protected void onPostExecute(List<Result> results) {
+            mCallback.sendAllComics(results);
+            super.onPostExecute(results);
+        }
     }
 
     private static class getReadingComicsAsyncTask extends AsyncTask<Void, Void, List<Result>> {
 
         private ComicDAO mAsyncTaskDao;
+        private AsyncResponseInterfaceComic mCallback;
 
-        getReadingComicsAsyncTask(ComicDAO dao) {
+        getReadingComicsAsyncTask(ComicDAO dao, AsyncResponseInterfaceComic mCallback) {
             mAsyncTaskDao = dao;
+            this.mCallback = mCallback;
         }
 
         @Override
@@ -249,19 +243,28 @@ public class ComicRepository {
 
             return results;
         }
+
+        @Override
+        protected void onPostExecute(List<Result> results) {
+            mCallback.sendAllComics(results);
+            super.onPostExecute(results);
+        }
     }
 
-    private static class getAllComicsAsyncTask extends AsyncTask<Integer, Void, LiveData<List<Result>>> {
+
+    private static class getAllComicsAsyncTask extends AsyncTask<Integer, Void, List<Result>> {
 
         private ApiInterface mAsyncTaskInterface;
-        private MutableLiveData<List<Result>> results;
+        private List<Result> results;
+        private AsyncResponseInterfaceComic mCallback;
 
-        getAllComicsAsyncTask(ApiInterface interf) {
+        getAllComicsAsyncTask(ApiInterface interf, AsyncResponseInterfaceComic mCallback) {
             mAsyncTaskInterface = interf;
+            this.mCallback = mCallback;
         }
 
         @Override
-        protected LiveData<List<Result>> doInBackground(final Integer... params) {
+        protected List<Result> doInBackground(final Integer... params) {
 
             Long tsLong = new Date().getTime();
             String ts = tsLong.toString();
@@ -272,7 +275,7 @@ public class ComicRepository {
 
             Call<Comics> comicsCall = mAsyncTaskInterface.getComicsData(ts, apiKey, hashResult, params[0], params[1]);
 
-            results = new MutableLiveData<>();
+            results = new ArrayList<>();
 
             Comics comics;
             try {
@@ -281,7 +284,7 @@ public class ComicRepository {
                     doInBackground(params);
                 } else {
                     comics = response.body();
-                    results.postValue(comics.getData().getResults());
+                    results = comics.getData().getResults();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -289,19 +292,27 @@ public class ComicRepository {
 
             return results;
         }
+
+        @Override
+        protected void onPostExecute(List<Result> results) {
+            mCallback.sendAllComics(results);
+            super.onPostExecute(results);
+        }
     }
 
-    private static class getComicByNameAsyncTask extends AsyncTask<String, Void, LiveData<List<Result>>> {
+    private static class getComicByNameAsyncTask extends AsyncTask<String, Void, List<Result>> {
 
         private ApiInterface mAsyncTaskInterface;
-        private MutableLiveData<List<Result>> results;
+        private List<Result> results;
+        private AsyncResponseInterfaceComic mCallback;
 
-        getComicByNameAsyncTask(ApiInterface interf) {
+        getComicByNameAsyncTask(ApiInterface interf, AsyncResponseInterfaceComic mCallback) {
             mAsyncTaskInterface = interf;
+            this.mCallback = mCallback;
         }
 
         @Override
-        protected LiveData<List<Result>> doInBackground(final String... params) {
+        protected List<Result> doInBackground(final String... params) {
 
             Long tsLong = new Date().getTime();
             String ts = tsLong.toString();
@@ -312,7 +323,7 @@ public class ComicRepository {
 
             Call<Comics> charactersCall = mAsyncTaskInterface.getComicByName(ts, apiKey, hashResult, params[0]);
 
-            results = new MutableLiveData<>();
+            results = new ArrayList<>();
 
             Comics comics;
             try {
@@ -321,13 +332,19 @@ public class ComicRepository {
                     doInBackground(params);
                 } else {
                     comics = response.body();
-                    results.postValue(comics.getData().getResults());
+                    results = comics.getData().getResults();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
             return results;
+        }
+
+        @Override
+        protected void onPostExecute(List<Result> results) {
+            mCallback.sendAllComics(results);
+            super.onPostExecute(results);
         }
     }
 

@@ -7,4 +7,5 @@
     <color name="white">#fdfdff</color>
     <color name="yellowHighlight">#FEF3BB</color>
     <color name="grey">#F5F5F5</color>
+    <color name="light_red">#FF6347</color>
 </resources>
