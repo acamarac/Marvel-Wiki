@@ -51,18 +51,6 @@ public class CharacterRepository {
      - DAO METHODS -
      ***********************/
 
-//TODO cambiar
-    /*public CharacterEntityOLD getCharacter(Integer id) {
-        try {
-            return new getCharacterAsyncTask(mCharacterDAO).execute(id).get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }*/
-
     public  CharacterState getCharacterState(Integer id) {
         try {
             return new getCharacterStateAsyncTask(mCharacterDAO).execute(id).get();
@@ -80,34 +68,14 @@ public class CharacterRepository {
      *
      * @return
      */
-    /*public void getAllFavoriteCharacters() {
-        new getAllFavoriteCharactersAsyncTask(mCharacterDAO, mCallback).execute();
-    }*/
-
-    //TODO cambiado
     public void getAllFavoriteCharacters() {
         new getAllFavoriteCharactersAsyncTask(mCharacterDAO, mCallback).execute();
     }
 
-    //TODO añadido
     public void getCacheCharacters() {
         new getCacheCharactersAsyncTask(mCharacterDAO, mCallback).execute();
     }
 
-
-    /*public void insertCharacter(CharacterEntityOLD character) {
-        new insertAsyncTask(mCharacterDAO).execute(character);
-    }
-
-    public void updateCharacter(CharacterEntityOLD character) {
-        new updateAsyncTask(mCharacterDAO).execute(character);
-    }
-
-    public void deleteCharacter(Integer id) {
-        new deleteAsyncTask(mCharacterDAO).execute(id);
-    }*/
-
-    //TODO cambiado
     public void insertCharacterState(CharacterState character) {
         new insertCharacterStateAsyncTask(mCharacterDAO).execute(character);
     }
@@ -162,24 +130,6 @@ public class CharacterRepository {
     public interface AsyncResponseInterface {
         void sendAllCharacters(List<Result> result);
     }
-
-    /***********************
-     - ASYNC TASK SELECTS -
-     ***********************/
-
-    /*private static class getCharacterAsyncTask extends AsyncTask<Integer, Void, CharacterEntityOLD> {
-
-        private CharacterDAOOLD mAsyncTaskDao;
-
-        getCharacterAsyncTask(CharacterDAOOLD dao) {
-            mAsyncTaskDao = dao;
-        }
-
-        @Override
-        protected CharacterEntityOLD doInBackground(final Integer... params) {
-            return mAsyncTaskDao.getCharacter(params[0]);
-        }
-    }*/
 
     private static class getCharacterStateAsyncTask extends AsyncTask<Integer, Void, CharacterState> {
 
@@ -481,6 +431,10 @@ public class CharacterRepository {
             return null;
         }
     }
+
+    /***********************
+     - ASYNC TASK DELETES -
+     ***********************/
 
     private static class deleteCharacterStateAsyncTask extends AsyncTask<Integer, Void, Void> {
 

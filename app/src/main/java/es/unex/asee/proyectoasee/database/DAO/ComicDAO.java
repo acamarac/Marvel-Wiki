@@ -8,30 +8,62 @@ import android.arch.persistence.room.Update;
 
 import java.util.List;
 
-import es.unex.asee.proyectoasee.database.Entities.ComicEntity;
+import es.unex.asee.proyectoasee.database.Entities.Comics.ComicCache;
+import es.unex.asee.proyectoasee.database.Entities.Comics.ComicData;
+import es.unex.asee.proyectoasee.database.Entities.Comics.ComicState;
+import es.unex.asee.proyectoasee.database.Entities.Comics.ComicStateDataJOIN;
 
 @Dao
 public interface ComicDAO {
 
+    /***************
+        - CACHE -
+     ***************/
+    @Query("SELECT id, name, thumbnailPath, thumbnailExtension FROM ComicData cd JOIN ComicCache cc ON cd.id=cc.idComic")
+    List<ComicData> getCacheComics();
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertComic(ComicEntity comic);
+    void insertCacheComic(ComicCache comic);
 
-    @Query("SELECT * FROM ComicEntity WHERE id = :id")
-    ComicEntity getComic(Integer id);
+    /***************
+        - STATE -
+     ***************/
+    @Query("SELECT id, name, thumbnailPath, thumbnailExtension, favorite, rating, read, reading " +
+            "FROM ComicData cd JOIN ComicState cs ON cd.id = cs.idComic " +
+            "WHERE favorite = 1")
+    List<ComicStateDataJOIN> getFavoriteComics();
 
-    @Query("SELECT * FROM ComicEntity WHERE favorite = 1")
-    List<ComicEntity> getFavoriteComics();
 
-    @Query("SELECT * FROM ComicEntity WHERE read = 1")
-    List<ComicEntity> getReadComics();
+    @Query("SELECT id, name, thumbnailPath, thumbnailExtension, favorite, rating, read, reading " +
+            "FROM ComicData cd JOIN ComicState cs ON cd.id = cs.idComic " +
+            "WHERE read = 1")
+    List<ComicStateDataJOIN> getReadComics();
 
-    @Query("SELECT * FROM ComicEntity WHERE reading = 1")
-    List<ComicEntity> getReadingComics();
+
+    @Query("SELECT id, name, thumbnailPath, thumbnailExtension, favorite, rating, read, reading " +
+            "FROM ComicData cd JOIN ComicState cs ON cd.id = cs.idComic " +
+            "WHERE reading = 1")
+    List<ComicStateDataJOIN> getReadingComics();
+
+
+    @Query("SELECT * FROM ComicState WHERE idComic = :id")
+    ComicState getComicState(Integer id);
+
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertStateComic(ComicState comic);
+
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    void updateComic(ComicEntity comic);
+    void updateStateComic(ComicState comic);
 
-    @Query("DELETE FROM ComicEntity WHERE id = :id")
-    void deleteComic(Integer id);
+    @Query("DELETE FROM ComicState WHERE idComic = :id")
+    void deleteStateComic(Integer id);
+
+    /***************
+        - DATA -
+     ***************/
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertDataComic(ComicData comic);
 
 }

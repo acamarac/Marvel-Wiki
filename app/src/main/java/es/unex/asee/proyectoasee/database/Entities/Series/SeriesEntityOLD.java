@@ -1,14 +1,14 @@
-package es.unex.asee.proyectoasee.database.Entities;
+package es.unex.asee.proyectoasee.database.Entities.Series;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-@Entity(tableName = "SeriesEntity")
-public class SeriesEntity {
+@Entity(tableName = "SeriesEntityOLD")
+public class SeriesEntityOLD {
 
-    public SeriesEntity(@NonNull Integer id, @NonNull String title, @NonNull String thumbnailPath, @NonNull String thumbnailExtension, @NonNull float rating, @NonNull boolean favorite, @NonNull boolean seen, @NonNull boolean pending, @NonNull boolean following) {
+    public SeriesEntityOLD(@NonNull Integer id, @NonNull String title, @NonNull String thumbnailPath, @NonNull String thumbnailExtension, @NonNull float rating, @NonNull boolean favorite, @NonNull boolean seen, @NonNull boolean pending, @NonNull boolean following) {
         this.id = id;
         this.title = title;
         this.thumbnailPath = thumbnailPath;

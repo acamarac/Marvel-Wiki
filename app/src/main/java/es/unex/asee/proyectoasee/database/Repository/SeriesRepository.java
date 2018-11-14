@@ -1,8 +1,6 @@
 package es.unex.asee.proyectoasee.database.Repository;
 
 import android.app.Application;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 
 import java.io.IOException;
@@ -13,7 +11,13 @@ import java.util.concurrent.ExecutionException;
 
 import es.unex.asee.proyectoasee.client.APIClient;
 import es.unex.asee.proyectoasee.database.DAO.SeriesDAO;
-import es.unex.asee.proyectoasee.database.Entities.SeriesEntity;
+import es.unex.asee.proyectoasee.database.DAO.SeriesDAOOLD;
+import es.unex.asee.proyectoasee.database.Entities.Comics.ComicState;
+import es.unex.asee.proyectoasee.database.Entities.Series.SeriesCache;
+import es.unex.asee.proyectoasee.database.Entities.Series.SeriesData;
+import es.unex.asee.proyectoasee.database.Entities.Series.SeriesEntityOLD;
+import es.unex.asee.proyectoasee.database.Entities.Series.SeriesState;
+import es.unex.asee.proyectoasee.database.Entities.Series.SeriesStateDataJOIN;
 import es.unex.asee.proyectoasee.database.ROOM.CharacterRoomDatabase;
 import es.unex.asee.proyectoasee.interfaces.ApiInterface;
 import es.unex.asee.proyectoasee.pojo.marvel.series.Result;
@@ -50,9 +54,9 @@ public class SeriesRepository {
          - DAO METHODS -
      ***********************/
 
-    public SeriesEntity getSeries(Integer id) {
+    public SeriesState getSeriesState(Integer id) {
         try {
-            return new getSeriesAsyncTask(mSeriesDAO).execute(id).get();
+            return new getSeriesStateAsyncTask(mSeriesDAO).execute(id).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -77,16 +81,28 @@ public class SeriesRepository {
         new getFollowingSeriesAsyncTask(mSeriesDAO,mCallback).execute();
     }
 
-    public void insertSeries(SeriesEntity series) {
-        new insertAsyncTask(mSeriesDAO).execute(series);
+    public void getCacheSeries() {
+        new getCacheSeriesAsyncTask(mSeriesDAO, mCallback).execute();
     }
 
-    public void updateComic(SeriesEntity series) {
-        new updateAsyncTask(mSeriesDAO).execute(series);
+    public void insertSeriesState(SeriesState series) {
+        new insertSeriesStateAsyncTask(mSeriesDAO).execute(series);
     }
 
-    public void deleteComic(Integer id) {
-        new deleteAsyncTask(mSeriesDAO).execute(id);
+    public void insertSeriesData(SeriesData series) {
+        new insertSeriesDataAsyncTask(mSeriesDAO).execute(series);
+    }
+
+    public void insertSeriesCache(SeriesCache series) {
+        new insertSeriesCacheAsyncTask(mSeriesDAO).execute(series);
+    }
+
+    public void updateSeriesState(SeriesState series) {
+        new updateSeriesStateAsyncTask(mSeriesDAO).execute(series);
+    }
+
+    public void deleteSeriesState(Integer id) {
+        new deleteSeriesStateAsyncTask(mSeriesDAO).execute(id);
     }
 
 
@@ -126,17 +142,17 @@ public class SeriesRepository {
      - ASYNC TASK SELECTS -
      ***********************/
 
-    private static class getSeriesAsyncTask extends AsyncTask<Integer, Void, SeriesEntity> {
+    private static class getSeriesStateAsyncTask extends AsyncTask<Integer, Void, SeriesState> {
 
         private SeriesDAO mAsyncTaskDao;
 
-        getSeriesAsyncTask(SeriesDAO dao) {
+        getSeriesStateAsyncTask(SeriesDAO dao) {
             mAsyncTaskDao = dao;
         }
 
         @Override
-        protected SeriesEntity doInBackground(final Integer... params) {
-            return mAsyncTaskDao.getSeries(params[0]);
+        protected SeriesState doInBackground(final Integer... params) {
+            return mAsyncTaskDao.getSeriesState(params[0]);
         }
     }
 
@@ -152,16 +168,16 @@ public class SeriesRepository {
 
         @Override
         protected List<Result> doInBackground(Void... voids) {
-            List<SeriesEntity> seriesEntities = mAsyncTaskDao.getFavoriteSeries();
+            List<SeriesStateDataJOIN> seriesEntities = mAsyncTaskDao.getFavoriteSeries();
             List<Result> results = new ArrayList<>();
 
-            for (SeriesEntity series : seriesEntities) {
+            for (SeriesStateDataJOIN series : seriesEntities) {
 
                 Result result = new Result();
                 Thumbnail th = new Thumbnail();
 
                 result.setId(series.getId());
-                result.setTitle(series.getTitle());
+                result.setTitle(series.getName());
                 th.setPath(series.getThumbnailPath());
                 th.setExtension(series.getThumbnailExtension());
                 result.setThumbnail(th);
@@ -191,16 +207,16 @@ public class SeriesRepository {
 
         @Override
         protected List<Result> doInBackground(Void... voids) {
-            List<SeriesEntity> seriesEntities = mAsyncTaskDao.getSeenSeries();
+            List<SeriesStateDataJOIN> seriesEntities = mAsyncTaskDao.getSeenSeries();
             List<Result> results = new ArrayList<>();
 
-            for (SeriesEntity series : seriesEntities) {
+            for (SeriesStateDataJOIN series : seriesEntities) {
 
                 Result result = new Result();
                 Thumbnail th = new Thumbnail();
 
                 result.setId(series.getId());
-                result.setTitle(series.getTitle());
+                result.setTitle(series.getName());
                 th.setPath(series.getThumbnailPath());
                 th.setExtension(series.getThumbnailExtension());
                 result.setThumbnail(th);
@@ -230,16 +246,16 @@ public class SeriesRepository {
 
         @Override
         protected List<Result> doInBackground(Void... voids) {
-            List<SeriesEntity> seriesEntities = mAsyncTaskDao.getPendingSeries();
+            List<SeriesStateDataJOIN> seriesEntities = mAsyncTaskDao.getPendingSeries();
             List<Result> results = new ArrayList<>();
 
-            for (SeriesEntity series : seriesEntities) {
+            for (SeriesStateDataJOIN series : seriesEntities) {
 
                 Result result = new Result();
                 Thumbnail th = new Thumbnail();
 
                 result.setId(series.getId());
-                result.setTitle(series.getTitle());
+                result.setTitle(series.getName());
                 th.setPath(series.getThumbnailPath());
                 th.setExtension(series.getThumbnailExtension());
                 result.setThumbnail(th);
@@ -269,16 +285,55 @@ public class SeriesRepository {
 
         @Override
         protected List<Result> doInBackground(Void... voids) {
-            List<SeriesEntity> seriesEntities = mAsyncTaskDao.getFollowingSeries();
+            List<SeriesStateDataJOIN> seriesEntities = mAsyncTaskDao.getFollowingSeries();
             List<Result> results = new ArrayList<>();
 
-            for (SeriesEntity series : seriesEntities) {
+            for (SeriesStateDataJOIN series : seriesEntities) {
 
                 Result result = new Result();
                 Thumbnail th = new Thumbnail();
 
                 result.setId(series.getId());
-                result.setTitle(series.getTitle());
+                result.setTitle(series.getName());
+                th.setPath(series.getThumbnailPath());
+                th.setExtension(series.getThumbnailExtension());
+                result.setThumbnail(th);
+
+                results.add(result);
+            }
+
+            return results;
+        }
+
+        @Override
+        protected void onPostExecute(List<Result> results) {
+            mCallback.sendAllSeries(results);
+            super.onPostExecute(results);
+        }
+    }
+
+    private static class getCacheSeriesAsyncTask extends AsyncTask<Void, Void, List<Result>> {
+
+        private SeriesDAO mAsyncTaskDao;
+        private AsyncResponseInterfaceSeries mCallback;
+
+        getCacheSeriesAsyncTask(SeriesDAO dao, AsyncResponseInterfaceSeries mCallback) {
+            mAsyncTaskDao = dao;
+            this.mCallback = mCallback;
+        }
+
+        @Override
+        protected List<Result> doInBackground(Void... voids) {
+            List<SeriesData> seriesEntities = mAsyncTaskDao.getCacheSeries();
+            List<Result> results = new ArrayList<>();
+
+            for (SeriesData series : seriesEntities) {
+
+                Result result = new Result();
+                Thumbnail th = new Thumbnail();
+
+                result.setId(series.getId());
+                result.setTitle(series.getName());
                 th.setPath(series.getThumbnailPath());
                 th.setExtension(series.getThumbnailExtension());
                 result.setThumbnail(th);
@@ -437,38 +492,67 @@ public class SeriesRepository {
      ***********************/
 
 
-    private static class insertAsyncTask extends AsyncTask<SeriesEntity, Void, Void> {
+    private static class insertSeriesStateAsyncTask extends AsyncTask<SeriesState, Void, Void> {
 
         private SeriesDAO mAsyncTaskDao;
 
-        insertAsyncTask(SeriesDAO dao) {
+        insertSeriesStateAsyncTask(SeriesDAO dao) {
             mAsyncTaskDao = dao;
         }
 
         @Override
-        protected Void doInBackground(final SeriesEntity... params) {
-            mAsyncTaskDao.insertSeries(params[0]);
+        protected Void doInBackground(final SeriesState... params) {
+            mAsyncTaskDao.insertStateSeries(params[0]);
             return null;
         }
     }
 
+    private static class insertSeriesDataAsyncTask extends AsyncTask<SeriesData, Void, Void> {
+
+        private SeriesDAO mAsyncTaskDao;
+
+        insertSeriesDataAsyncTask(SeriesDAO dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(final SeriesData... params) {
+            mAsyncTaskDao.insertDataSeries(params[0]);
+            return null;
+        }
+    }
+
+    private static class insertSeriesCacheAsyncTask extends AsyncTask<SeriesCache, Void, Void> {
+
+        private SeriesDAO mAsyncTaskDao;
+
+        insertSeriesCacheAsyncTask(SeriesDAO dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(final SeriesCache... params) {
+            mAsyncTaskDao.insertCacheSeries(params[0]);
+            return null;
+        }
+    }
 
     /***********************
      - ASYNC TASK UPDATES -
      ***********************/
 
 
-    private static class updateAsyncTask extends AsyncTask<SeriesEntity, Void, Void> {
+    private static class updateSeriesStateAsyncTask extends AsyncTask<SeriesState, Void, Void> {
 
         private SeriesDAO mAsyncTaskDao;
 
-        updateAsyncTask(SeriesDAO dao) {
+        updateSeriesStateAsyncTask(SeriesDAO dao) {
             mAsyncTaskDao = dao;
         }
 
         @Override
-        protected Void doInBackground(final SeriesEntity... params) {
-            mAsyncTaskDao.updateSeries(params[0]);
+        protected Void doInBackground(final SeriesState... params) {
+            mAsyncTaskDao.updateStateSeries(params[0]);
             return null;
         }
     }
@@ -477,17 +561,17 @@ public class SeriesRepository {
      - ASYNC TASK DELETES -
      ***********************/
 
-    private static class deleteAsyncTask extends AsyncTask<Integer, Void, Void> {
+    private static class deleteSeriesStateAsyncTask extends AsyncTask<Integer, Void, Void> {
 
         private SeriesDAO mAsyncTaskDao;
 
-        deleteAsyncTask(SeriesDAO dao) {
+        deleteSeriesStateAsyncTask(SeriesDAO dao) {
             mAsyncTaskDao = dao;
         }
 
         @Override
         protected Void doInBackground(final Integer... params) {
-            mAsyncTaskDao.deleteSeries(params[0]);
+            mAsyncTaskDao.deleteStateSeries(params[0]);
             return null;
         }
     }

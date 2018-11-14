@@ -6,14 +6,11 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -28,7 +25,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import es.unex.asee.proyectoasee.database.Entities.ComicEntity;
+import es.unex.asee.proyectoasee.database.Entities.Comics.ComicState;
+import es.unex.asee.proyectoasee.database.Entities.Comics.ComicStateDataJOIN;
 import es.unex.asee.proyectoasee.database.ViewModel.ComicViewModel;
 import es.unex.asee.proyectoasee.pojo.marvel.comicDetails.ComicDetails;
 import es.unex.asee.proyectoasee.pojo.marvel.comicDetails.Result;
@@ -54,7 +52,7 @@ public class ComicInformationFragment extends Fragment{
     private static final String imageSize = "/landscape_incredible";
 
     private ComicViewModel mComicViewModel;
-    private ComicEntity comicDb;
+    private ComicState comicDb;
     private Integer idComic;
 
     private MaterialFavoriteButton favButton;
@@ -111,7 +109,7 @@ public class ComicInformationFragment extends Fragment{
 
         idComic = comic.getData().getResults().get(0).getId();
 
-        comicDb = mComicViewModel.getComic(idComic);
+        comicDb = mComicViewModel.getComicState(idComic);
 
         loadComicData();
 
@@ -240,18 +238,18 @@ public class ComicInformationFragment extends Fragment{
         //Si el usuario ya no está interesado, borramos el registro (en caso de que exista)
         if (favComic == false && readingComic ==false && readComic == false && ratingComic == 0) {
 
-            if (comicDb != null) mComicViewModel.deleteComic(comicDetails.getId());
+            if (comicDb != null) mComicViewModel.deleteStateComic(comicDetails.getId());
 
         } else {
 
-            ComicEntity comicInsert = new ComicEntity(idComic, comicDetails.getTitle(),
+            ComicStateDataJOIN comicInsert = new ComicStateDataJOIN(idComic, comicDetails.getTitle(),
                     comicDetails.getThumbnail().getPath(), comicDetails.getThumbnail().getExtension(),
-                    favComic, readComic, readingComic, ratingComic);
+                    favComic, ratingComic, readComic, readingComic);
 
             if (comicDb == null) {
-                mComicViewModel.insertComic(comicInsert);
+                mComicViewModel.insertStateComic(comicInsert);
             } else {
-                mComicViewModel.updateComic(comicInsert);
+                mComicViewModel.updateStateComic(comicInsert);
             }
 
         }

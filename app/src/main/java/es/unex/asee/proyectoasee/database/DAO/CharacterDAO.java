@@ -19,7 +19,9 @@ public interface CharacterDAO {
     @Query("SELECT id, name, thumbnailExtension, thumbnailPath FROM CharacterData cd JOIN CharacterCache cc ON cd.id=cc.idCharacter ORDER BY name")
     List<CharacterData> getCacheData();
 
-    @Query("SELECT id, name, thumbnailPath, thumbnailExtension, favorite, rating FROM CharacterData cd JOIN CharacterState cs on cd.id=cs.idCharacter")
+    @Query("SELECT id, name, thumbnailPath, thumbnailExtension, favorite, rating " +
+            "FROM CharacterData cd JOIN CharacterState cs ON cd.id=cs.idCharacter " +
+            "WHERE favorite = 1")
     List<CharacterStateDataJOIN> getAllFavoriteCharacters();
 
     @Query("SELECT * FROM CharacterState WHERE idCharacter = :id")

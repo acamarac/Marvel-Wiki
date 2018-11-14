@@ -40,15 +40,10 @@ public class CharacterViewModel extends AndroidViewModel implements CharacterRep
     /***********************
           - METHODS -
      ***********************/
-    /*public CharacterEntityOLD getCharacter(Integer id) {
-        return mRepository.getCharacter(id);
-    }*/
-
     public void getCacheCharacters() {
         mRepository.getCacheCharacters();
     }
 
-    //TODO añadido
     public CharacterState getCharacterState(Integer id) {
         return mRepository.getCharacterState(id);
     }
@@ -98,20 +93,6 @@ public class CharacterViewModel extends AndroidViewModel implements CharacterRep
     public void deleteStateCharacter(Integer id) {
         mRepository.deleteCharacterState(id);
     }
-
-    /*public void insertCharacter(CharacterEntityOLD character) {
-        mRepository.insertCharacter(character);
-    }
-
-    public void updateCharacter(CharacterEntityOLD character) {
-        mRepository.updateCharacter(character);
-    }
-
-    public void deleteCharacter(Integer id) {
-        mRepository.deleteCharacter(id);
-    }*/
-
-
 
     public void getAllCharacters(Integer offset, Integer limit) {
         mRepository.getAllCharacters(offset, limit);

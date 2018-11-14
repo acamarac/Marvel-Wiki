@@ -26,7 +26,9 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import es.unex.asee.proyectoasee.database.Entities.SeriesEntity;
+import es.unex.asee.proyectoasee.database.Entities.Series.SeriesEntityOLD;
+import es.unex.asee.proyectoasee.database.Entities.Series.SeriesState;
+import es.unex.asee.proyectoasee.database.Entities.Series.SeriesStateDataJOIN;
 import es.unex.asee.proyectoasee.database.ViewModel.SeriesViewModel;
 import es.unex.asee.proyectoasee.pojo.marvel.seriesDetails.Result;
 import es.unex.asee.proyectoasee.pojo.marvel.seriesDetails.SeriesDetails;
@@ -53,7 +55,7 @@ public class SeriesInformationFragment extends Fragment {
     private static final String imageSize = "/landscape_incredible";
 
     private SeriesViewModel mSeriesViewModel;
-    private SeriesEntity seriesDb;
+    private SeriesState seriesDb;
     private Integer idSeries;
 
     private MaterialFavoriteButton favButton;
@@ -117,7 +119,7 @@ public class SeriesInformationFragment extends Fragment {
 
         idSeries = series.getData().getResults().get(0).getId();
 
-        seriesDb = mSeriesViewModel.getSeries(idSeries);
+        seriesDb = mSeriesViewModel.getSeriesState(idSeries);
 
         loadSeriesData();
 
@@ -254,18 +256,18 @@ public class SeriesInformationFragment extends Fragment {
         //Si el usuario ya no está interesado, borramos el registro (en caso de que exista)
         if (!favSeries && !seenSeries && !pendingSeries && !followingSeries && ratingComic == 0) {
 
-            if (seriesDb != null) mSeriesViewModel.deleteSeries(seriesDetails.getId());
+            if (seriesDb != null) mSeriesViewModel.deleteStateSeries(seriesDetails.getId());
 
         } else {
 
-            SeriesEntity seriesInsert = new SeriesEntity(idSeries, seriesDetails.getTitle(),
+            SeriesStateDataJOIN seriesInsert = new SeriesStateDataJOIN(idSeries, seriesDetails.getTitle(),
                     seriesDetails.getThumbnail().getPath(), seriesDetails.getThumbnail().getExtension(),
-                    ratingComic, favSeries, seenSeries, pendingSeries, followingSeries);
+                    favSeries, ratingComic, seenSeries, pendingSeries, followingSeries);
 
             if (seriesDb == null) {
-                mSeriesViewModel.insertSeries(seriesInsert);
+                mSeriesViewModel.insertStateSeries(seriesInsert);
             } else {
-                mSeriesViewModel.updateSeries(seriesInsert);
+                mSeriesViewModel.updateStateSeries(seriesInsert);
             }
 
         }

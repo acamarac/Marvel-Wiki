@@ -25,6 +25,7 @@ import java.util.List;
 
 import es.unex.asee.proyectoasee.MainActivity;
 import es.unex.asee.proyectoasee.adapters.comics.ComicsAdapter;
+import es.unex.asee.proyectoasee.database.Entities.Comics.ComicData;
 import es.unex.asee.proyectoasee.database.ViewModel.ComicViewModel;
 import es.unex.asee.proyectoasee.pojo.marvel.comics.Result;
 import es.unex.asee.proyectoasee.preferences.SettingsFragment;
@@ -52,6 +53,9 @@ public class ComicsListFragment extends Fragment implements ComicsAdapter.Comics
     private SharedPreferences prefs;
     private int limitPreference = 0;
 
+    boolean isInOtherOption = false;
+
+    boolean storeInCache = true;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -77,18 +81,27 @@ public class ComicsListFragment extends Fragment implements ComicsAdapter.Comics
 
         prefs = PreferenceManager.getDefaultSharedPreferences(view.getContext());
 
-        String limitGet = prefs.getString(SettingsFragment.KEY_PREF_LIMIT, "");
+        String limitGet = prefs.getString(SettingsFragment.KEY_PREF_LIMIT, "20");
         limitPreference = Integer.valueOf(limitGet);
 
-        requestMoreComics();
+        requestCacheComics();
 
         mComicViewModel.getmAllComics().observe(getActivity(), new Observer<List<Result>>() {
             @Override
             public void onChanged(@Nullable List<Result> results) {
-                progressBar.setVisibility(View.VISIBLE);
-                adapter.addComicsPagination(results);
-                offset += results.size();
-                progressBar.setVisibility(View.GONE);
+                if (results.size() == 0 && !isInOtherOption) {
+                    requestMoreComics();
+                } else {
+                    for (Result result: results) {
+                        ComicData comic = new ComicData(result.getId(), result.getTitle(), result.getThumbnail().getPath(), result.getThumbnail().getExtension());
+                        mComicViewModel.insertCacheComic(comic);
+                    }
+                    progressBar.setVisibility(View.VISIBLE);
+                    adapter.addComicsPagination(results);
+                    offset += results.size();
+                    progressBar.setVisibility(View.GONE);
+                }
+
             }
         });
 
@@ -121,36 +134,14 @@ public class ComicsListFragment extends Fragment implements ComicsAdapter.Comics
         return view;
     }
 
-
-    /*public void requestComics() {
-        progressBar.setVisibility(View.VISIBLE);
-        mComicViewModel.getAllComics(offset,limitPreference).observe(getActivity(), new Observer<List<Result>>() {
-            @Override
-            public void onChanged(@Nullable List<Result> results) {
-                adapter.addComicsPagination(results);
-                offset = offset + results.size();
-            }
-        });
-        progressBar.setVisibility(View.GONE);
-    }*/
+    public void requestCacheComics() {
+        mComicViewModel.getCacheComics();
+    }
 
     public void requestMoreComics() {
         mComicViewModel.getAllComics(offset,limitPreference);
     }
 
-
-    /*private void searchComicByName(final String name) {
-        adapter.clearList();
-        progressBar.setVisibility(View.VISIBLE);
-        mComicViewModel.getComicByName(name).observe(getActivity(), new Observer<List<Result>>() {
-            @Override
-            public void onChanged(@Nullable List<Result> results) {
-                adapter.addComicsPagination(results);
-                offset = offset + results.size();
-            }
-        });
-        progressBar.setVisibility(View.GONE);
-    }*/
 
     private void searchComicByName(final String name) {
         adapter.clearList();
@@ -183,6 +174,7 @@ public class ComicsListFragment extends Fragment implements ComicsAdapter.Comics
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                storeInCache = false;
                 onSearch = true;
                 searchComicByName(query);
                 return false;
@@ -197,9 +189,10 @@ public class ComicsListFragment extends Fragment implements ComicsAdapter.Comics
         mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
+                storeInCache = true;
                 offset = 0;
                 adapter.clearList();
-                requestMoreComics();
+                requestCacheComics();
                 return false;
             }
         });
@@ -212,14 +205,17 @@ public class ComicsListFragment extends Fragment implements ComicsAdapter.Comics
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.menuShowFavorite:
+                isInOtherOption = true;
                 ((MainActivity) getActivity()).getSupportActionBar().setTitle("Favorite Comics");
                 displayFavComics();
                 return true;
             case R.id.menuShowRead:
+                isInOtherOption = true;
                 ((MainActivity) getActivity()).getSupportActionBar().setTitle("Read Comics");
                 displayReadComic();
                 return true;
             case R.id.menuShowReading:
+                isInOtherOption = true;
                 ((MainActivity) getActivity()).getSupportActionBar().setTitle("Reading Comics");
                 displayReadingComic();
                 return true;

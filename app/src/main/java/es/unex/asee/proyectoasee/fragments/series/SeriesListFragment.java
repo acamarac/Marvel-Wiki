@@ -25,6 +25,7 @@ import java.util.List;
 
 import es.unex.asee.proyectoasee.MainActivity;
 import es.unex.asee.proyectoasee.adapters.series.SeriesAdapter;
+import es.unex.asee.proyectoasee.database.Entities.Series.SeriesData;
 import es.unex.asee.proyectoasee.database.ViewModel.SeriesViewModel;
 import es.unex.asee.proyectoasee.pojo.marvel.series.Result;
 import es.unex.asee.proyectoasee.preferences.SettingsFragment;
@@ -52,6 +53,9 @@ public class SeriesListFragment extends Fragment implements SeriesAdapter.Series
     private SharedPreferences prefs;
     private int limitPreference = 0;
 
+    boolean isInOtherOption = false;
+
+    boolean storeInCache = true;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -77,18 +81,26 @@ public class SeriesListFragment extends Fragment implements SeriesAdapter.Series
 
         prefs = PreferenceManager.getDefaultSharedPreferences(view.getContext());
 
-        String limitGet = prefs.getString(SettingsFragment.KEY_PREF_LIMIT, "");
+        String limitGet = prefs.getString(SettingsFragment.KEY_PREF_LIMIT, "20");
         limitPreference = Integer.valueOf(limitGet);
 
-        requestMoreSeries();
+        requestCacheSeries();
 
         mSeriesViewModel.getmAllSeries().observe(getActivity(), new Observer<List<Result>>() {
             @Override
             public void onChanged(@Nullable List<Result> results) {
-                progressBar.setVisibility(View.VISIBLE);
-                adapter.addSeriesPagination(results);
-                offset = offset + results.size();
-                progressBar.setVisibility(View.GONE);
+                if (results.size() == 0 && !isInOtherOption) {
+                    requestMoreSeries();
+                } else {
+                    for (Result result: results) {
+                        SeriesData series = new SeriesData(result.getId(), result.getTitle(), result.getThumbnail().getPath(), result.getThumbnail().getExtension());
+                        mSeriesViewModel.insertCacheSeries(series);
+                    }
+                    progressBar.setVisibility(View.VISIBLE);
+                    adapter.addSeriesPagination(results);
+                    offset = offset + results.size();
+                    progressBar.setVisibility(View.GONE);
+                }
             }
         });
 
@@ -119,6 +131,10 @@ public class SeriesListFragment extends Fragment implements SeriesAdapter.Series
         });
 
         return view;
+    }
+
+    public void requestCacheSeries() {
+        mSeriesViewModel.getCacheSeries();
     }
 
     public void requestMoreSeries() {
@@ -163,6 +179,7 @@ public class SeriesListFragment extends Fragment implements SeriesAdapter.Series
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                storeInCache = false;
                 onSearch = true;
                 searchSeriesByName(query);
                 return false;
@@ -177,6 +194,7 @@ public class SeriesListFragment extends Fragment implements SeriesAdapter.Series
         mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
+                storeInCache = true;
                 offset = 0;
                 adapter.clearList();
                 requestMoreSeries();
@@ -192,18 +210,22 @@ public class SeriesListFragment extends Fragment implements SeriesAdapter.Series
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.menuShowFavorite:
+                isInOtherOption = true;
                 ((MainActivity) getActivity()).getSupportActionBar().setTitle("Favorite Series");
                 displayFavSeries();
                 return true;
             case R.id.menuShowSeen:
+                isInOtherOption = true;
                 ((MainActivity) getActivity()).getSupportActionBar().setTitle("Seen Series");
                 displaySeenseries();
                 return true;
             case R.id.menuShowPending:
+                isInOtherOption = true;
                 ((MainActivity) getActivity()).getSupportActionBar().setTitle("Pending Series");
                 displayPendingSeries();
                 return true;
             case R.id.menuShowFollowing:
+                isInOtherOption = true;
                 ((MainActivity) getActivity()).getSupportActionBar().setTitle("Following Series");
                 displayFollowingSeries();
                 return true;

@@ -1,8 +1,6 @@
 package es.unex.asee.proyectoasee.database.Repository;
 
 import android.app.Application;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 
 import java.io.IOException;
@@ -13,7 +11,10 @@ import java.util.concurrent.ExecutionException;
 
 import es.unex.asee.proyectoasee.client.APIClient;
 import es.unex.asee.proyectoasee.database.DAO.ComicDAO;
-import es.unex.asee.proyectoasee.database.Entities.ComicEntity;
+import es.unex.asee.proyectoasee.database.Entities.Comics.ComicCache;
+import es.unex.asee.proyectoasee.database.Entities.Comics.ComicData;
+import es.unex.asee.proyectoasee.database.Entities.Comics.ComicState;
+import es.unex.asee.proyectoasee.database.Entities.Comics.ComicStateDataJOIN;
 import es.unex.asee.proyectoasee.database.ROOM.CharacterRoomDatabase;
 import es.unex.asee.proyectoasee.interfaces.ApiInterface;
 import es.unex.asee.proyectoasee.pojo.marvel.comicDetails.ComicDetails;
@@ -50,9 +51,9 @@ public class ComicRepository {
          - DAO METHODS -
      ***********************/
 
-    public ComicEntity getComic(Integer id)  {
+    public ComicState getComicState(Integer id) {
         try {
-            return new getComicAsyncTask(mComicDAO).execute(id).get();
+            return new getComicStateAsyncTask(mComicDAO).execute(id).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -73,16 +74,28 @@ public class ComicRepository {
         new getReadingComicsAsyncTask(mComicDAO, mCallback).execute();
     }
 
-    public void insertComic(ComicEntity comic) {
-        new insertAsyncTask(mComicDAO).execute(comic);
+    public void getCacheComics() {
+        new getCacheComicsAsyncTask(mComicDAO, mCallback).execute();
     }
 
-    public void updateComic(ComicEntity comic) {
-        new updateAsyncTask(mComicDAO).execute(comic);
+    public void insertComicState(ComicState comic) {
+        new insertComicStateAsyncTask(mComicDAO).execute(comic);
     }
 
-    public void deleteComic(Integer id) {
-        new deleteComicAsyncTask(mComicDAO).execute(id);
+    public void insertComicData(ComicData comic) {
+        new insertComicDataAsyncTask(mComicDAO).execute(comic);
+    }
+
+    public void insertComicCache(ComicCache comic) {
+        new insertComicCacheAsyncTask(mComicDAO).execute(comic);
+    }
+
+    public void updateComicState(ComicState comic) {
+        new updateComicStateAsyncTask(mComicDAO).execute(comic);
+    }
+
+    public void deleteComicState(Integer id) {
+        new deleteComicStateAsyncTask(mComicDAO).execute(id);
     }
 
     /***********************
@@ -120,17 +133,17 @@ public class ComicRepository {
      - ASYNC TASK SELECTS -
      ***********************/
 
-    private static class getComicAsyncTask extends AsyncTask<Integer, Void, ComicEntity> {
+    private static class getComicStateAsyncTask extends AsyncTask<Integer, Void, ComicState> {
 
         private ComicDAO mAsyncTaskDao;
 
-        getComicAsyncTask(ComicDAO dao) {
+        getComicStateAsyncTask(ComicDAO dao) {
             mAsyncTaskDao = dao;
         }
 
         @Override
-        protected ComicEntity doInBackground(final Integer... params) {
-            return mAsyncTaskDao.getComic(params[0]);
+        protected ComicState doInBackground(final Integer... params) {
+            return mAsyncTaskDao.getComicState(params[0]);
         }
     }
 
@@ -146,16 +159,16 @@ public class ComicRepository {
 
         @Override
         protected List<Result> doInBackground(Void... voids) {
-            List<ComicEntity> comicEntities = mAsyncTaskDao.getFavoriteComics();
+            List<ComicStateDataJOIN> comicEntities = mAsyncTaskDao.getFavoriteComics();
             List<Result> results = new ArrayList<>();
 
-            for (ComicEntity comic : comicEntities) {
+            for (ComicStateDataJOIN comic : comicEntities) {
 
                 Result result = new Result();
                 Thumbnail th = new Thumbnail();
 
                 result.setId(comic.getId());
-                result.setTitle(comic.getTitle());
+                result.setTitle(comic.getName());
                 th.setPath(comic.getThumbnailPath());
                 th.setExtension(comic.getThumbnailExtension());
                 result.setThumbnail(th);
@@ -185,16 +198,16 @@ public class ComicRepository {
 
         @Override
         protected List<Result> doInBackground(Void... voids) {
-            List<ComicEntity> comicEntities = mAsyncTaskDao.getReadComics();
+            List<ComicStateDataJOIN> comicEntities = mAsyncTaskDao.getReadComics();
             List<Result> results = new ArrayList<>();
 
-            for (ComicEntity comic : comicEntities) {
+            for (ComicStateDataJOIN comic : comicEntities) {
 
                 Result result = new Result();
                 Thumbnail th = new Thumbnail();
 
                 result.setId(comic.getId());
-                result.setTitle(comic.getTitle());
+                result.setTitle(comic.getName());
                 th.setPath(comic.getThumbnailPath());
                 th.setExtension(comic.getThumbnailExtension());
                 result.setThumbnail(th);
@@ -224,16 +237,55 @@ public class ComicRepository {
 
         @Override
         protected List<Result> doInBackground(Void... voids) {
-            List<ComicEntity> comicEntities = mAsyncTaskDao.getReadingComics();
+            List<ComicStateDataJOIN> comicEntities = mAsyncTaskDao.getReadingComics();
             List<Result> results = new ArrayList<>();
 
-            for (ComicEntity comic : comicEntities) {
+            for (ComicStateDataJOIN comic : comicEntities) {
 
                 Result result = new Result();
                 Thumbnail th = new Thumbnail();
 
                 result.setId(comic.getId());
-                result.setTitle(comic.getTitle());
+                result.setTitle(comic.getName());
+                th.setPath(comic.getThumbnailPath());
+                th.setExtension(comic.getThumbnailExtension());
+                result.setThumbnail(th);
+
+                results.add(result);
+            }
+
+            return results;
+        }
+
+        @Override
+        protected void onPostExecute(List<Result> results) {
+            mCallback.sendAllComics(results);
+            super.onPostExecute(results);
+        }
+    }
+
+    private static class getCacheComicsAsyncTask extends AsyncTask<Void, Void, List<Result>> {
+
+        private ComicDAO mAsyncTaskDao;
+        private AsyncResponseInterfaceComic mCallback;
+
+        getCacheComicsAsyncTask(ComicDAO dao, AsyncResponseInterfaceComic mCallback) {
+            mAsyncTaskDao = dao;
+            this.mCallback = mCallback;
+        }
+
+        @Override
+        protected List<Result> doInBackground(Void... voids) {
+            List<ComicData> comicEntities = mAsyncTaskDao.getCacheComics();
+            List<Result> results = new ArrayList<>();
+
+            for (ComicData comic : comicEntities) {
+
+                Result result = new Result();
+                Thumbnail th = new Thumbnail();
+
+                result.setId(comic.getId());
+                result.setTitle(comic.getName());
                 th.setPath(comic.getThumbnailPath());
                 th.setExtension(comic.getThumbnailExtension());
                 result.setThumbnail(th);
@@ -395,17 +447,47 @@ public class ComicRepository {
      ***********************/
 
 
-    private static class insertAsyncTask extends AsyncTask<ComicEntity, Void, Void> {
+    private static class insertComicStateAsyncTask extends AsyncTask<ComicState, Void, Void> {
 
         private ComicDAO mAsyncTaskDao;
 
-        insertAsyncTask(ComicDAO dao) {
+        insertComicStateAsyncTask(ComicDAO dao) {
             mAsyncTaskDao = dao;
         }
 
         @Override
-        protected Void doInBackground(final ComicEntity... params) {
-            mAsyncTaskDao.insertComic(params[0]);
+        protected Void doInBackground(final ComicState... params) {
+            mAsyncTaskDao.insertStateComic(params[0]);
+            return null;
+        }
+    }
+
+    private static class insertComicDataAsyncTask extends AsyncTask<ComicData, Void, Void> {
+
+        private ComicDAO mAsyncTaskDao;
+
+        insertComicDataAsyncTask(ComicDAO dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(final ComicData... params) {
+            mAsyncTaskDao.insertDataComic(params[0]);
+            return null;
+        }
+    }
+
+    private static class insertComicCacheAsyncTask extends AsyncTask<ComicCache, Void, Void> {
+
+        private ComicDAO mAsyncTaskDao;
+
+        insertComicCacheAsyncTask(ComicDAO dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(final ComicCache... params) {
+            mAsyncTaskDao.insertCacheComic(params[0]);
             return null;
         }
     }
@@ -416,17 +498,17 @@ public class ComicRepository {
      ***********************/
 
 
-    private static class updateAsyncTask extends AsyncTask<ComicEntity, Void, Void> {
+    private static class updateComicStateAsyncTask extends AsyncTask<ComicState, Void, Void> {
 
         private ComicDAO mAsyncTaskDao;
 
-        updateAsyncTask(ComicDAO dao) {
+        updateComicStateAsyncTask(ComicDAO dao) {
             mAsyncTaskDao = dao;
         }
 
         @Override
-        protected Void doInBackground(final ComicEntity... params) {
-            mAsyncTaskDao.updateComic(params[0]);
+        protected Void doInBackground(final ComicState... params) {
+            mAsyncTaskDao.updateStateComic(params[0]);
             return null;
         }
     }
@@ -435,17 +517,17 @@ public class ComicRepository {
      - ASYNC TASK DELETES -
      ***********************/
 
-    private static class deleteComicAsyncTask extends AsyncTask<Integer, Void, Void> {
+    private static class deleteComicStateAsyncTask extends AsyncTask<Integer, Void, Void> {
 
         private ComicDAO mAsyncTaskDao;
 
-        deleteComicAsyncTask(ComicDAO dao) {
+        deleteComicStateAsyncTask(ComicDAO dao) {
             mAsyncTaskDao = dao;
         }
 
         @Override
         protected Void doInBackground(final Integer... params) {
-            mAsyncTaskDao.deleteComic(params[0]);
+            mAsyncTaskDao.deleteStateComic(params[0]);
             return null;
         }
     }
