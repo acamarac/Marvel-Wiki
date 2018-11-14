@@ -10,8 +10,14 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 
 import com.example.android.proyectoasee.R;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import es.unex.asee.proyectoasee.fragments.characters.CharacterDetailMainFragment;
 import es.unex.asee.proyectoasee.fragments.characters.CharacterInformationFragment;
@@ -40,6 +46,7 @@ public class MainActivity extends AppCompatActivity
     DrawerLayout drawerLayout;
     Toolbar toolbar;
     ActionBar actionBar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

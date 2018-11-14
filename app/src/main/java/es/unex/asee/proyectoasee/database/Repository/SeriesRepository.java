@@ -98,7 +98,6 @@ public class SeriesRepository {
         new getAllSeriesAsyncTask(mApiInterface,mCallback).execute(offset,limit);
     }
 
-    //TODO cambiar
     public void getSeriesByName(String name) {
         new getSeriesByNameAsyncTask(mApiInterface,mCallback).execute(name);
     }

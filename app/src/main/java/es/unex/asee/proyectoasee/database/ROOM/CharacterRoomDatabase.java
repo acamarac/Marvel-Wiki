@@ -8,11 +8,13 @@ import android.content.Context;
 import es.unex.asee.proyectoasee.database.DAO.CharacterDAO;
 import es.unex.asee.proyectoasee.database.DAO.ComicDAO;
 import es.unex.asee.proyectoasee.database.DAO.SeriesDAO;
-import es.unex.asee.proyectoasee.database.Entities.CharacterEntity;
+import es.unex.asee.proyectoasee.database.Entities.Characters.CharacterCache;
+import es.unex.asee.proyectoasee.database.Entities.Characters.CharacterData;
+import es.unex.asee.proyectoasee.database.Entities.Characters.CharacterState;
 import es.unex.asee.proyectoasee.database.Entities.ComicEntity;
 import es.unex.asee.proyectoasee.database.Entities.SeriesEntity;
 
-@Database(entities = {CharacterEntity.class, ComicEntity.class, SeriesEntity.class}, version = 4)
+@Database(entities = {CharacterState.class, CharacterData.class, CharacterCache.class, ComicEntity.class, SeriesEntity.class}, version = 5)
 public abstract class CharacterRoomDatabase extends RoomDatabase {
 
     public abstract CharacterDAO characterDao();

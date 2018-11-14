@@ -1,8 +1,6 @@
 package es.unex.asee.proyectoasee.database.Repository;
 
 import android.app.Application;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 
 import java.io.IOException;
@@ -12,7 +10,10 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import es.unex.asee.proyectoasee.database.DAO.CharacterDAO;
-import es.unex.asee.proyectoasee.database.Entities.CharacterEntity;
+import es.unex.asee.proyectoasee.database.Entities.Characters.CharacterCache;
+import es.unex.asee.proyectoasee.database.Entities.Characters.CharacterData;
+import es.unex.asee.proyectoasee.database.Entities.Characters.CharacterState;
+import es.unex.asee.proyectoasee.database.Entities.Characters.CharacterStateDataJOIN;
 import es.unex.asee.proyectoasee.database.ROOM.CharacterRoomDatabase;
 import es.unex.asee.proyectoasee.client.APIClient;
 import es.unex.asee.proyectoasee.interfaces.ApiInterface;
@@ -22,7 +23,6 @@ import es.unex.asee.proyectoasee.pojo.marvel.characters.Result;
 import es.unex.asee.proyectoasee.pojo.marvel.characters.Thumbnail;
 import es.unex.asee.proyectoasee.utils.Utils;
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 
 public class CharacterRepository {
@@ -51,10 +51,21 @@ public class CharacterRepository {
      - DAO METHODS -
      ***********************/
 
-
-    public CharacterEntity getCharacter(Integer id) {
+//TODO cambiar
+    /*public CharacterEntityOLD getCharacter(Integer id) {
         try {
             return new getCharacterAsyncTask(mCharacterDAO).execute(id).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }*/
+
+    public  CharacterState getCharacterState(Integer id) {
+        try {
+            return new getCharacterStateAsyncTask(mCharacterDAO).execute(id).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -69,17 +80,52 @@ public class CharacterRepository {
      *
      * @return
      */
+    /*public void getAllFavoriteCharacters() {
+        new getAllFavoriteCharactersAsyncTask(mCharacterDAO, mCallback).execute();
+    }*/
+
+    //TODO cambiado
     public void getAllFavoriteCharacters() {
         new getAllFavoriteCharactersAsyncTask(mCharacterDAO, mCallback).execute();
     }
 
+    //TODO añadido
+    public void getCacheCharacters() {
+        new getCacheCharactersAsyncTask(mCharacterDAO, mCallback).execute();
+    }
 
-    public void insertCharacter(CharacterEntity character) {
+
+    /*public void insertCharacter(CharacterEntityOLD character) {
         new insertAsyncTask(mCharacterDAO).execute(character);
     }
 
-    public void updateCharacter(CharacterEntity character) {
+    public void updateCharacter(CharacterEntityOLD character) {
         new updateAsyncTask(mCharacterDAO).execute(character);
+    }
+
+    public void deleteCharacter(Integer id) {
+        new deleteAsyncTask(mCharacterDAO).execute(id);
+    }*/
+
+    //TODO cambiado
+    public void insertCharacterState(CharacterState character) {
+        new insertCharacterStateAsyncTask(mCharacterDAO).execute(character);
+    }
+
+    public void updateCharacterState(CharacterState character) {
+        new updateCharacterStateAsyncTask(mCharacterDAO).execute(character);
+    }
+
+    public void deleteCharacterState(Integer id) {
+        new deleteCharacterStateAsyncTask(mCharacterDAO).execute(id);
+    }
+
+    public void insertCharacterData(CharacterData character) {
+        new insertCharacterDataAsyncTask(mCharacterDAO).execute(character);
+    }
+
+    public void insertCharacterCache(CharacterCache character) {
+        new insertCharacterCacheAsyncTask(mCharacterDAO).execute(character);
     }
 
 
@@ -121,17 +167,31 @@ public class CharacterRepository {
      - ASYNC TASK SELECTS -
      ***********************/
 
-    private static class getCharacterAsyncTask extends AsyncTask<Integer, Void, CharacterEntity> {
+    /*private static class getCharacterAsyncTask extends AsyncTask<Integer, Void, CharacterEntityOLD> {
 
-        private CharacterDAO mAsyncTaskDao;
+        private CharacterDAOOLD mAsyncTaskDao;
 
-        getCharacterAsyncTask(CharacterDAO dao) {
+        getCharacterAsyncTask(CharacterDAOOLD dao) {
             mAsyncTaskDao = dao;
         }
 
         @Override
-        protected CharacterEntity doInBackground(final Integer... params) {
+        protected CharacterEntityOLD doInBackground(final Integer... params) {
             return mAsyncTaskDao.getCharacter(params[0]);
+        }
+    }*/
+
+    private static class getCharacterStateAsyncTask extends AsyncTask<Integer, Void, CharacterState> {
+
+        private CharacterDAO mAsyncTaskDao;
+
+        getCharacterStateAsyncTask(CharacterDAO dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected CharacterState doInBackground(final Integer... params) {
+            return mAsyncTaskDao.getCharacterState(params[0]);
         }
     }
 
@@ -147,10 +207,50 @@ public class CharacterRepository {
 
         @Override
         protected List<Result> doInBackground(Void... voids) {
-            List<CharacterEntity> characterEntities = mAsyncTaskDao.getAllFavoriteCharacters();
+            List<CharacterStateDataJOIN> characterEntities = mAsyncTaskDao.getAllFavoriteCharacters();
             List<Result> results = new ArrayList<>();
 
-            for (CharacterEntity character : characterEntities) {
+            for (CharacterStateDataJOIN character : characterEntities) {
+
+                Result result = new Result();
+                Thumbnail th = new Thumbnail();
+
+                result.setId(character.getId());
+                result.setName(character.getName());
+                th.setPath(character.getThumbnailPath());
+                th.setExtension(character.getThumbnailExtension());
+                result.setThumbnail(th);
+
+                results.add(result);
+            }
+
+            return results;
+        }
+
+        @Override
+        protected void onPostExecute(List<Result> results) {
+            mCallback.sendAllCharacters(results);
+            super.onPostExecute(results);
+        }
+    }
+
+
+    private static class getCacheCharactersAsyncTask extends AsyncTask<Void, Void, List<Result>> {
+
+        private CharacterDAO mAsyncTaskDao;
+        private AsyncResponseInterface mCallback;
+
+        getCacheCharactersAsyncTask(CharacterDAO dao, AsyncResponseInterface mCallback) {
+            mAsyncTaskDao = dao;
+            this.mCallback = mCallback;
+        }
+
+        @Override
+        protected List<Result> doInBackground(Void... voids) {
+            List<CharacterData> characterEntities = mAsyncTaskDao.getCacheData();
+            List<Result> results = new ArrayList<>();
+
+            for (CharacterData character : characterEntities) {
 
                 Result result = new Result();
                 Thumbnail th = new Thumbnail();
@@ -317,18 +417,47 @@ public class CharacterRepository {
      - ASYNC TASK INSERTS -
      ***********************/
 
-
-    private static class insertAsyncTask extends AsyncTask<CharacterEntity, Void, Void> {
+    private static class insertCharacterStateAsyncTask extends AsyncTask<CharacterState, Void, Void> {
 
         private CharacterDAO mAsyncTaskDao;
 
-        insertAsyncTask(CharacterDAO dao) {
+        insertCharacterStateAsyncTask(CharacterDAO dao) {
             mAsyncTaskDao = dao;
         }
 
         @Override
-        protected Void doInBackground(final CharacterEntity... params) {
-            mAsyncTaskDao.insertCharacter(params[0]);
+        protected Void doInBackground(final CharacterState... params) {
+            mAsyncTaskDao.insertStateCharacter(params[0]);
+            return null;
+        }
+    }
+
+    private static class insertCharacterDataAsyncTask extends AsyncTask<CharacterData, Void, Void> {
+
+        private CharacterDAO mAsyncTaskDao;
+
+        insertCharacterDataAsyncTask(CharacterDAO dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(final CharacterData... params) {
+            mAsyncTaskDao.insertDataCharacter(params[0]);
+            return null;
+        }
+    }
+
+    private static class insertCharacterCacheAsyncTask extends AsyncTask<CharacterCache, Void, Void> {
+
+        private CharacterDAO mAsyncTaskDao;
+
+        insertCharacterCacheAsyncTask(CharacterDAO dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(final CharacterCache... params) {
+            mAsyncTaskDao.insertCacheCharacter(params[0]);
             return null;
         }
     }
@@ -338,18 +467,32 @@ public class CharacterRepository {
      - ASYNC TASK UPDATES -
      ***********************/
 
-
-    private static class updateAsyncTask extends AsyncTask<CharacterEntity, Void, Void> {
+    private static class updateCharacterStateAsyncTask extends AsyncTask<CharacterState, Void, Void> {
 
         private CharacterDAO mAsyncTaskDao;
 
-        updateAsyncTask(CharacterDAO dao) {
+        updateCharacterStateAsyncTask(CharacterDAO dao) {
             mAsyncTaskDao = dao;
         }
 
         @Override
-        protected Void doInBackground(final CharacterEntity... params) {
-            mAsyncTaskDao.updateCharacter(params[0]);
+        protected Void doInBackground(final CharacterState... params) {
+            mAsyncTaskDao.updateStateCharacter(params[0]);
+            return null;
+        }
+    }
+
+    private static class deleteCharacterStateAsyncTask extends AsyncTask<Integer, Void, Void> {
+
+        private CharacterDAO mAsyncTaskDao;
+
+        deleteCharacterStateAsyncTask(CharacterDAO dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(final Integer... params) {
+            mAsyncTaskDao.deleteStateCharacter(params[0]);
             return null;
         }
     }

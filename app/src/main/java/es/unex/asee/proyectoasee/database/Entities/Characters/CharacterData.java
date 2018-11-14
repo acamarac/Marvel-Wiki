@@ -1,20 +1,18 @@
-package es.unex.asee.proyectoasee.database.Entities;
+package es.unex.asee.proyectoasee.database.Entities.Characters;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-@Entity(tableName = "CharacterEntity")
-public class CharacterEntity {
+@Entity(tableName = "CharacterData")
+public class CharacterData {
 
-    public CharacterEntity(Integer id, String name, String thumbnailPath, String thumbnailExtension, boolean favorite, float rating) {
+    public CharacterData(@NonNull Integer id, @NonNull String name, @NonNull String thumbnailPath, @NonNull String thumbnailExtension) {
         this.id = id;
         this.name = name;
         this.thumbnailPath = thumbnailPath;
         this.thumbnailExtension = thumbnailExtension;
-        this.favorite = favorite;
-        this.rating = rating;
     }
 
     @PrimaryKey
@@ -34,13 +32,6 @@ public class CharacterEntity {
     @ColumnInfo(name = "thumbnailExtension")
     private String thumbnailExtension;
 
-    @NonNull
-    @ColumnInfo(name = "favorite")
-    private boolean favorite;
-
-    @NonNull
-    @ColumnInfo(name = "rating")
-    private float rating;
 
     @NonNull
     public Integer getId() {
@@ -76,23 +67,5 @@ public class CharacterEntity {
 
     public void setThumbnailExtension(@NonNull String thumbnailExtension) {
         this.thumbnailExtension = thumbnailExtension;
-    }
-
-    @NonNull
-    public boolean isFavorite() {
-        return favorite;
-    }
-
-    public void setFavorite(@NonNull boolean favorite) {
-        this.favorite = favorite;
-    }
-
-    @NonNull
-    public float getRating() {
-        return rating;
-    }
-
-    public void setRating(@NonNull float rating) {
-        this.rating = rating;
     }
 }
