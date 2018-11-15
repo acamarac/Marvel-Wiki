@@ -24,6 +24,8 @@ import com.example.android.proyectoasee.R;
 import com.github.ivbaranov.mfb.MaterialFavoriteButton;
 import com.squareup.picasso.Picasso;
 
+import org.w3c.dom.Text;
+
 import java.util.List;
 
 import es.unex.asee.proyectoasee.database.Entities.Series.SeriesEntityOLD;
@@ -49,6 +51,9 @@ public class SeriesInformationFragment extends Fragment {
     private RadioButton rbFollowing;
     private RadioButton rbPending;
     private RadioGroup radioGroup;
+    private LinearLayout relatedLayout;
+    private TextView nextSeries;
+    private TextView previousSeries;
 
     private LinearLayout mLinearLayout;
 
@@ -106,6 +111,9 @@ public class SeriesInformationFragment extends Fragment {
         rbFollowing = (RadioButton) view.findViewById(R.id.followingSeries);
         rbPending = (RadioButton) view.findViewById(R.id.pendingSeries);
         radioGroup = (RadioGroup) view.findViewById(R.id.seriesRadioButtonGroup);
+        relatedLayout = (LinearLayout) view.findViewById(R.id.layoutSeriesPrev);
+        nextSeries = (TextView) view.findViewById(R.id.tvNextSeries);
+        previousSeries = (TextView) view.findViewById(R.id.tvPreviousSeries);
 
         prefs = PreferenceManager.getDefaultSharedPreferences(view.getContext());
         loadImages = prefs.getBoolean(SettingsFragment.KEY_PREF_LOAD_IMAGES, true);
@@ -197,7 +205,13 @@ public class SeriesInformationFragment extends Fragment {
                         .into(ivComicImage);
             }
 
-
+            if (comicDetail.getNext() != null || comicDetail.getPrevious() != null) {
+                relatedLayout.setVisibility(View.VISIBLE);
+                if (comicDetail.getNext() != null) nextSeries.setText(comicDetail.getNext().getName());
+                else nextSeries.setText("-");
+                if (comicDetail.getPrevious() != null) previousSeries.setText(comicDetail.getPrevious().getName());
+                else previousSeries.setText("-");
+            }
 
 
             webButton.setOnClickListener(new View.OnClickListener() {

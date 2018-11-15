@@ -11,7 +11,7 @@
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/light_red"
+        android:background="@color/redTab"
         app:tabIndicatorColor="@color/yellowHighlight"
         app:tabTextColor="@color/white"
         app:tabSelectedTextColor="@color/yellowHighlight"

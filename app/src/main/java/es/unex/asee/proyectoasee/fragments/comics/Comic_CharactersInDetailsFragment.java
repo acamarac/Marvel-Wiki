@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.example.android.proyectoasee.R;
 
@@ -27,6 +28,8 @@ public class Comic_CharactersInDetailsFragment extends Fragment implements Comic
     LinearLayoutManager mLinearLayoutManager;
     Comic_CharactersInDetailsAdapter adapter;
     ComicDetails comic;
+
+    RelativeLayout mRelativeLayout;
 
 
     @Override
@@ -60,6 +63,12 @@ public class Comic_CharactersInDetailsFragment extends Fragment implements Comic
 
         if (savedInstanceState != null) {
             comic = (ComicDetails) savedInstanceState.getSerializable("comic");
+        }
+
+        mRelativeLayout = (RelativeLayout) view.findViewById(R.id.no_data_layout);
+
+        if (comic.getData().getResults().get(0).getCharacters().getItems().size() == 0) {
+            mRelativeLayout.setVisibility(View.VISIBLE);
         }
 
         adapter = new Comic_CharactersInDetailsAdapter(comic.getData().getResults().get(0).getCharacters().getItems(), view.getContext(), Comic_CharactersInDetailsFragment.this);

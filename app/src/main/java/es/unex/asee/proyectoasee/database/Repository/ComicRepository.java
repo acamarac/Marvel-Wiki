@@ -62,7 +62,7 @@ public class ComicRepository {
         return null;
     }
 
-    public void getFavoriteComics()  {
+    public void getFavoriteComics() {
         new getFavoriteComicsAsyncTask(mComicDAO, mCallback).execute();
     }
 

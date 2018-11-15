@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.example.android.proyectoasee.R;
 
@@ -57,6 +58,8 @@ public class ComicsListFragment extends Fragment implements ComicsAdapter.Comics
 
     boolean storeInCache = true;
 
+    RelativeLayout mRelativeLayout;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -84,6 +87,8 @@ public class ComicsListFragment extends Fragment implements ComicsAdapter.Comics
         String limitGet = prefs.getString(SettingsFragment.KEY_PREF_LIMIT, "20");
         limitPreference = Integer.valueOf(limitGet);
 
+        mRelativeLayout = (RelativeLayout) view.findViewById(R.id.no_data_r_layout);
+
         requestCacheComics();
 
         mComicViewModel.getmAllComics().observe(getActivity(), new Observer<List<Result>>() {
@@ -92,16 +97,20 @@ public class ComicsListFragment extends Fragment implements ComicsAdapter.Comics
                 if (results.size() == 0 && !isInOtherOption) {
                     requestMoreComics();
                 } else {
-                    for (Result result: results) {
-                        ComicData comic = new ComicData(result.getId(), result.getTitle(), result.getThumbnail().getPath(), result.getThumbnail().getExtension());
-                        mComicViewModel.insertCacheComic(comic);
+                    if (results.size() == 0 && isInOtherOption) {
+                        mRelativeLayout.setVisibility(View.VISIBLE);
+                    } else {
+                        mRelativeLayout.setVisibility(View.GONE);
+                        for (Result result: results) {
+                            ComicData comic = new ComicData(result.getId(), result.getTitle(), result.getThumbnail().getPath(), result.getThumbnail().getExtension());
+                            mComicViewModel.insertCacheComic(comic);
+                        }
+                        progressBar.setVisibility(View.VISIBLE);
+                        adapter.addComicsPagination(results);
+                        offset += results.size();
+                        progressBar.setVisibility(View.GONE);
                     }
-                    progressBar.setVisibility(View.VISIBLE);
-                    adapter.addComicsPagination(results);
-                    offset += results.size();
-                    progressBar.setVisibility(View.GONE);
                 }
-
             }
         });
 
@@ -148,32 +157,18 @@ public class ComicsListFragment extends Fragment implements ComicsAdapter.Comics
         mComicViewModel.getComicByName(name);
     }
 
-    private void displayFavComics() {
-        adapter.clearList();
-        mComicViewModel.getFavoriteComics();
-    }
-
-    private void displayReadComic() {
-        adapter.clearList();
-        mComicViewModel.getReadComics();
-    }
-
-    private void displayReadingComic() {
-        adapter.clearList();
-        mComicViewModel.getReadingComics();
-    }
-
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
-        inflater.inflate(R.menu.comic_list_menu, menu);
+        inflater.inflate(R.menu.search_menu, menu);
         MenuItem item = menu.findItem(R.id.menuSearch);
         mSearchView = (SearchView) item.getActionView();
 
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                isInOtherOption = true;
                 storeInCache = false;
                 onSearch = true;
                 searchComicByName(query);
@@ -189,6 +184,7 @@ public class ComicsListFragment extends Fragment implements ComicsAdapter.Comics
         mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
+                isInOtherOption = false;
                 storeInCache = true;
                 offset = 0;
                 adapter.clearList();
@@ -200,29 +196,6 @@ public class ComicsListFragment extends Fragment implements ComicsAdapter.Comics
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.menuShowFavorite:
-                isInOtherOption = true;
-                ((MainActivity) getActivity()).getSupportActionBar().setTitle("Favorite Comics");
-                displayFavComics();
-                return true;
-            case R.id.menuShowRead:
-                isInOtherOption = true;
-                ((MainActivity) getActivity()).getSupportActionBar().setTitle("Read Comics");
-                displayReadComic();
-                return true;
-            case R.id.menuShowReading:
-                isInOtherOption = true;
-                ((MainActivity) getActivity()).getSupportActionBar().setTitle("Reading Comics");
-                displayReadingComic();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
 
     @Override
     public void sendComicId(Integer id, ComicDetailMainFragment fragment) {

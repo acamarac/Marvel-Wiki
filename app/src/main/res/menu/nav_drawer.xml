@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="@string/characters">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/item_all_characters"
+                    android:icon="@drawable/ic_characters_2"
+                    android:title="All"></item>
+                <item
+                    android:id="@+id/item_fav_characters"
+                    android:icon="@drawable/ic_fav"
+                    android:title="Favorite"></item>
+            </group>
+        </menu>
+    </item>
+
+    <item android:title="@string/comics">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/item_all_comics"
+                    android:icon="@drawable/ic_comics"
+                    android:title="All"></item>
+                <item
+                    android:id="@+id/item_fav_comics"
+                    android:icon="@drawable/ic_fav"
+                    android:title="Favorite"></item>
+                <item
+                    android:id="@+id/item_read_comics"
+                    android:icon="@drawable/read_icon"
+                    android:title="Read"></item>
+                <item
+                    android:id="@+id/item_reading_comics"
+                    android:icon="@drawable/reading_icon_2"
+                    android:title="Reading"></item>
+            </group>
+        </menu>
+    </item>
+
+    <item android:title="@string/series">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/item_all_series"
+                    android:icon="@drawable/ic_series"
+                    android:title="All"></item>
+                <item
+                    android:id="@+id/item_fav_series"
+                    android:icon="@drawable/ic_fav"
+                    android:title="Favorite"></item>
+                <item
+                    android:id="@+id/item_seen_series"
+                    android:icon="@drawable/seen_icon"
+                    android:title="Seen"></item>
+                <item
+                    android:id="@+id/item_pending_series"
+                    android:icon="@drawable/pending_icon"
+                    android:title="Pending"></item>
+                <item
+                    android:id="@+id/item_following_series"
+                    android:icon="@drawable/following_icon"
+                    android:title="Following"></item>
+            </group>
+        </menu>
+    </item>
+
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/item_preferences"
+            android:icon="@drawable/settings"
+            android:title="@string/settings" />
+    </group>
+
+
+</menu>

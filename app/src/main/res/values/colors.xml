@@ -8,4 +8,7 @@
     <color name="yellowHighlight">#FEF3BB</color>
     <color name="grey">#F5F5F5</color>
     <color name="light_red">#FF6347</color>
+    <color name="black">#000000</color>
+    <color name="redTop">#F03B1A</color>
+    <color name="redTab">#FF816A</color>
 </resources>

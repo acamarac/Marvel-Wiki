@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.example.android.proyectoasee.R;
 
@@ -26,6 +27,7 @@ public class Series_CharactersInDetailsFragment extends Fragment implements Seri
     Series_CharactersInDetailsAdapter adapter;
     SeriesDetails series;
 
+    RelativeLayout mRelativeLayout;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,6 +60,11 @@ public class Series_CharactersInDetailsFragment extends Fragment implements Seri
 
         if (savedInstanceState != null) {
             series = (SeriesDetails) savedInstanceState.getSerializable("series");
+        }
+
+        if (series.getData().getResults().get(0).getCharacters().getItems().size() == 0) {
+            mRelativeLayout = (RelativeLayout) view.findViewById(R.id.no_data_layout);
+            mRelativeLayout.setVisibility(View.VISIBLE);
         }
 
         adapter = new Series_CharactersInDetailsAdapter(series.getData().getResults().get(0).getCharacters().getItems(), view.getContext(), Series_CharactersInDetailsFragment.this);

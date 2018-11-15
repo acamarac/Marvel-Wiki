@@ -201,7 +201,7 @@ public class Result implements Serializable
         this.next = next;
     }
 
-    public Object getPrevious() {
+    public Next getPrevious() {
         return previous;
     }
 

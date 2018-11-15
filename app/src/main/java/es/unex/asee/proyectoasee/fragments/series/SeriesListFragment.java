@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.example.android.proyectoasee.R;
 
@@ -57,6 +58,8 @@ public class SeriesListFragment extends Fragment implements SeriesAdapter.Series
 
     boolean storeInCache = true;
 
+    RelativeLayout mRelativeLayout;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -84,6 +87,8 @@ public class SeriesListFragment extends Fragment implements SeriesAdapter.Series
         String limitGet = prefs.getString(SettingsFragment.KEY_PREF_LIMIT, "20");
         limitPreference = Integer.valueOf(limitGet);
 
+        mRelativeLayout = (RelativeLayout) view.findViewById(R.id.no_data_r_layout);
+
         requestCacheSeries();
 
         mSeriesViewModel.getmAllSeries().observe(getActivity(), new Observer<List<Result>>() {
@@ -92,14 +97,20 @@ public class SeriesListFragment extends Fragment implements SeriesAdapter.Series
                 if (results.size() == 0 && !isInOtherOption) {
                     requestMoreSeries();
                 } else {
-                    for (Result result: results) {
-                        SeriesData series = new SeriesData(result.getId(), result.getTitle(), result.getThumbnail().getPath(), result.getThumbnail().getExtension());
-                        mSeriesViewModel.insertCacheSeries(series);
+                    if (results.size() == 0 && isInOtherOption) {
+                        mRelativeLayout.setVisibility(View.VISIBLE);
+                    } else {
+                        mRelativeLayout.setVisibility(View.GONE);
+                        for (Result result: results) {
+                            SeriesData series = new SeriesData(result.getId(), result.getTitle(), result.getThumbnail().getPath(), result.getThumbnail().getExtension());
+                            mSeriesViewModel.insertCacheSeries(series);
+                        }
+                        progressBar.setVisibility(View.VISIBLE);
+                        adapter.addSeriesPagination(results);
+                        offset = offset + results.size();
+                        progressBar.setVisibility(View.GONE);
                     }
-                    progressBar.setVisibility(View.VISIBLE);
-                    adapter.addSeriesPagination(results);
-                    offset = offset + results.size();
-                    progressBar.setVisibility(View.GONE);
+
                 }
             }
         });
@@ -148,37 +159,17 @@ public class SeriesListFragment extends Fragment implements SeriesAdapter.Series
     }
 
 
-    private void displayFavSeries() {
-        adapter.clearList();
-        mSeriesViewModel.getFavoriteSeries();
-    }
-
-    private void displaySeenseries() {
-        adapter.clearList();
-        mSeriesViewModel.getSeenSeries();
-    }
-
-    private void displayPendingSeries() {
-        adapter.clearList();
-        mSeriesViewModel.getPendingSeries();
-    }
-
-    private void displayFollowingSeries() {
-        adapter.clearList();
-        mSeriesViewModel.getFollowingSeries();
-    }
-
-
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
-        inflater.inflate(R.menu.series_list_menu, menu);
+        inflater.inflate(R.menu.search_menu, menu);
         MenuItem item = menu.findItem(R.id.menuSearch);
         mSearchView = (SearchView) item.getActionView();
 
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                isInOtherOption = true;
                 storeInCache = false;
                 onSearch = true;
                 searchSeriesByName(query);
@@ -194,44 +185,16 @@ public class SeriesListFragment extends Fragment implements SeriesAdapter.Series
         mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
+                isInOtherOption = false;
                 storeInCache = true;
                 offset = 0;
                 adapter.clearList();
-                requestMoreSeries();
+                requestCacheSeries();;
                 return false;
             }
         });
 
         super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.menuShowFavorite:
-                isInOtherOption = true;
-                ((MainActivity) getActivity()).getSupportActionBar().setTitle("Favorite Series");
-                displayFavSeries();
-                return true;
-            case R.id.menuShowSeen:
-                isInOtherOption = true;
-                ((MainActivity) getActivity()).getSupportActionBar().setTitle("Seen Series");
-                displaySeenseries();
-                return true;
-            case R.id.menuShowPending:
-                isInOtherOption = true;
-                ((MainActivity) getActivity()).getSupportActionBar().setTitle("Pending Series");
-                displayPendingSeries();
-                return true;
-            case R.id.menuShowFollowing:
-                isInOtherOption = true;
-                ((MainActivity) getActivity()).getSupportActionBar().setTitle("Following Series");
-                displayFollowingSeries();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
 

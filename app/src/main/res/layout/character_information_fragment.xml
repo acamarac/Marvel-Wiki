@@ -54,7 +54,8 @@
 
                 <TextView
                     android:id="@+id/tvCharacterName"
-                    android:layout_width="314dp"
+                    android:textColor="@color/black"
+                    android:layout_width="300dp"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
@@ -63,8 +64,8 @@
                     android:paddingLeft="10dp"
                     android:paddingTop="15dp"
                     android:text="TextView"
-                    android:textSize="20dp"
-                    android:textStyle="bold" />
+                    android:textSize="22dp"
+                    android:textStyle="bold"/>
 
                 <ImageButton
                     android:id="@+id/bShowWeb"
@@ -95,15 +96,66 @@
             </RelativeLayout>
 
             <LinearLayout
+                android:id="@+id/layoutSeriesPrev"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+
+                <TextView
+                    android:id="@+id/tvPreviousDesc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/previous"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvPreviousSeries"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:id="@+id/tvNextDesc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/next"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvNextSeries"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/comicRadioButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone">
+                android:visibility="gone"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/options"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
 
                 <RadioGroup
                     android:id="@+id/radioButtonGroup"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp">
 
                     <RadioButton
                         android:id="@+id/readComic"
@@ -128,7 +180,17 @@
                 android:id="@+id/seriesRadioButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone">
+                android:visibility="gone"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/options"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
 
                 <RadioGroup
                     android:id="@+id/seriesRadioButtonGroup"
@@ -183,6 +245,7 @@
                     android:layout_height="wrap_content" />
 
             </LinearLayout>
+
 
         </TableLayout>
     </ScrollView>
