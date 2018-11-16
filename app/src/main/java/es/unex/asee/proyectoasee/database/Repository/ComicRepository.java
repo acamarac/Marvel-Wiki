@@ -9,14 +9,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import es.unex.asee.proyectoasee.client.APIClient;
+import es.unex.asee.proyectoasee.api.client.APIClient;
 import es.unex.asee.proyectoasee.database.DAO.ComicDAO;
 import es.unex.asee.proyectoasee.database.Entities.Comics.ComicCache;
 import es.unex.asee.proyectoasee.database.Entities.Comics.ComicData;
 import es.unex.asee.proyectoasee.database.Entities.Comics.ComicState;
 import es.unex.asee.proyectoasee.database.Entities.Comics.ComicStateDataJOIN;
 import es.unex.asee.proyectoasee.database.ROOM.CharacterRoomDatabase;
-import es.unex.asee.proyectoasee.interfaces.ApiInterface;
+import es.unex.asee.proyectoasee.api.interfaces.ApiInterface;
 import es.unex.asee.proyectoasee.pojo.marvel.comicDetails.ComicDetails;
 import es.unex.asee.proyectoasee.pojo.marvel.comics.Comics;
 import es.unex.asee.proyectoasee.pojo.marvel.comics.Result;

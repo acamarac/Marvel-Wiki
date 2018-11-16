@@ -29,7 +29,7 @@ import es.unex.asee.proyectoasee.adapters.comics.ComicsAdapter;
 import es.unex.asee.proyectoasee.database.Entities.Comics.ComicData;
 import es.unex.asee.proyectoasee.database.ViewModel.ComicViewModel;
 import es.unex.asee.proyectoasee.pojo.marvel.comics.Result;
-import es.unex.asee.proyectoasee.preferences.SettingsFragment;
+import es.unex.asee.proyectoasee.fragments.preferences.SettingsFragment;
 
 public class ComicsListFragment extends Fragment implements ComicsAdapter.ComicsAdapterListener{
 

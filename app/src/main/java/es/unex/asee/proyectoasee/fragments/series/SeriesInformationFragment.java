@@ -24,17 +24,14 @@ import com.example.android.proyectoasee.R;
 import com.github.ivbaranov.mfb.MaterialFavoriteButton;
 import com.squareup.picasso.Picasso;
 
-import org.w3c.dom.Text;
-
 import java.util.List;
 
-import es.unex.asee.proyectoasee.database.Entities.Series.SeriesEntityOLD;
 import es.unex.asee.proyectoasee.database.Entities.Series.SeriesState;
 import es.unex.asee.proyectoasee.database.Entities.Series.SeriesStateDataJOIN;
 import es.unex.asee.proyectoasee.database.ViewModel.SeriesViewModel;
 import es.unex.asee.proyectoasee.pojo.marvel.seriesDetails.Result;
 import es.unex.asee.proyectoasee.pojo.marvel.seriesDetails.SeriesDetails;
-import es.unex.asee.proyectoasee.preferences.SettingsFragment;
+import es.unex.asee.proyectoasee.fragments.preferences.SettingsFragment;
 
 public class SeriesInformationFragment extends Fragment {
 

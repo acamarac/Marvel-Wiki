@@ -29,7 +29,7 @@ import es.unex.asee.proyectoasee.adapters.series.SeriesAdapter;
 import es.unex.asee.proyectoasee.database.Entities.Series.SeriesData;
 import es.unex.asee.proyectoasee.database.ViewModel.SeriesViewModel;
 import es.unex.asee.proyectoasee.pojo.marvel.series.Result;
-import es.unex.asee.proyectoasee.preferences.SettingsFragment;
+import es.unex.asee.proyectoasee.fragments.preferences.SettingsFragment;
 
 public class SeriesListFragment extends Fragment implements SeriesAdapter.SeriesAdapterListener{
 

@@ -1,8 +1,6 @@
 package es.unex.asee.proyectoasee;
 
 import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -11,16 +9,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ExpandableListAdapter;
-import android.widget.ExpandableListView;
 
 import com.example.android.proyectoasee.R;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 import es.unex.asee.proyectoasee.fragments.characters.CharacterDetailMainFragment;
 import es.unex.asee.proyectoasee.fragments.characters.CharacterInformationFragment;
@@ -47,7 +38,7 @@ import es.unex.asee.proyectoasee.fragments.series.Series_ComicsInDetailsFragment
 import es.unex.asee.proyectoasee.pojo.marvel.characterDetails.CharacterDetails;
 import es.unex.asee.proyectoasee.pojo.marvel.comicDetails.ComicDetails;
 import es.unex.asee.proyectoasee.pojo.marvel.seriesDetails.SeriesDetails;
-import es.unex.asee.proyectoasee.preferences.SettingsFragment;
+import es.unex.asee.proyectoasee.fragments.preferences.SettingsFragment;
 
 public class MainActivity extends AppCompatActivity
         implements CharacterDetailMainFragment.CharacterDetailListener,

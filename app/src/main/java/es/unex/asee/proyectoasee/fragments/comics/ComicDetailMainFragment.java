@@ -4,28 +4,18 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.android.proyectoasee.R;
 
-import java.util.Date;
-
 import es.unex.asee.proyectoasee.adapters.ViewPagerAdapter;
-import es.unex.asee.proyectoasee.client.APIClient;
 import es.unex.asee.proyectoasee.database.ViewModel.ComicViewModel;
-import es.unex.asee.proyectoasee.interfaces.ApiInterface;
 import es.unex.asee.proyectoasee.pojo.marvel.comicDetails.ComicDetails;
-import es.unex.asee.proyectoasee.utils.Utils;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class ComicDetailMainFragment extends Fragment {
 

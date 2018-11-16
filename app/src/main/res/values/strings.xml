@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ProyectoASEE</string>
+    <string name="app_name">Marvel Wiki</string>
     <string name="api_base_url">https://gateway.marvel.com:443/v1/public/</string>
     <string name="publickey">8930b8251773dc6334474b306aaaa6b6</string>
     <string name="privatekey">a6fd8f30a718e8f8f2e8f462ef36a46ee94f9309</string>

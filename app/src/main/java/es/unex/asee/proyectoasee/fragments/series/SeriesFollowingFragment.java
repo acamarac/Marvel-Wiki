@@ -4,13 +4,10 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,10 +20,8 @@ import java.util.List;
 
 import es.unex.asee.proyectoasee.MainActivity;
 import es.unex.asee.proyectoasee.adapters.series.SeriesAdapter;
-import es.unex.asee.proyectoasee.database.Entities.Series.SeriesData;
 import es.unex.asee.proyectoasee.database.ViewModel.SeriesViewModel;
 import es.unex.asee.proyectoasee.pojo.marvel.series.Result;
-import es.unex.asee.proyectoasee.preferences.SettingsFragment;
 
 public class SeriesFollowingFragment extends Fragment implements SeriesAdapter.SeriesAdapterListener {
 

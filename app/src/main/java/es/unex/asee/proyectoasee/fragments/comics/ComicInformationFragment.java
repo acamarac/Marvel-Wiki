@@ -30,7 +30,7 @@ import es.unex.asee.proyectoasee.database.Entities.Comics.ComicStateDataJOIN;
 import es.unex.asee.proyectoasee.database.ViewModel.ComicViewModel;
 import es.unex.asee.proyectoasee.pojo.marvel.comicDetails.ComicDetails;
 import es.unex.asee.proyectoasee.pojo.marvel.comicDetails.Result;
-import es.unex.asee.proyectoasee.preferences.SettingsFragment;
+import es.unex.asee.proyectoasee.fragments.preferences.SettingsFragment;
 
 public class ComicInformationFragment extends Fragment{
 

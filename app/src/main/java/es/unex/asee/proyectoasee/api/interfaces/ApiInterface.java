@@ -1,4 +1,4 @@
-package es.unex.asee.proyectoasee.interfaces;
+package es.unex.asee.proyectoasee.api.interfaces;
 
 import es.unex.asee.proyectoasee.pojo.marvel.characterDetails.CharacterDetails;
 import es.unex.asee.proyectoasee.pojo.marvel.characters.Characters;

@@ -21,7 +21,7 @@ import java.util.List;
 
 import es.unex.asee.proyectoasee.fragments.series.SeriesDetailMainFragment;
 import es.unex.asee.proyectoasee.pojo.marvel.series.Result;
-import es.unex.asee.proyectoasee.preferences.SettingsFragment;
+import es.unex.asee.proyectoasee.fragments.preferences.SettingsFragment;
 
 public class SeriesAdapter extends RecyclerView.Adapter<SeriesAdapter.SeriesViewHolder> {
 
