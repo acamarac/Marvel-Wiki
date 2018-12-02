@@ -2,6 +2,7 @@ package es.unex.asee.proyectoasee.database.ViewModel;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
@@ -18,7 +19,8 @@ import es.unex.asee.proyectoasee.pojo.marvel.comics.Result;
 public class ComicViewModel extends AndroidViewModel implements ComicRepository.AsyncResponseInterfaceComic{
 
     private ComicRepository mRepository;
-    private MutableLiveData<List<Result>> mAllComics;
+    private MutableLiveData<List<Result>> mAllComicsMLD;
+    private LiveData<List<Result>> mAllComics;
 
     /***********************
         - CONSTRUCTOR -
@@ -27,13 +29,14 @@ public class ComicViewModel extends AndroidViewModel implements ComicRepository.
     public ComicViewModel(@NonNull Application application) {
         super(application);
         mRepository = new ComicRepository(application, ComicViewModel.this);
-        mAllComics = new MutableLiveData<>();
+        mAllComicsMLD = new MutableLiveData<>();
     }
 
     /***********************
           - GETTERS -
      ***********************/
-    public MutableLiveData<List<Result>> getmAllComics() {
+    public LiveData<List<Result>> getmAllComics() {
+        mAllComics = mAllComicsMLD;
         return mAllComics;
     }
 
@@ -100,6 +103,6 @@ public class ComicViewModel extends AndroidViewModel implements ComicRepository.
      ***********************/
     @Override
     public void sendAllComics(List<Result> result) {
-        mAllComics.postValue(result);
+        mAllComicsMLD.postValue(result);
     }
 }

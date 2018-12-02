@@ -105,7 +105,6 @@ public class ComicsListFragment extends Fragment implements ComicsAdapter.Comics
                             ComicData comic = new ComicData(result.getId(), result.getTitle(), result.getThumbnail().getPath(), result.getThumbnail().getExtension());
                             mComicViewModel.insertCacheComic(comic);
                         }
-                        progressBar.setVisibility(View.VISIBLE);
                         adapter.addComicsPagination(results);
                         offset += results.size();
                         progressBar.setVisibility(View.GONE);
@@ -132,6 +131,7 @@ public class ComicsListFragment extends Fragment implements ComicsAdapter.Comics
                         }
                     } else {
                         if ((totalItemCount - visibleItemCount) <= (pastVisibleItems + limit) && !onSearch) {
+                            progressBar.setVisibility(View.VISIBLE);
                             requestMoreComics();
                             isLoading = true;
                         }

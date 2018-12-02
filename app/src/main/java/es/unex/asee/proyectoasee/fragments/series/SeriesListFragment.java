@@ -105,7 +105,6 @@ public class SeriesListFragment extends Fragment implements SeriesAdapter.Series
                             SeriesData series = new SeriesData(result.getId(), result.getTitle(), result.getThumbnail().getPath(), result.getThumbnail().getExtension());
                             mSeriesViewModel.insertCacheSeries(series);
                         }
-                        progressBar.setVisibility(View.VISIBLE);
                         adapter.addSeriesPagination(results);
                         offset = offset + results.size();
                         progressBar.setVisibility(View.GONE);
@@ -133,6 +132,7 @@ public class SeriesListFragment extends Fragment implements SeriesAdapter.Series
                         }
                     } else {
                         if ((totalItemCount - visibleItemCount) <= (pastVisibleItems + limit) && !onSearch) {
+                            progressBar.setVisibility(View.VISIBLE);
                             requestMoreSeries();
                             isLoading = true;
                         }

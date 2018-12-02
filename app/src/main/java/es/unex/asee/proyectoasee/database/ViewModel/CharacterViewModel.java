@@ -2,6 +2,7 @@ package es.unex.asee.proyectoasee.database.ViewModel;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
@@ -18,7 +19,8 @@ import es.unex.asee.proyectoasee.pojo.marvel.characters.Result;
 public class CharacterViewModel extends AndroidViewModel implements CharacterRepository.AsyncResponseInterface{
 
     private CharacterRepository mRepository;
-    private MutableLiveData<List<Result>> mAllCharacters;
+    private MutableLiveData<List<Result>> mAllCharactersMLD;
+    private LiveData<List<Result>> mAllCharacters;
 
     /***********************
         - CONSTRUCTOR -
@@ -26,13 +28,14 @@ public class CharacterViewModel extends AndroidViewModel implements CharacterRep
     public CharacterViewModel(@NonNull Application application) {
         super(application);
         mRepository = new CharacterRepository(application, CharacterViewModel.this);
-        mAllCharacters = new MutableLiveData<>();
+        mAllCharactersMLD = new MutableLiveData<>();
     }
 
     /***********************
            - GETTERS -
      ***********************/
-    public MutableLiveData<List<Result>> getmAllCharacters() {
+    public LiveData<List<Result>> getmAllCharacters() {
+        mAllCharacters = mAllCharactersMLD;
         return mAllCharacters;
     }
 
@@ -112,7 +115,7 @@ public class CharacterViewModel extends AndroidViewModel implements CharacterRep
      ***********************/
     @Override
     public void sendAllCharacters(List<Result> result) {
-        mAllCharacters.postValue(result);
+        mAllCharactersMLD.postValue(result);
     }
 
 }

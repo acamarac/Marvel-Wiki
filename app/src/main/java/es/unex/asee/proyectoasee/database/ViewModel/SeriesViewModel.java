@@ -2,6 +2,7 @@ package es.unex.asee.proyectoasee.database.ViewModel;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
@@ -19,7 +20,8 @@ import es.unex.asee.proyectoasee.pojo.marvel.seriesDetails.SeriesDetails;
 public class SeriesViewModel extends AndroidViewModel implements SeriesRepository.AsyncResponseInterfaceSeries{
 
     private SeriesRepository mRepository;
-    private MutableLiveData<List<Result>> mAllSeries;
+    private MutableLiveData<List<Result>> mAllSeriesMLD;
+    private LiveData<List<Result>> mAllSeries;
 
     /***********************
         - CONSTRUCTOR -
@@ -27,13 +29,14 @@ public class SeriesViewModel extends AndroidViewModel implements SeriesRepositor
     public SeriesViewModel(@NonNull Application application) {
         super(application);
         mRepository = new SeriesRepository(application, SeriesViewModel.this);
-        mAllSeries = new MutableLiveData<>();
+        mAllSeriesMLD = new MutableLiveData<>();
     }
 
     /***********************
           - GETTERS -
      ***********************/
-    public MutableLiveData<List<Result>> getmAllSeries() {
+    public LiveData<List<Result>> getmAllSeries() {
+        mAllSeries = mAllSeriesMLD;
         return mAllSeries;
     }
 
@@ -105,6 +108,6 @@ public class SeriesViewModel extends AndroidViewModel implements SeriesRepositor
      ***********************/
     @Override
     public void sendAllSeries(List<Result> result) {
-        mAllSeries.postValue(result);
+        mAllSeriesMLD.postValue(result);
     }
 }
