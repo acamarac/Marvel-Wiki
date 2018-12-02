@@ -69,16 +69,11 @@ public class SeriesViewModel extends AndroidViewModel implements SeriesRepositor
     }
 
     public void insertCacheSeries(SeriesData series) {
-        mRepository.insertSeriesData(series);
-        mRepository.insertSeriesCache(new SeriesCache(series.getId()));
+        mRepository.insertCacheSeries(series);
     }
 
     public void insertStateSeries(SeriesStateDataJOIN series) {
-        SeriesState state = new SeriesState(series.getId(), series.isFavorite(), series.getRating(), series.isSeen(), series.isPending(), series.isFollowing());
-        mRepository.insertSeriesState(state);
-
-        SeriesData data = new SeriesData(series.getId(), series.getName(), series.getThumbnailPath(), series.getThumbnailExtension());
-        mRepository.insertSeriesData(data);
+        mRepository.insertStateSeries(series);
     }
 
     public void updateStateSeries(SeriesStateDataJOIN series) {

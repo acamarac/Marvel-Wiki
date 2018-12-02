@@ -47,6 +47,19 @@ public class ComicRepository {
     }
 
 
+    public void insertCacheComic(ComicData comic) {
+        insertComicData(comic);
+        insertComicCache(new ComicCache(comic.getId()));
+    }
+
+    public void insertStateComic(ComicStateDataJOIN comic) {
+        ComicState state = new ComicState(comic.getId(), comic.isFavorite(), comic.getRating(), comic.isRead(), comic.isReading());
+        insertComicState(state);
+
+        ComicData data = new ComicData(comic.getId(), comic.getName(), comic.getThumbnailPath(), comic.getThumbnailExtension());
+        insertComicData(data);
+    }
+
     /***********************
          - DAO METHODS -
      ***********************/

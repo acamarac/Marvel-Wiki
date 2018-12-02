@@ -56,26 +56,19 @@ public class CharacterViewModel extends AndroidViewModel implements CharacterRep
     }
 
     /**
-     * Insertamos un nuevo personaje en la cache, lo que supone insertar sus datos
-     * en la tabla CharacterData y su id en la tabla CharacterCache
+     * Insertamos un nuevo personaje en la cache
      * @param character
      */
     public void insertCacheCharacter(CharacterData character) {
-        mRepository.insertCharacterData(character);
-        mRepository.insertCharacterCache(new CharacterCache(character.getId()));
+        mRepository.insertCacheCharacter(character);
     }
 
     /**
-     * Insertamos un nuevo estado para un persona, lo que supone insertar sus datos
-     * en la tabla CharacterData y su estado en la tabla CharacterState
+     * Insertamos un nuevo estado para un personaje
      * @param character
      */
     public void insertStateCharacter(CharacterStateDataJOIN character) {
-        CharacterState state = new CharacterState(character.getId(), character.isFavorite(), character.getRating());
-        mRepository.insertCharacterState(state);
-
-        CharacterData data = new CharacterData(character.getId(), character.getName(), character.getThumbnailPath(), character.getThumbnailExtension());
-        mRepository.insertCharacterData(data);
+        mRepository.insertStateCharacter(character);
     }
 
     /**

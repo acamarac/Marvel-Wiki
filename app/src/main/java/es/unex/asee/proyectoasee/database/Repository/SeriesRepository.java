@@ -47,6 +47,19 @@ public class SeriesRepository {
     }
 
 
+    public void insertCacheSeries(SeriesData series) {
+        insertSeriesData(series);
+        insertSeriesCache(new SeriesCache(series.getId()));
+    }
+
+    public void insertStateSeries(SeriesStateDataJOIN series) {
+        SeriesState state = new SeriesState(series.getId(), series.isFavorite(), series.getRating(), series.isSeen(), series.isPending(), series.isFollowing());
+        insertSeriesState(state);
+
+        SeriesData data = new SeriesData(series.getId(), series.getName(), series.getThumbnailPath(), series.getThumbnailExtension());
+        insertSeriesData(data);
+    }
+
     /***********************
          - DAO METHODS -
      ***********************/

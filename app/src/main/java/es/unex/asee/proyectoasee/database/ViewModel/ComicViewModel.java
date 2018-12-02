@@ -64,16 +64,11 @@ public class ComicViewModel extends AndroidViewModel implements ComicRepository.
     }
 
     public void insertCacheComic(ComicData comic) {
-        mRepository.insertComicData(comic);
-        mRepository.insertComicCache(new ComicCache(comic.getId()));
+        mRepository.insertCacheComic(comic);
     }
 
     public void insertStateComic(ComicStateDataJOIN comic) {
-        ComicState state = new ComicState(comic.getId(), comic.isFavorite(), comic.getRating(), comic.isRead(), comic.isReading());
-        mRepository.insertComicState(state);
-
-        ComicData data = new ComicData(comic.getId(), comic.getName(), comic.getThumbnailPath(), comic.getThumbnailExtension());
-        mRepository.insertComicData(data);
+        mRepository.insertStateComic(comic);
     }
 
     public void updateStateComic(ComicStateDataJOIN comic) {
