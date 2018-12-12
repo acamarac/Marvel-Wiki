@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/charactersListFragment">
+
+    <fragment
+        android:id="@+id/charactersListFragment"
+        android:name="es.unex.asee.proyectoasee.fragments.characters.CharactersListFragment"
+        android:label="layout_characters"
+        tools:layout="@layout/layout_characters">
+        <action
+            android:id="@+id/action_charactersListFragment_to_characterDetailMainFragment"
+            app:destination="@id/characterDetailMainFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@+id/charactersListFragment"
+            app:popUpToInclusive="false" />
+    </fragment>
+    <fragment
+        android:id="@+id/characterDetailMainFragment"
+        android:name="es.unex.asee.proyectoasee.fragments.characters.CharacterDetailMainFragment"
+        android:label="character_detail_main_fragment"
+        tools:layout="@layout/character_detail_main_fragment" >
+        <argument
+            android:name="id"
+            app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/charactersFavFragment"
+        android:name="es.unex.asee.proyectoasee.fragments.characters.CharactersFavFragment"
+        android:label="layout_characters"
+        tools:layout="@layout/layout_characters" >
+        <action
+            android:id="@+id/action_charactersListFragment_to_characterDetailMainFragment"
+            app:destination="@id/characterDetailMainFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+    <fragment
+        android:id="@+id/seriesSeenFragment"
+        android:name="es.unex.asee.proyectoasee.fragments.series.SeriesSeenFragment"
+        android:label="layout_characters"
+        tools:layout="@layout/layout_characters" >
+        <action
+            android:id="@+id/action_seriesListFragment_to_seriesDetailMainFragment"
+            app:destination="@id/seriesDetailMainFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/seriesListFragment"
+        android:name="es.unex.asee.proyectoasee.fragments.series.SeriesListFragment"
+        android:label="layout_characters"
+        tools:layout="@layout/layout_characters" >
+        <action
+            android:id="@+id/action_seriesListFragment_to_seriesDetailMainFragment"
+            app:destination="@id/seriesDetailMainFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/comicsReadFragment"
+        android:name="es.unex.asee.proyectoasee.fragments.comics.ComicsReadFragment"
+        android:label="layout_characters"
+        tools:layout="@layout/layout_characters" >
+        <action
+            android:id="@+id/action_comicsListFragment_to_comicDetailMainFragment"
+            app:destination="@id/comicDetailMainFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/comicsReadingFragment"
+        android:name="es.unex.asee.proyectoasee.fragments.comics.ComicsReadingFragment"
+        android:label="layout_characters"
+        tools:layout="@layout/layout_characters" >
+        <action
+            android:id="@+id/action_comicsListFragment_to_comicDetailMainFragment"
+            app:destination="@id/comicDetailMainFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/comicsListFragment"
+        android:name="es.unex.asee.proyectoasee.fragments.comics.ComicsListFragment"
+        android:label="layout_characters"
+        tools:layout="@layout/layout_characters" >
+        <action
+            android:id="@+id/action_comicsListFragment_to_comicDetailMainFragment"
+            app:destination="@id/comicDetailMainFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/seriesFavFragment"
+        android:name="es.unex.asee.proyectoasee.fragments.series.SeriesFavFragment"
+        android:label="layout_characters"
+        tools:layout="@layout/layout_characters" >
+        <action
+            android:id="@+id/action_seriesListFragment_to_seriesDetailMainFragment"
+            app:destination="@id/seriesDetailMainFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/seriesFollowingFragment"
+        android:name="es.unex.asee.proyectoasee.fragments.series.SeriesFollowingFragment"
+        android:label="layout_characters"
+        tools:layout="@layout/layout_characters" >
+        <action
+            android:id="@+id/action_seriesListFragment_to_seriesDetailMainFragment"
+            app:destination="@id/seriesDetailMainFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/seriesPendingFragment"
+        android:name="es.unex.asee.proyectoasee.fragments.series.SeriesPendingFragment"
+        android:label="layout_characters"
+        tools:layout="@layout/layout_characters" >
+        <action
+            android:id="@+id/action_seriesListFragment_to_seriesDetailMainFragment"
+            app:destination="@id/seriesDetailMainFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/comicsFavFragment"
+        android:name="es.unex.asee.proyectoasee.fragments.comics.ComicsFavFragment"
+        android:label="layout_characters"
+        tools:layout="@layout/layout_characters" >
+        <action
+            android:id="@+id/action_comicsListFragment_to_comicDetailMainFragment"
+            app:destination="@id/comicDetailMainFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="es.unex.asee.proyectoasee.fragments.preferences.SettingsFragment"
+        android:label="SettingsFragment" />
+    <fragment
+        android:id="@+id/seriesDetailMainFragment"
+        android:name="es.unex.asee.proyectoasee.fragments.series.SeriesDetailMainFragment"
+        android:label="character_detail_main_fragment"
+        tools:layout="@layout/character_detail_main_fragment" />
+    <fragment
+        android:id="@+id/comicDetailMainFragment"
+        android:name="es.unex.asee.proyectoasee.fragments.comics.ComicDetailMainFragment"
+        android:label="character_detail_main_fragment"
+        tools:layout="@layout/character_detail_main_fragment" />
+
+</navigation>

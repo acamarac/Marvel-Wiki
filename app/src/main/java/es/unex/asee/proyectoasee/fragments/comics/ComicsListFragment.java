@@ -2,12 +2,14 @@ package es.unex.asee.proyectoasee.fragments.comics;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -61,12 +63,21 @@ public class ComicsListFragment extends Fragment implements ComicsAdapter.Comics
     RelativeLayout mRelativeLayout;
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        mComicViewModel = ViewModelProviders.of(this).get(ComicViewModel.class);
+
+        setObserver();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.layout_characters, container, false);
 
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle("Comics");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Comics");
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rViewCharactersList);
         progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
@@ -80,8 +91,6 @@ public class ComicsListFragment extends Fragment implements ComicsAdapter.Comics
         adapter = new ComicsAdapter(view.getContext(), ComicsListFragment.this);
         mRecyclerView.setAdapter(adapter);
 
-        mComicViewModel = ViewModelProviders.of(this).get(ComicViewModel.class);
-
         prefs = PreferenceManager.getDefaultSharedPreferences(view.getContext());
 
         String limitGet = prefs.getString(SettingsFragment.KEY_PREF_LIMIT, "20");
@@ -90,6 +99,21 @@ public class ComicsListFragment extends Fragment implements ComicsAdapter.Comics
         mRelativeLayout = (RelativeLayout) view.findViewById(R.id.no_data_r_layout);
 
         requestCacheComics();
+
+        setScrollListener();
+
+        return view;
+    }
+
+    public void requestCacheComics() {
+        mComicViewModel.getCacheComics();
+    }
+
+    public void requestMoreComics() {
+        mComicViewModel.getAllComics(offset,limitPreference);
+    }
+
+    private void setObserver() {
 
         mComicViewModel.getmAllComics().observe(getActivity(), new Observer<List<Result>>() {
             @Override
@@ -112,6 +136,10 @@ public class ComicsListFragment extends Fragment implements ComicsAdapter.Comics
                 }
             }
         });
+
+    }
+
+    private void setScrollListener() {
 
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
@@ -140,20 +168,11 @@ public class ComicsListFragment extends Fragment implements ComicsAdapter.Comics
             }
         });
 
-        return view;
     }
-
-    public void requestCacheComics() {
-        mComicViewModel.getCacheComics();
-    }
-
-    public void requestMoreComics() {
-        mComicViewModel.getAllComics(offset,limitPreference);
-    }
-
 
     private void searchComicByName(final String name) {
         adapter.clearList();
+        progressBar.setVisibility(View.VISIBLE);
         mComicViewModel.getComicByName(name);
     }
 

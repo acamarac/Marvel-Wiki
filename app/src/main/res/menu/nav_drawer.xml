@@ -5,11 +5,11 @@
         <menu>
             <group android:checkableBehavior="single">
                 <item
-                    android:id="@+id/item_all_characters"
+                    android:id="@+id/charactersListFragment"
                     android:icon="@drawable/ic_characters_2"
                     android:title="All"></item>
                 <item
-                    android:id="@+id/item_fav_characters"
+                    android:id="@+id/charactersFavFragment"
                     android:icon="@drawable/ic_fav"
                     android:title="Favorite"></item>
             </group>
@@ -20,19 +20,19 @@
         <menu>
             <group android:checkableBehavior="single">
                 <item
-                    android:id="@+id/item_all_comics"
+                    android:id="@+id/comicsListFragment"
                     android:icon="@drawable/ic_comics"
                     android:title="All"></item>
                 <item
-                    android:id="@+id/item_fav_comics"
+                    android:id="@+id/comicsFavFragment"
                     android:icon="@drawable/ic_fav"
                     android:title="Favorite"></item>
                 <item
-                    android:id="@+id/item_read_comics"
+                    android:id="@+id/comicsReadFragment"
                     android:icon="@drawable/read_icon"
                     android:title="Read"></item>
                 <item
-                    android:id="@+id/item_reading_comics"
+                    android:id="@+id/comicsReadingFragment"
                     android:icon="@drawable/reading_icon_2"
                     android:title="Reading"></item>
             </group>
@@ -43,23 +43,23 @@
         <menu>
             <group android:checkableBehavior="single">
                 <item
-                    android:id="@+id/item_all_series"
+                    android:id="@+id/seriesListFragment"
                     android:icon="@drawable/ic_series"
                     android:title="All"></item>
                 <item
-                    android:id="@+id/item_fav_series"
+                    android:id="@+id/seriesFavFragment"
                     android:icon="@drawable/ic_fav"
                     android:title="Favorite"></item>
                 <item
-                    android:id="@+id/item_seen_series"
+                    android:id="@+id/seriesSeenFragment"
                     android:icon="@drawable/seen_icon"
                     android:title="Seen"></item>
                 <item
-                    android:id="@+id/item_pending_series"
+                    android:id="@+id/seriesPendingFragment"
                     android:icon="@drawable/pending_icon"
                     android:title="Pending"></item>
                 <item
-                    android:id="@+id/item_following_series"
+                    android:id="@+id/seriesFollowingFragment"
                     android:icon="@drawable/following_icon"
                     android:title="Following"></item>
             </group>
@@ -69,7 +69,7 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/item_preferences"
+            android:id="@+id/settingsFragment"
             android:icon="@drawable/settings"
             android:title="@string/settings" />
     </group>

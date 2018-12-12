@@ -2,6 +2,8 @@ package es.unex.asee.proyectoasee.database.Repository;
 
 import android.app.Application;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.util.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,7 +39,6 @@ public class CharacterRepository {
     private ApiInterface mApiInterface;
 
     AsyncResponseInterface mCallback;
-
 
     public CharacterRepository(Application application, AsyncResponseInterface mCallback) {
         CharacterRoomDatabase db = CharacterRoomDatabase.getDatabase(application);

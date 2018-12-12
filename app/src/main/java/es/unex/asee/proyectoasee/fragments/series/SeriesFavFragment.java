@@ -2,10 +2,12 @@ package es.unex.asee.proyectoasee.fragments.series;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -49,12 +51,21 @@ public class SeriesFavFragment extends Fragment implements SeriesAdapter.SeriesA
     private RelativeLayout mRelativeLayout;
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        mSeriesViewModel = ViewModelProviders.of(this).get(SeriesViewModel.class);
+
+        setObserver();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.layout_characters, container, false);
 
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle("Favorite Series");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Favorite Series");
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rViewCharactersList);
         progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
@@ -68,9 +79,17 @@ public class SeriesFavFragment extends Fragment implements SeriesAdapter.SeriesA
         adapter = new SeriesAdapter(view.getContext(), SeriesFavFragment.this);
         mRecyclerView.setAdapter(adapter);
 
-        mSeriesViewModel = ViewModelProviders.of(this).get(SeriesViewModel.class);
-
         requestFavSeries();
+
+        return view;
+    }
+
+
+    private void requestFavSeries() {
+        mSeriesViewModel.getFavoriteSeries();
+    }
+
+    private void setObserver() {
 
         mSeriesViewModel.getmAllSeries().observe(getActivity(), new Observer<List<Result>>() {
             @Override
@@ -89,12 +108,6 @@ public class SeriesFavFragment extends Fragment implements SeriesAdapter.SeriesA
             }
         });
 
-        return view;
-    }
-
-
-    public void requestFavSeries() {
-        mSeriesViewModel.getFavoriteSeries();
     }
 
     @Override

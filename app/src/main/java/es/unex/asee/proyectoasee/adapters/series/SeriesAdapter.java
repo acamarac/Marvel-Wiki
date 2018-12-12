@@ -2,6 +2,7 @@ package es.unex.asee.proyectoasee.adapters.series;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
@@ -19,6 +20,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.navigation.Navigation;
 import es.unex.asee.proyectoasee.fragments.series.SeriesDetailMainFragment;
 import es.unex.asee.proyectoasee.pojo.marvel.series.Result;
 import es.unex.asee.proyectoasee.fragments.preferences.SettingsFragment;
@@ -56,20 +58,24 @@ public class SeriesAdapter extends RecyclerView.Adapter<SeriesAdapter.SeriesView
     @Override
     public void onBindViewHolder(@NonNull SeriesViewHolder seriesViewHolder, int i) {
 
-        final Result comic = seriesList.get(i);
+        final Result series = seriesList.get(i);
 
-        seriesViewHolder.mTextViewCharacter.setText(comic.getTitle());
+        seriesViewHolder.mTextViewCharacter.setText(series.getTitle());
 
         if(loadImages) {
-            String imagePath = comic.getThumbnail().getPath();
-            String imageExtension = comic.getThumbnail().getExtension();
+            String imagePath = series.getThumbnail().getPath();
+            String imageExtension = series.getThumbnail().getExtension();
             String finalImagePath = imagePath + imageSize + "." + imageExtension;
             Picasso.with(context).load(finalImagePath).into(seriesViewHolder.mImageViewCharacter);
         } else {
             Picasso.with(context).load(R.drawable.placeholder).into(seriesViewHolder.mImageViewCharacter);
         }
 
-        seriesViewHolder.mCardView.setOnClickListener(new View.OnClickListener() {
+        Bundle idBundle = new Bundle();
+        idBundle.putInt("id", series.getId());
+        seriesViewHolder.mCardView.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.action_seriesListFragment_to_seriesDetailMainFragment, idBundle));
+
+        /*seriesViewHolder.mCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -83,7 +89,7 @@ public class SeriesAdapter extends RecyclerView.Adapter<SeriesAdapter.SeriesView
                         .commit();
 
             }
-        });
+        });*/
 
     }
 

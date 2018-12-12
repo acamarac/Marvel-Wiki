@@ -2,9 +2,11 @@ package es.unex.asee.proyectoasee.fragments.characters;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -41,12 +43,21 @@ public class CharactersFavFragment extends Fragment implements CharactersAdapter
 
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        mCharacterViewModel = ViewModelProviders.of(this).get(CharacterViewModel.class);
+
+        setObserver();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.layout_characters, container, false);
 
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle("Favorite Characters");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Favorite Characters");
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rViewCharactersList);
         progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
@@ -60,9 +71,16 @@ public class CharactersFavFragment extends Fragment implements CharactersAdapter
         adapter = new CharactersAdapter(view.getContext(), CharactersFavFragment.this);
         mRecyclerView.setAdapter(adapter);
 
-        mCharacterViewModel = ViewModelProviders.of(this).get(CharacterViewModel.class);
-
         requestFavCharacters();
+
+        return view;
+    }
+
+    public void requestFavCharacters() {
+        mCharacterViewModel.getAllFavoriteCharacters();
+    }
+
+    private void setObserver() {
 
         mCharacterViewModel.getmAllCharacters().observe(getActivity(), new Observer<List<Result>>() {
             @Override
@@ -80,14 +98,7 @@ public class CharactersFavFragment extends Fragment implements CharactersAdapter
 
             }
         });
-
-        return view;
     }
-
-    public void requestFavCharacters() {
-        mCharacterViewModel.getAllFavoriteCharacters();
-    }
-
 
     @Override
     public void sendCharacterId(Integer id, CharacterDetailMainFragment fragment) {

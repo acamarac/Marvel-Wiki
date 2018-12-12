@@ -2,10 +2,12 @@ package es.unex.asee.proyectoasee.fragments.series;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -34,19 +36,19 @@ public class SeriesPendingFragment extends Fragment implements SeriesAdapter.Ser
     private GridLayoutManager mGridLayoutManager;
 
     private int offset = 0;
-    private int visibleItemCount, totalItemCount, pastVisibleItems, limit, previousTotal = 0;
-    private boolean isLoading = true;
-
-    boolean onSearch = false;
 
     private SeriesViewModel mSeriesViewModel;
 
-    private SharedPreferences prefs;
-    private int limitPreference = 0;
-
-    boolean isInOtherOption = false;
-
     private RelativeLayout mRelativeLayout;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        mSeriesViewModel = ViewModelProviders.of(this).get(SeriesViewModel.class);
+
+        setObserver();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -54,7 +56,7 @@ public class SeriesPendingFragment extends Fragment implements SeriesAdapter.Ser
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.layout_characters, container, false);
 
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle("Pending Series");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Pending Series");
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rViewCharactersList);
         progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
@@ -68,9 +70,17 @@ public class SeriesPendingFragment extends Fragment implements SeriesAdapter.Ser
         adapter = new SeriesAdapter(view.getContext(), SeriesPendingFragment.this);
         mRecyclerView.setAdapter(adapter);
 
-        mSeriesViewModel = ViewModelProviders.of(this).get(SeriesViewModel.class);
-
         requestPendingSeries();
+
+        return view;
+    }
+
+
+    private void requestPendingSeries() {
+        mSeriesViewModel.getPendingSeries();
+    }
+
+    private void setObserver() {
 
         mSeriesViewModel.getmAllSeries().observe(getActivity(), new Observer<List<Result>>() {
             @Override
@@ -89,12 +99,6 @@ public class SeriesPendingFragment extends Fragment implements SeriesAdapter.Ser
             }
         });
 
-        return view;
-    }
-
-
-    public void requestPendingSeries() {
-        mSeriesViewModel.getPendingSeries();
     }
 
     @Override

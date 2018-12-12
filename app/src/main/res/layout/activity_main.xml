@@ -4,7 +4,6 @@
     android:id="@+id/navigation_drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <!-- android:fitsSystemWindows="@bool/fitsSystemWindows" -->
 
 
     <LinearLayout
@@ -33,14 +32,19 @@
             app:theme="@style/ToolbarTheme"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-        <FrameLayout
+
+        <fragment
             android:id="@+id/fragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
 
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            app:defaultNavHost="true"
+            app:navGraph="@navigation/nav_graph" />
 
 
     </LinearLayout>
+
 
     <android.support.design.widget.NavigationView
         android:id="@+id/navigation_view"

@@ -1,7 +1,9 @@
 package es.unex.asee.proyectoasee;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -9,10 +11,18 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.support.v4.app.Fragment;
+import android.util.AttributeSet;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.example.android.proyectoasee.R;
 
+import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.NavigationUI;
 import es.unex.asee.proyectoasee.fragments.characters.CharacterDetailMainFragment;
 import es.unex.asee.proyectoasee.fragments.characters.CharacterInformationFragment;
 import es.unex.asee.proyectoasee.fragments.characters.Character_ComicsInDetailsFragment;
@@ -48,6 +58,7 @@ public class MainActivity extends AppCompatActivity
     DrawerLayout drawerLayout;
     Toolbar toolbar;
     ActionBar actionBar;
+    NavController navController;
 
     boolean alreadyStarted = false;
 
@@ -56,6 +67,8 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        navController = Navigation.findNavController(this, R.id.fragment);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -79,12 +92,15 @@ public class MainActivity extends AppCompatActivity
 
         //Iniciamos el fragmento que muestra todos los personajes; solo si aún no se había
         //iniciado la aplicación
-        if (!alreadyStarted) fragmentSwitcher(1);
+        //if (!alreadyStarted) fragmentSwitcher(1);
 
-        alreadyStarted = true;
+        //alreadyStarted = true;
+
+        NavigationUI.setupWithNavController(navigationView, navController);
 
 
     }
+
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -92,14 +108,14 @@ public class MainActivity extends AppCompatActivity
         super.onSaveInstanceState(outState);
     }
 
-    @Override
+    /*@Override
     public void onBackPressed() {
         if (getSupportFragmentManager().getBackStackEntryCount() > 1) {
             getSupportFragmentManager().popBackStack();
         } else {
             finish();
         }
-    }
+    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -113,69 +129,86 @@ public class MainActivity extends AppCompatActivity
 
 
     private void setNavDrawerContent(final NavigationView navigationView) {
+        //NavOptions.Builder navBuilder = new NavOptions.Builder();
+        //final NavOptions navOptions = navBuilder.setPopUpTo(R.id.main_layout_character, false).build();
+
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         switch (menuItem.getItemId()) {
-                            case R.id.item_all_characters:
+                            case R.id.charactersListFragment:
                                 menuItem.setChecked(true);
-                                fragmentSwitcher(1);
+                                Navigation.findNavController(navigationView).navigate(R.id.charactersListFragment);
+                                //Navigation.createNavigateOnClickListener(R.id.charactersListFragment);
+                                //fragmentSwitcher(1);
                                 drawerLayout.closeDrawer(GravityCompat.START);
                                 return true;
-                            case R.id.item_fav_characters:
+                            case R.id.charactersFavFragment:
                                 menuItem.setChecked(true);
-                                fragmentSwitcher(2);
+                                //fragmentSwitcher(2);
+                                //Navigation.createNavigateOnClickListener(R.id.charactersFavFragment, null, navOptions);
+                                Navigation.findNavController(navigationView).navigate(R.id.charactersFavFragment);
                                 drawerLayout.closeDrawer(GravityCompat.START);
                                 return true;
-                            case R.id.item_all_comics:
+                            case R.id.comicsListFragment:
                                 menuItem.setChecked(true);
-                                fragmentSwitcher(3);
+                                //fragmentSwitcher(3);
+                                Navigation.createNavigateOnClickListener(R.id.comicsListFragment);
                                 drawerLayout.closeDrawer(GravityCompat.START);
                                 return true;
-                            case R.id.item_fav_comics:
+                            case R.id.comicsFavFragment:
                                 menuItem.setChecked(true);
-                                fragmentSwitcher(4);
+                                //fragmentSwitcher(4);
+                                Navigation.createNavigateOnClickListener(R.id.comicsFavFragment);
                                 drawerLayout.closeDrawer(GravityCompat.START);
                                 return true;
-                            case R.id.item_read_comics:
+                            case R.id.comicsReadFragment:
                                 menuItem.setChecked(true);
-                                fragmentSwitcher(5);
+                                //fragmentSwitcher(5);
+                                Navigation.createNavigateOnClickListener(R.id.comicsReadFragment);
                                 drawerLayout.closeDrawer(GravityCompat.START);
                                 return true;
-                            case R.id.item_reading_comics:
+                            case R.id.comicsReadingFragment:
                                 menuItem.setChecked(true);
-                                fragmentSwitcher(6);
+                                //fragmentSwitcher(6);
+                                Navigation.createNavigateOnClickListener(R.id.comicsReadingFragment);
                                 drawerLayout.closeDrawer(GravityCompat.START);
                                 return true;
-                            case R.id.item_all_series:
+                            case R.id.seriesListFragment:
                                 menuItem.setChecked(true);
-                                fragmentSwitcher(7);
+                                //fragmentSwitcher(7);
+                                Navigation.createNavigateOnClickListener(R.id.seriesListFragment);
                                 drawerLayout.closeDrawer(GravityCompat.START);
                                 return true;
-                            case R.id.item_fav_series:
+                            case R.id.seriesFavFragment:
                                 menuItem.setChecked(true);
-                                fragmentSwitcher(8);
+                                //fragmentSwitcher(8);
+                                Navigation.createNavigateOnClickListener(R.id.seriesFavFragment);
                                 drawerLayout.closeDrawer(GravityCompat.START);
                                 return true;
-                            case R.id.item_seen_series:
+                            case R.id.seriesSeenFragment:
                                 menuItem.setChecked(true);
-                                fragmentSwitcher(9);
+                                //fragmentSwitcher(9);
+                                Navigation.createNavigateOnClickListener(R.id.seriesSeenFragment);
                                 drawerLayout.closeDrawer(GravityCompat.START);
                                 return true;
-                            case R.id.item_pending_series:
+                            case R.id.seriesPendingFragment:
                                 menuItem.setChecked(true);
-                                fragmentSwitcher(10);
+                                //fragmentSwitcher(10);
+                                Navigation.createNavigateOnClickListener(R.id.seriesPendingFragment);
                                 drawerLayout.closeDrawer(GravityCompat.START);
                                 return true;
-                            case R.id.item_following_series:
+                            case R.id.seriesFollowingFragment:
                                 menuItem.setChecked(true);
-                                fragmentSwitcher(11);
+                                //fragmentSwitcher(11);
+                                Navigation.createNavigateOnClickListener(R.id.seriesFollowingFragment);
                                 drawerLayout.closeDrawer(GravityCompat.START);
                                 return true;
-                            case R.id.item_preferences:
+                            case R.id.settingsFragment:
                                 menuItem.setChecked(true);
-                                fragmentSwitcher(12);
+                                //fragmentSwitcher(12);
+                                Navigation.createNavigateOnClickListener(R.id.settingsFragment);
                                 drawerLayout.closeDrawer(GravityCompat.START);
                                 return true;
                         }
@@ -184,11 +217,10 @@ public class MainActivity extends AppCompatActivity
                 });
     }
 
-    public void fragmentSwitcher(int position) {
-        FragmentManager fragmentManager;
-        FragmentTransaction fragmentTransaction;
-        fragmentManager = getSupportFragmentManager();
-        fragmentTransaction = fragmentManager.beginTransaction();
+    /*public void fragmentSwitcher(int position) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
         switch (position) {
             case 1:
                 CharactersListFragment charactersFragment = new CharactersListFragment();
@@ -263,7 +295,7 @@ public class MainActivity extends AppCompatActivity
                         .commit();
                 break;
         }
-    }
+    }*/
 
     @Override
     public void sendCharacter(CharacterDetails character, CharacterInformationFragment fragment) {

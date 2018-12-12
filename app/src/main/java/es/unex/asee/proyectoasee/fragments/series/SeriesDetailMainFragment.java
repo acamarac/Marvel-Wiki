@@ -59,6 +59,10 @@ public class SeriesDetailMainFragment extends Fragment {
             id = savedInstanceState.getInt("id");
         }
 
+        Bundle bundle = getArguments();
+        if (bundle != null)
+            id = bundle.getInt("id");
+
         setHasOptionsMenu(false);
 
         requestSeriesDetails();
