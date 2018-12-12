@@ -125,9 +125,11 @@ public class ComicsListFragment extends Fragment implements ComicsAdapter.Comics
                         mRelativeLayout.setVisibility(View.VISIBLE);
                     } else {
                         mRelativeLayout.setVisibility(View.GONE);
-                        for (Result result: results) {
-                            ComicData comic = new ComicData(result.getId(), result.getTitle(), result.getThumbnail().getPath(), result.getThumbnail().getExtension());
-                            mComicViewModel.insertCacheComic(comic);
+                        if (storeInCache) {
+                            for (Result result : results) {
+                                ComicData comic = new ComicData(result.getId(), result.getTitle(), result.getThumbnail().getPath(), result.getThumbnail().getExtension());
+                                mComicViewModel.insertCacheComic(comic);
+                            }
                         }
                         adapter.addComicsPagination(results);
                         offset += results.size();

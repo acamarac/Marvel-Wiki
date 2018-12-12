@@ -126,9 +126,11 @@ public class SeriesListFragment extends Fragment implements SeriesAdapter.Series
                         mRelativeLayout.setVisibility(View.VISIBLE);
                     } else {
                         mRelativeLayout.setVisibility(View.GONE);
-                        for (Result result: results) {
-                            SeriesData series = new SeriesData(result.getId(), result.getTitle(), result.getThumbnail().getPath(), result.getThumbnail().getExtension());
-                            mSeriesViewModel.insertCacheSeries(series);
+                        if (storeInCache) {
+                            for (Result result : results) {
+                                SeriesData series = new SeriesData(result.getId(), result.getTitle(), result.getThumbnail().getPath(), result.getThumbnail().getExtension());
+                                mSeriesViewModel.insertCacheSeries(series);
+                            }
                         }
                         adapter.addSeriesPagination(results);
                         offset = offset + results.size();
