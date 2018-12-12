@@ -123,6 +123,7 @@ public class ComicsListFragment extends Fragment implements ComicsAdapter.Comics
                 } else {
                     if (results.size() == 0 && isInOtherOption) {
                         mRelativeLayout.setVisibility(View.VISIBLE);
+                        progressBar.setVisibility(View.GONE);
                     } else {
                         mRelativeLayout.setVisibility(View.GONE);
                         if (storeInCache) {

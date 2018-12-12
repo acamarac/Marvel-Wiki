@@ -124,6 +124,7 @@ public class SeriesListFragment extends Fragment implements SeriesAdapter.Series
                 } else {
                     if (results.size() == 0 && isInOtherOption) {
                         mRelativeLayout.setVisibility(View.VISIBLE);
+                        progressBar.setVisibility(View.GONE);
                     } else {
                         mRelativeLayout.setVisibility(View.GONE);
                         if (storeInCache) {
